@@ -13,6 +13,7 @@
   "dependencies": {
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
+    "bootstrap": "^5.3.3",
     "concurrently": "^8.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -22,11 +23,14 @@
     "mongoose": "^8.3.1",
     "nodemon": "^3.1.0",
     "react": "^18.2.0",
+    "react-auth": "^1.0.0",
+    "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
-    "react-router-dom": "^6.22.3",
+    "react-router-dom": "^5.2.0",
     "realm-web": "^2.0.0",
-    "sass": "^1.74.1"
+    "sass": "^1.74.1",
+    "universal-cookie": "^7.1.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

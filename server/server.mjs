@@ -159,7 +159,7 @@ app.post("/login", (req, res) => {
 });
 // free endpoint
 app.get("/free-endpoint", (req, res) => {
-  req.json({ message: "You are free to access me anytime" });
+  res.json({ message: "You are free to access me anytime" });
 });
 // authentication endpoint
 app.get("/auth-endpoint", auth, (req, res) => {
