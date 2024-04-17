@@ -53,7 +53,8 @@ const locationSchema = new mongoose.Schema({
 const User = mongoose.model('Authentication', authenticationSchema, 'users');
 const Product = mongoose.model('Product', productSchema, 'products');
 const Location = mongoose.model('Location', locationSchema, 'locations');
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:4173', 'https://productprice-iligan.vercel.app/'];
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:4173', 'https://productprice-iligan.vercel.app/',
+'https://productprice-iligan.vercel.app/groceries'];
 const corsOptions = {
   origin: function (origin, callback) {
     // Check if the origin is in the allowed origins list
