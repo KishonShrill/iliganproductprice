@@ -1,5 +1,10 @@
 import React, { useEffect, useState,  } from "react";
+import { Button } from "react-bootstrap";
 import axios from "axios";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
+const token = cookies.get("TOKEN");
 
 export default function FreeComponent() {
   const [message, setMessage] = useState("");
@@ -9,7 +14,10 @@ export default function FreeComponent() {
     // set configurations for the API call here
     const configuration = {
       method: "get",
-      url: "https://iliganproductprice-mauve.vercel.app/free-endpoint",
+      url: "https://iliganproductprice-mauve.vercel.app/auth-endpoint",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
     };
 
     // make the API call
@@ -23,12 +31,23 @@ export default function FreeComponent() {
       });
   }, [])
 
+  // logout
+  const logout = () => {
+    // destroy the cookie
+    cookies.remove("TOKEN", { path: "/" });
+    // redirect user to the landing page
+    window.location.href = "/";
+  }
+
   return (
-    <div>
+    <div className="">
       <h1 className="text-center">Free Component</h1>
 
       {/* displaying our message from our API call */}
       <h3 className="text-center text-danger">{message}</h3>
+      <Button type="submit" variant="danger" onClick={() => logout()}>
+        Logout
+      </Button>
     </div>
   );
 }

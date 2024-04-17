@@ -1,0 +1,27 @@
+.product {
+  &__card {
+    height: 250px;
+    padding: 1rem;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: 2fr 3fr;
+    background-color: var(--clr-light);
+    transition: .2s;
+
+    &:hover {
+      transform: translateY(-5px);
+    }
+  }
+
+  &__info1,
+  &__info2 {
+    height: 100%
+  }
+
+  &__image {
+  }
+
+  &__name {
+    font-size: var(--size-s);
+  }
+}

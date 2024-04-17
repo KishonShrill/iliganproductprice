@@ -31,7 +31,7 @@ const Login = () => {
         cookies.set("TOKEN", result.data.token, {
           path: "/",
         });
-        window.location.href = "/auth";
+        window.location.href = "/dev-mode";
       })
       .catch((error) => {
         error = new Error();

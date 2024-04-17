@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5000; // Choose your desired port
 app.use(express.json());
 
 // MongoDB Atlas URL
-const uri = `mongodb+srv://${process.env.HIDDEN_USERNAME}:${process.env.HIDDEN_PASSWORD}@${process.env.CLUSTER}.qj3tx5b.mongodb.net/${process.env.COLLECTION}?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.HIDDEN_USERNAME}:${process.env.HIDDEN_PASSWORD}@chirscentportfolio.qj3tx5b.mongodb.net/IliganCityStores?retryWrites=true&w=majority`;
 mongoose.connect(uri)
   .then(() => {console.log('Connected to MongoDB');})
   .catch(err => {console.error('Error connecting to MongoDB:', err.message);});
@@ -33,8 +33,27 @@ const authenticationSchema = new mongoose.Schema({
   }
 });
 
-const Database = mongoose.model('Authentication', authenticationSchema, 'users');
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:4173'];
+const productSchema = new mongoose.Schema({
+  product_id: String,
+  product_name: String,
+  category_id: String,
+  updated_price: Number,
+  date_updated: String,
+  location_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Locations' // Assuming 'Location' is the model name for the referenced collection
+  }
+});
+
+const locationSchema = new mongoose.Schema({
+  location_name: String,
+  location_address: String,
+});
+
+const User = mongoose.model('Authentication', authenticationSchema, 'users');
+const Product = mongoose.model('Product', productSchema, 'products');
+const Location = mongoose.model('Location', locationSchema, 'locations');
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:4173', 'https://productprice-iligan.vercel.app/'];
 const corsOptions = {
   origin: function (origin, callback) {
     // Check if the origin is in the allowed origins list
@@ -64,7 +83,7 @@ app.use((req, res, next) => {
 
 /**
  * Structure locations for POST, GET, PUT, and DELETE
- * methods for MongoDB Atlas for use in Database application
+ * methods for MongoDB Atlas for use in User application
  */
 // Resgister user to endpoint
 app.post("/register", async (req, res) => {
@@ -76,7 +95,7 @@ app.post("/register", async (req, res) => {
   bcrypt.hash(req.body.password, 10)
     .then((hashedPassword) => {
       // create a new user instance and collect the data
-      const user = Database({
+      const user = User({
         email: req.body.email,
         password: hashedPassword,
       });
@@ -106,7 +125,7 @@ app.post("/register", async (req, res) => {
 // Login user to endpoint
 app.post("/login", (req, res) => {
   // check if email exists
-  Database.findOne({ email: req.body.email })
+  User.findOne({ email: req.body.email })
     // if email exists
     .then((user) => {
       // compare the password entered and the hashed password found
@@ -166,6 +185,56 @@ app.get("/auth-endpoint", auth, (req, res) => {
   res.json({ message: "You are authorized to access me" });
 });
 /* Above this is authentication code for the web app */
+
+
+/**
+ * Structure locations for POST, GET, PUT, and DELETE
+ * methods for MongoDB Atlas for use in Product application
+ */
+// Fetsh all data from Product
+app.get('/api/database', async (req, res) => {
+  try {
+    const database = await Product.find();
+    res.json(database);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+// Fetsh data by id
+app.get('/api/database/:id', async (req, res) => {
+  const id = req.params.id;
+  try {
+    const database = await Product.findOne({ id }); // Note that .findOne({ id }) and .findOne(id) is different
+    if (!database) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    res.json(database);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+// Update a student by ID
+app.put('/api/database/:id', cors(corsOptions), async (req, res) => {
+  try {
+    const updatedStudent = await Product.findOneAndUpdate(
+      { _id: req.params.id },
+      req.body,
+      { new: true }
+    );
+    res.json(updatedStudent);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+// Delete a student by ID
+app.delete('/api/database/:id', cors(corsOptions), async (req, res) => {
+  try {
+    const deletedStudent = await Product.findOneAndDelete({ _id: req.params.id });
+    res.json(deletedStudent);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

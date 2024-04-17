@@ -1,0 +1,50 @@
+:root {
+  --font-s: 0.8rem;
+  --font-normal: 1rem;
+  --font-l: 1.25rem;
+  --font-xl: 0.8rem;
+  --font-2xl: 1rem;
+  --font-3xl: 1.25rem;
+  --font-4xl: 1.953rem;
+  --font-5xl: 2.441rem;
+  --font-6xl: 3.052rem;
+  --font-7xl: 3.815rem;
+
+  --clr-outline: rgb(200, 200, 200);
+  --clr-primary: #0F62FE;
+  --clr-secondary: #82CFFF;
+  --clr-tertiary: #D0E2FF;
+  /* --clr-highlight: #1eecff; */
+  --clr-grey: #DDE1E6;
+  --clr-darkGrey: #A2A9B0;
+  --clr-pink: #F7CEE0;
+  --clr-light: white;
+  --clr-dark: black;
+}
+
+#root {
+  display: grid;
+  grid-template-columns: 250px 1fr 400px;
+  grid-template-rows: 85px 1fr;
+  grid-template-areas: 
+    'aside header login'
+    'aside content cart'
+  ;
+}
+
+a {
+  text-decoration: none;
+}
+
+#navigation{
+  margin-top: 5%;
+  margin-bottom: 5%;
+}
+
+#navigation a{
+  margin-right: 10%;
+}
+
+#navigation a:last-child{
+  margin-right: 0;
+}
