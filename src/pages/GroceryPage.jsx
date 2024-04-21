@@ -2,8 +2,9 @@ import { Button } from "react-bootstrap";
 
 import '../styles/grocery.scss'
 import useProductsData from '../hooks/useProductsData';
+import Cart from "../components/Cart";
 
-export default function GroceryPage({ addToCart }) {
+export default function GroceryPage({ addToCart, cartItems, setCartItems  }) {
   const { isLoading, data, isError, error, isFetching } = useProductsData()
   console.log({ isLoading, isFetching })
   
@@ -19,13 +20,15 @@ export default function GroceryPage({ addToCart }) {
   )}
 
   return (
-    <>
+    <section className="grocery">
+      <Cart cartItems={cartItems} setCartItems={setCartItems} />
       <main className='grocery'>
+
         {data
         ? data?.data.map((item) => (
           <div key={item._id} className="product__card">
             <div className='product__info1'>
-              <img className="product__image" src="https://fakeimg.pl/141x218" alt="" />
+              <img className="product__image" src="" alt="Otherwise I am empty without a soul" />
             </div>
             <div className='product__info2'>
               <header>
@@ -37,21 +40,11 @@ export default function GroceryPage({ addToCart }) {
               <Button className="btn" onClick={() => addToCart(item)}>Click Me</Button>
             </div>
 
-            
-            {/* <p className="data__name">{student.name}</p>
-            <p className="data__id">{student.id}</p>
-            <p className="data__yearLvl">{student.year_level}</p>
-            <p className="data__gender">{student.gender}</p>
-            <p className="data__course">{student.course}</p>
-            <div className="data__actions">
-              <button className='btn'>Edit</button>
-              <button className='btn' onClick={() => handleDeleteStudent(student._id)}>Delete</button>
-              <Link className='btn' to={`/groceries/${student.id}`}>More</Link>
-            </div> */}
           </div>))
         : <h2>No products found...</h2>
         }
+
       </main>
-    </>
+    </section>
   );
 }

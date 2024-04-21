@@ -20,7 +20,7 @@
     "express": "^4.19.2",
     "jquery": "^3.7.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.3.1",
+    "mongoose": "^8.3.2",
     "nodemon": "^3.1.0",
     "react": "^18.2.0",
     "react-auth": "^1.0.0",
@@ -29,7 +29,7 @@
     "react-query": "^3.39.3",
     "react-router-dom": "^6.22.3",
     "realm-web": "^2.0.0",
-    "sass": "^1.74.1",
+    "sass": "^1.75.0",
     "universal-cookie": "^7.1.4"
   },
   "devDependencies": {

@@ -1,24 +1,46 @@
+main.grocery {
+  width: 1200px;
+  margin-inline: auto ;
+  padding: 1rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(12, 1fr);
+  grid-area: products;
+}
+
 .product {
   &__card {
-    height: 250px;
-    padding: 1rem;
+    grid-column: span 2;
+
+    height: 330px;
+    // padding: 1rem;
     display: grid;
-    gap: 1rem;
-    grid-template-columns: 2fr 3fr;
+    grid-template-rows: 187px 1fr;
     background-color: var(--clr-light);
     transition: .2s;
 
     &:hover {
-      transform: translateY(-5px);
+      // transform: translateY(-5px);
     }
   }
 
-  &__info1,
+  &__info1 {
+    height: 100%;
+    position: relative;
+    // padding-top: 56.25%;
+  }
+
   &__info2 {
-    height: 100%
+    height: 100%;
+    padding: 1rem;
   }
 
   &__image {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    background-color: antiquewhite;
   }
 
   &__name {

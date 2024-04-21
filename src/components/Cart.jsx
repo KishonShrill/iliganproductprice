@@ -30,7 +30,7 @@ export default function Cart({ cartItems, setCartItems }) {
   }, [change]);
 
   return (
-    <div className="cartside">
+    <aside className="cartside">
       <div className="cartside__header">
         <svg 
           xmlns="http://www.w3.org/2000/svg" 
@@ -67,6 +67,6 @@ export default function Cart({ cartItems, setCartItems }) {
         </div>
       </div>
       <Button className="btn">Print Budget</Button>
-    </div>
+    </aside>
   );
 }

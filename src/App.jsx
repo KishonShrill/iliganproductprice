@@ -6,14 +6,13 @@ import Cookies from "universal-cookie";
 const cookies = new Cookies();
 import './styles/App.scss'
 
-import Login from './components/Login.jsx'
-import AuthComponent from './pages/AuthComponent.jsx';
-import NoPage from "./components/NoPage.jsx";
 import Homepage from './pages/Homepage.jsx';
 import GroceryPage from "./pages/GroceryPage.jsx";
-import Aside from "./components/Aside.jsx";
+import Login from './components/Login.jsx'
+import AuthComponent from './pages/AuthComponent.jsx';
 import Header from "./components/Header.jsx";
-import Cart from "./components/Cart.jsx";
+import Cart from './components/Cart.jsx';
+import NoPage from "./components/NoPage.jsx";
 
 const queryClient = new QueryClient();
 
@@ -29,19 +28,10 @@ function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <Aside />
-          <Header />
-          <div className="login">
-            {!token ? (
-                <a className='login__devmode' href="/authenticate">Login</a>
-              ) : (
-                <a className='login__devmode' href="/dev-mode">Dev Mode</a>
-            )}
-          </div>
-          <Cart cartItems={cartItems} setCartItems={setCartItems} />
+          <Header token={token} />
           <Routes>
             <Route exact path="/" element={<Homepage />} />
-            <Route exact path="/groceries" element={<GroceryPage addToCart={addToCart} />} />
+            <Route exact path="/groceries" element={<GroceryPage addToCart={addToCart} cartItems={cartItems} setCartItems={setCartItems}/>} />
             <Route exact path="/authenticate" element={<Login />} />
             <Route path="/dev-mode" element={token ? <AuthComponent /> : <Navigate to="/" replace />}/>
             <Route path="*" element={<NoPage />} />

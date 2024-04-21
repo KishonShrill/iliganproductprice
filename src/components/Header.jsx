@@ -1,17 +1,28 @@
-import { Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
-export default function Header() {
+export default function Header({ token }) {
   return (
     <>
       <header className="header">
-        {/* <div className="homepage__header">
-          <ul className='homepage__links'>
-            <li><a href="/">Home</a></li>
-            <li><a href="/groceries">Groceries</a></li>
-            <li><a href="#">Cuisines</a></li>
-            <li><a href="#">About</a></li>
+        <div className="header__name-container">
+          <h1 className="header__name">Price Check</h1>
+        </div>
+        <nav className="header__nav">
+          <ul className='header__nav-links'>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/groceries">Groceries</Link></li>
+            <li><Link to="#">Cuisines</Link></li>
+            <li><Link to="#">About</Link></li>
           </ul>
-        </div> */}
+          <div className="header__nav-login">
+            {!token ? (
+                <a className='login__devmode' href="/authenticate">Login</a>
+              ) : (
+                <a className='login__devmode' href="/dev-mode">Dev Mode</a>
+            )}
+            <Link to="/cart" >Cart</Link>
+          </div>
+        </nav>
       </header>
     </>
   );

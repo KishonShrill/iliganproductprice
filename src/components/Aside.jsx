@@ -7,7 +7,6 @@ export default function Aside() {
 
   return (
     <div className="aside">
-      <div className="aside__name-container"><h1 className="aside__name">Price Check</h1></div>
       <nav className="aside__nav">
         <Link className="aside__btn" variant="primary" style={{"backgroundColor": isHomePage ? "var(--clr-tertiary)" : ""}} to="/">
           <svg 

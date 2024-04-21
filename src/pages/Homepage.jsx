@@ -24,8 +24,20 @@ export default function HomePage() {
   // }, [])
 
   return (
-    <main className="errorDisplay">
+    <main className="homepage">
+      <header className="frontpage">
+        <div>
+          <h1>Price Checker</h1>
+          <p></p>
+        </div>
+      </header>
+      {/* <section></section> */}
+      {/* <section className=""></section> */}
+      <section className="faq"></section>
+      <footer></footer>
       <h1 className="text-center">Free Component</h1>
+      {/* displaying our message from our API call */}
+      {/* <h3 className="text-center text-danger">{message}</h3> */}<h1 className="text-center">Free Component</h1>
       {/* displaying our message from our API call */}
       {/* <h3 className="text-center text-danger">{message}</h3> */}
     </main>
