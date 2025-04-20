@@ -4,9 +4,7 @@ export default function Header({ token }) {
   return (
     <>
       <header className="header">
-        <div className="header__name-container">
-          <h1 className="header__name">Price Check</h1>
-        </div>
+        <h1 className="header__name">Budget Buddy</h1>
         <nav className="header__nav">
           <ul className='header__nav-links'>
             <li><Link to="/">Home</Link></li>

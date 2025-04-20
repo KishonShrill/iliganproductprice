@@ -1,49 +1,155 @@
-main.grocery {
-  width: 1200px;
-  margin-inline: auto ;
-  padding: 1rem;
-  display: grid;
-  gap: 1rem;
-  grid-template-columns: repeat(12, 1fr);
-  grid-area: products;
+section.grocery {
+  max-width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 20px;
+  background-color: #f8f8f8;
+  display: flex;
+  gap: 20px;
 }
 
 .product {
-  &__card {
-    grid-column: span 2;
-
-    height: 330px;
-    // padding: 1rem;
+    &-container {
+    flex-grow: 1;
     display: grid;
-    grid-template-rows: 187px 1fr;
-    background-color: var(--clr-light);
-    transition: .2s;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+  }
 
-    &:hover {
-      // transform: translateY(-5px);
+  &-card {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    /* Removed cursor pointer and transition from card itself */
+  }
+
+  /* Added hover effect to details or button if needed */
+
+  &-image-placeholder {
+    width: 100%;
+    padding-top: 75%; /* 4:3 aspect ratio */
+    background-color: #e0e0e0; /* Placeholder color */
+    position: relative;
+    overflow: hidden;
+  }
+
+  &-image-placeholder::before {
+    content: 'Image Placeholder';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #666;
+    font-size: 0.9em;
+  }
+
+
+  &-details {
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  &-name {
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #333;
+  }
+
+  &-info {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 5px;
+  }
+
+  &-price {
+    font-size: 1.2em;
+    color: #ee4d2d; /* Shopee-like orange */
+    margin-top: auto; /* Push price to the bottom */
+    margin-bottom: 10px;
+  }
+}
+
+.add-to-cart-btn {
+  background-color: #ee4d2d;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s ease;
+}
+
+.add-to-cart-btn:hover {
+  background-color: #d7391f;
+}
+
+.cart {
+  &-summary {
+    width: 280px;
+    min-width: 200px; /* Prevent shrinking too much */
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 15px;
+    height: fit-content; /* Adjust height based on content */
+    position: sticky; /* Make it sticky */
+    top: calc(20px + 60px); /* Stick below header, plus some gap */
+
+    & h2 {
+      margin-top: 0;
+      font-size: 1.3em;
+      color: #333;
+      border-bottom: 1px solid #eee;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
   }
 
-  &__info1 {
-    height: 100%;
-    position: relative;
-    // padding-top: 56.25%;
+  &-items {
+    margin-bottom: 15px;
+    max-height: 300px; /* Add max height for scrolling if many items */
+    overflow-y: auto; /* Add scroll if items exceed max height */
   }
 
-  &__info2 {
-    height: 100%;
-    padding: 1rem;
-  }
+  &-item {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    border-bottom: 1px dotted #eee;
+    cursor: pointer; /* Indicate it's clickable */
+    transition: color 0.2s ease;
 
-  &__image {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    top: 0;
-    background-color: antiquewhite;
-  }
+    &:hover {
+      color: #333;
+    }
 
-  &__name {
-    font-size: var(--size-s);
+    &:last-child {
+      border-bottom: none; /* No border for the last item */
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    & span {
+      float: right; /* Float the price to the right */
+      font-weight: bold;
+      color: #333;
+      margin-left: 10px; /* Add space between name and price */
+    }
+
+    &-total {
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+      border-top: 1px solid #eee;
+      padding-top: 10px;
+    }
   }
 }
