@@ -3,9 +3,11 @@ section.grocery {
   min-height: 100%;
   margin: 0;
   padding: 20px;
-  background-color: #f8f8f8;
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 20px;
+  background-color: #f8f8f8;
 }
 
 .product {
@@ -92,15 +94,16 @@ section.grocery {
 
 .cart {
   &-summary {
+    position: sticky; /* Make it sticky */
+    height: fit-content; /* Adjust height based on content */
     width: 280px;
     min-width: 200px; /* Prevent shrinking too much */
+    padding: 15px;
+    align-self: flex-start;
+    top: calc(20px + 60px); /* Stick below header, plus some gap */
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    height: fit-content; /* Adjust height based on content */
-    position: sticky; /* Make it sticky */
-    top: calc(20px + 60px); /* Stick below header, plus some gap */
 
     & h2 {
       margin-top: 0;
@@ -154,4 +157,12 @@ section.grocery {
       padding-top: 10px;
     }
   }
+}
+
+// Waiting Cycle
+.errorDisplay {
+  width: 100%;
+  height: calc(100dvh - 66px);
+  display: grid;
+  place-content: center;
 }

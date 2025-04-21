@@ -1,10 +1,14 @@
-import '../styles/grocery.scss'
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import useProductsData from '../hooks/useProductsData';
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 
 export default function GroceryPage() {
+  useEffect(() => {
+    document.title = "Grocery List - Budget Buddy"
+    import('../styles/grocery.scss')
+  }, [])
+
   const { isLoading, data, isError, error, isFetching } = useProductsData()
   console.log({ isLoading, isFetching })
   

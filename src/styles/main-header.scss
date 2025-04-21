@@ -1,0 +1,46 @@
+.header {
+  position: sticky;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  background-color: #fff;
+  border-bottom: 1px solid var(--clr-outline);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  top: 0;
+  z-index: 1000; /* Ensure header is on top */
+
+  &__name {
+    margin: 0;
+    color: #ee4d2d;
+    font-size: 1.8rem;
+  }
+
+  &__name-container {
+    margin-left: 1rem;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__nav {
+    display: flex;
+
+    &-links {
+      margin-right: 1rem;
+      display: flex;
+      gap: 1rem ;
+      align-items: center;
+      list-style-type: none;
+    }
+
+    &-login {
+      padding-inline: 1rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      align-items: center;
+      grid-area: login;
+      border-left: 1px solid var(--clr-outline);
+    }
+  }
+}

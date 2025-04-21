@@ -1,6 +1,11 @@
 import React, { useEffect, useState,  } from "react";
 
 export default function HomePage() {
+  useEffect(() => {
+    document.title = "Homepage - Budget Buddy"
+    import('../styles/homepage.scss')
+  }, [])
+
   const [message, setMessage] = useState("");
 
   // // useEffect automatically executes once the page is fully loaded
@@ -43,24 +48,24 @@ export default function HomePage() {
       <section className="homepage__contacts">
         <h3>Contact the Developer</h3>
         <ul>
-          <li>Email: your.email@example.com</li>
+          <li>Email: test@gmail.com</li>
           <li>Phone: +63 9XX XXX XXXX</li>
-          <li>Location: Cagayan de Oro, Philippines</li>
+          <li>Location: Iligan City, Philippines</li>
         </ul>
       </section>
 
       <section className="homepage__socials">
         <h3>Connect Online</h3>
         <ul>
-            <li><a href="#" target="_blank">Facebook</a></li>
-            <li><a href="#" target="_blank">Twitter</a></li>
-            <li><a href="#" target="_blank">LinkedIn</a></li>
-            <li><a href="#" target="_blank">GitHub</a></li>
+            <li><a href="#" target="_blank" style={{color: "black"}}>🔒 Facebook</a></li>
+            <li><a href="#" target="_blank" style={{color: "black"}}>🔒 Twitter</a></li>
+            <li><a href="https://www.linkedin.com/in/chriscent-louis-june-pingol/" target="_blank">✅ LinkedIn</a></li>
+            <li><a href="https://github.com/KishonShrill" target="_blank">✅ GitHub</a></li>
         </ul>
       </section>
 
       <footer>
-        <p>&copy; 2025 Budget Buddy. Developed by [Your Name]. All rights reserved.</p>
+        <p>&copy; 2025 Budget Buddy. Developed by Perseque. All rights reserved.</p>
       </footer>
     </main>
   );

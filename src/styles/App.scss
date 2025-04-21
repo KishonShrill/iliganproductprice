@@ -17,180 +17,18 @@
   font-family: "Inter", sans-serif;
 }
 
-body {background-color: #f8f8f8;}
-
-.header {
-  position: sticky;
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  background-color: #fff;
-  border-bottom: 1px solid var(--clr-outline);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  top: 0;
-  z-index: 1000; /* Ensure header is on top */
-
-  &__name {
-    margin: 0;
-    color: #ee4d2d;
-    font-size: 1.8rem;
-  }
-
-  &__name-container {
-    margin-left: 1rem;
-    display: grid;
-    align-items: center;
-    justify-content: center;
-  }
-
-  &__nav {
-    display: flex;
-
-    &-links {
-      margin-right: 1rem;
-      display: flex;
-      gap: 1rem ;
-      align-items: center;
-      list-style-type: none;
-    }
-
-    &-login {
-      padding-inline: 1rem;
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      align-items: center;
-      grid-area: login;
-      border-left: 1px solid var(--clr-outline);
-    }
-  }
+html {
+  background-color: #f8f8f8;
+  scrollbar-gutter: stable;
 }
 
 main {
   grid-area: content;
 }
 
-.homepage {
-  &__hero {
-    background-color: #ee4d2d; /* Shopee orange */
-    color: white;
-    text-align: center;
-    padding: 60px 20px;
-    margin-bottom: 30px;
-
-    & h2 {
-      margin-top: 0;
-      font-size: 2.5em;
-      margin-bottom: 15px;
-    }
-
-    & p {
-      font-size: 1.2em;
-      margin-bottom: 30px;
-    }
-
-    & .cta-button {
-      display: inline-block;
-      background-color: #fff;
-      color: #ee4d2d;
-      padding: 12px 25px;
-      text-decoration: none;
-      border-radius: 5px;
-      border: 1px solid #fff;
-      font-size: 1.1em;
-      font-weight: bold;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    
-      &:hover {
-        background-color: #ee4d2d;
-        color: #fff;
-      }
-    }
-  }
-
-  &__contacts ul,
-  &__socials ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  &__contacts li, &__socials li {
-    margin-bottom: 10px;
-  }
-
-  &__socials a {
-    display: inline-block;
-    margin-right: 15px;
-    color: #ee4d2d;
-    text-decoration: none;
-    font-weight: bold;
-
-    &:hover {
-      text-decoration: underline;
-    }
-  }
-}
-
-section {
-  padding: 40px 20px;
-  margin-bottom: 30px;
-  background-color: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
-  border-radius: 8px;
-  max-width: 900px; /* Limit width for readability */
-  margin-left: auto;
-  margin-right: auto;
-
-  & h3 {
-    color: #ee4d2d;
-    margin-top: 0;
-    font-size: 1.6em;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 10px;
-  }
-}
-
-
-footer {
-  background-color: #333;
-  color: white;
-  text-align: center;
-  padding: 40px;
-  margin-top: 30px;
-  font-size: 0.9em;
-}
-
 /* Utils Section */
-.btn {
-  cursor: pointer;
-}
-
-/* Responsive adjustments */
-@media screen and (max-width: 768px) {
-  .product-section {
-      flex-direction: column; /* Stack product grid and cart on smaller screens */
-  }
-
-  .cart-summary {
-      width: 100%; /* Full width when stacked */
-      position: static; /* Remove sticky positioning when stacked */
-      margin-bottom: 20px;
-  }
-
-   .product-container {
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Adjust grid columns */
-   }
-
-   section {
-       padding: 30px 15px;
-   }
-
-   .hero {
-       padding: 40px 15px;
-   }
-
-   .hero h2 {
-       font-size: 2em;
-   }
-}
+.btn {cursor: pointer;}
+.absolute {position: absolute;}
+.relative {position: relative;}
+.sticky {position: sticky;}
+.fixed {position: fixed;}
