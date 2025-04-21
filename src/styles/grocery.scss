@@ -71,7 +71,7 @@ section.grocery {
     font-size: 1.2em;
     color: #ee4d2d; /* Shopee-like orange */
     margin-top: auto; /* Push price to the bottom */
-    margin-bottom: 10px;
+    margin-bottom: auto;
   }
 }
 
@@ -119,6 +119,8 @@ section.grocery {
   }
 
   &-item {
+    display: flex;
+    justify-content: space-between;
     font-size: 0.9em;
     color: #555;
     margin-bottom: 5px;
@@ -128,7 +130,7 @@ section.grocery {
     transition: color 0.2s ease;
 
     &:hover {
-      color: #333;
+      color: red;
     }
 
     &:last-child {

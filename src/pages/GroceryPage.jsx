@@ -1,11 +1,66 @@
 import '../styles/grocery.scss'
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import useProductsData from '../hooks/useProductsData';
 import Cart from "../components/Cart";
+import ProductCard from '../components/ProductCard';
 
 export default function GroceryPage() {
   const { isLoading, data, isError, error, isFetching } = useProductsData()
   console.log({ isLoading, isFetching })
   
+  // Initialize Cart for localStorage to persist
+  const [cart, setCart] = useState(() => {
+    const storedCart = localStorage.getItem('cart');
+    return storedCart ? JSON.parse(storedCart) : {};
+  })
+  useEffect(() => {
+    localStorage.setItem('cart', JSON.stringify(cart));
+  }, [cart]);
+  
+  // cartRef from <Cart />
+  const cartRef = useRef(null)
+
+  // Remove Item from <Cart /> on Element Click
+  useEffect(() => {
+    if (cartRef.current) {
+      cartRef.current.onItemClick = (productId) => {
+        setCart(prev => {
+          const updated = { ...prev };
+          if (updated[productId].quantity > 1) {
+            updated[productId].quantity -= 1;
+          } else {
+            delete updated[productId];
+          }
+          return updated;
+        });
+      };
+    }
+  }, [cartRef.current])
+
+  // Add item on <Cart /> on Button Click on <ProductCard />
+  const handleClick = useCallback((el) => {
+    const productId = el.dataset.productId;
+    const productName = el.dataset.productName;
+    const productPrice = parseFloat(el.dataset.productPrice);
+
+    // Check if product is already in the cart
+    setCart(prevCart => {
+      const updatedCart = {...prevCart}
+
+      if (updatedCart[productId]) {
+        updatedCart[productId].quantity += 1;
+      } else {
+        updatedCart[productId] = {
+          name: productName,
+          price: productPrice, // Store the original price
+          quantity: 1
+        };
+      }
+      return updatedCart;
+    });
+  }, []);
+
+  // Display when fetched elements are empty or is loading...
   if (isLoading || isFetching) {return(
     <main className='errorDisplay'>
       <h2>Loading...</h2>
@@ -22,25 +77,16 @@ export default function GroceryPage() {
       <main className='product-container' id="productContainer">
         {data
         ? data?.data.map((item) => (
-          <div className="product-card" 
+          <ProductCard 
             key={item._id} 
-            data-product-id={item._id} 
-            data-product-name={item.product_name}
-            data-product-price={item.updated_price}
-          >
-            <div className="product-image-placeholder" style={{backgroundColor: "#ffccaa"}}></div>
-            <div className="product-details">
-              <div className="product-name">{item.product_name}</div>
-              <div className="product-info">{item.product_id} | {item.date_updated}</div>
-              <div className="product-price">₱{item.updated_price}</div>
-              <button className="add-to-cart-btn">Add to Cart</button>
-            </div>
-          </div>
+            item={item} 
+            onAdd={(event) => handleClick(event.currentTarget)} 
+          />
         ))
         : <h2>No products found...</h2>
         }
       </main>
-      <Cart />
+      <Cart ref={cartRef} cart={cart} setCart={setCart}/>
     </section>
   );
 }

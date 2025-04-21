@@ -4,7 +4,7 @@ export default function Header({ token }) {
   return (
     <>
       <header className="header">
-        <h1 className="header__name">Budget Buddy</h1>
+        <a href="/" className="header__name" style={{fontWeight: 700}}>Budget Buddy</a>
         <nav className="header__nav">
           <ul className='header__nav-links'>
             <li><Link to="/">Home</Link></li>
