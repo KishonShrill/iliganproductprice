@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import axios from 'axios'
 import { Form, Button } from "react-bootstrap";
 import Cookies from "universal-cookie";
+import '../styles/login.scss'
 
 const cookies = new Cookies();
 // set the cookie
@@ -10,6 +11,10 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [login, setLogin] = useState(false);
+  
+  const emailRef = useRef(null)
+  const passwordRef = useRef(null)
+  const logRef = useRef(null)
 
   const handleSubmit = (e) => {
     // prevent the form from refreshing the whole page
@@ -22,9 +27,19 @@ const Login = () => {
         password,
       },
     };
+
+    console.log({configuration})
+
     axios(configuration)
       .then((result) => {console.log(result);})
-      .catch((error) => {console.log(error);})
+      .catch((error) => {
+        console.error(error);
+        emailRef.current.style.border = "1px solid red"
+        passwordRef.current.style.border = "1px solid red"
+        logRef.current.textContent = "Email or Password does not exist"
+        logRef.current.style.color = "red"
+      })
+
     axios(configuration)
       .then((result) => {
         setLogin(true);
@@ -41,17 +56,20 @@ const Login = () => {
   }
 
   return(
-    <>
+    <main>
       <Form onSubmit={(e)=>handleSubmit(e)}>
+        <h2>LOGIN</h2>
+        <p>Insert your credentials</p>
         {/* email */}
         <Form.Group controlId="formBasicEmail">
-          <Form.Label>Email address</Form.Label>
+          <Form.Label>Email</Form.Label>
           <Form.Control
             type="email"
             name="email"
             value={email}
+            ref={emailRef}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter email"
+            placeholder="example@gmail.com"
           />
         </Form.Group>
 
@@ -62,10 +80,13 @@ const Login = () => {
             type="password"
             name="password"
             value={password}
+            ref={passwordRef}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Password"
+            placeholder="password"
           />
         </Form.Group>
+
+        <p className='forget'>Forgot your Password?</p>
 
         {/* submit button */}
         <Button
@@ -73,15 +94,15 @@ const Login = () => {
           type="submit"
           onClick={(e) => handleSubmit(e)}
         >
-          Login
+          LOGIN
         </Button>
         {login ? (
           <p className="text-success">You Are Logged in Successfully</p>
         ) : (
-          <p className="text-danger">You Are Not Logged in</p>
+          <p ref={logRef} className="text-danger">You Are Not Logged in</p>
         )}
       </Form>
-    </>
+    </main>
   )
 }
 export default Login

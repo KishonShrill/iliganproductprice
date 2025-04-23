@@ -14,7 +14,7 @@ const PORT = process.env.PORT || 5000; // Choose your desired port
 app.use(express.json());
 
 // MongoDB Atlas URL
-const uri = `mongodb+srv://${process.env.HIDDEN_USERNAME}:${process.env.HIDDEN_PASSWORD}@chirscentportfolio.qj3tx5b.mongodb.net/IliganCityStores?retryWrites=true&w=majority`;
+const uri = process.env.DATABASE_URI;
 mongoose.connect(uri)
   .then(() => {console.log('Connected to MongoDB');})
   .catch(err => {console.error('Error connecting to MongoDB:', err.message);});

@@ -41,7 +41,7 @@ export default function FreeComponent() {
 
   return (
     <div className="">
-      <h1 className="text-center">Free Component</h1>
+      <h1 className="text-center">Dev Component</h1>
 
       {/* displaying our message from our API call */}
       <h3 className="text-center text-danger">{message}</h3>

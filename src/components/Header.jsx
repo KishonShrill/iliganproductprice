@@ -3,12 +3,12 @@ import '../styles/main-header.scss'
 
 export default function Header({ token }) {
   const location = useLocation(); // ✅ also needs to be here, not in render logic
-  console.log({location})
+  console.log({ location })
 
   return (
     <>
       <header className="header">
-        <Link to="/" className="header__name" style={{fontWeight: 700}}>Budget Buddy</Link>
+        <Link to="/" className="header__name" style={{ fontWeight: 700 }}>Budget Buddy</Link>
         <nav className="header__nav">
           <ul className='header__nav-links'>
             <li><Link to="/">Home</Link></li>
@@ -17,10 +17,12 @@ export default function Header({ token }) {
             <li><Link to="#">About</Link></li>
           </ul>
           <div className="header__nav-login">
-            {!token ? (
-                <Link className='login__devmode' href="/authenticate">Login</Link>
+            {(location.pathname != '/authenticate') && (
+              !token ? (
+                <Link className='login__devmode' to="/authenticate">Login</Link>
               ) : (
-                <Link className='login__devmode' href="/dev-mode">Dev Mode</Link>
+                <Link className='login__devmode' to="/dev-mode">Dev Mode</Link>
+              )
             )}
             <Link to="/receipt">Cart</Link>
           </div>

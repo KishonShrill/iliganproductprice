@@ -1,0 +1,51 @@
+#root {
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    height: 100%;
+}
+
+form {
+    margin: 2rem auto;
+    padding: 2rem;
+    max-width: 400px;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 6px;
+    box-shadow: 0.5rem 0.5rem #ee4d2d;
+
+    & h2,
+    & p {text-align: center;}
+    & p {font-size: 0.8rem;}
+
+    > div:first-of-type {margin-top: 1.5rem;}
+    > div:last-of-type {margin-top: 1.25rem;}
+
+    > div {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    & div .form-label {
+        margin-bottom: 0.25rem;
+        font-size: 0.8rem;
+    }
+    & div .form-control {padding: 0.4rem 0.8rem;}
+    & button[type='submit'] {
+        width: 100%;
+        margin-top: 1.5rem;
+        padding-block: 0.75rem;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        background: #ee4d2d;
+    }
+
+    & p:nth-of-type(2) {margin-top: 1rem; text-align: end;}
+    & p:nth-of-type(2):hover {color: #ee4d2d;}
+    & p:last-of-type {margin-top: 1rem;}
+}

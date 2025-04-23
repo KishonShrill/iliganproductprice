@@ -1,7 +1,7 @@
 import { scan } from 'react-scan'
 
 // --- React Query Setup ---
-scan({enabled: import.meta.env.VITE_SCAN === "true",});
+scan({ enabled: import.meta.env.VITE_SCAN === "true", });
 
 import React, { useState, lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
@@ -35,17 +35,17 @@ function App() {
           <Suspense fallback={<div>Loading...</div>}>
             <Routes>
               <Route exact path="/" element={<Homepage />} />
-              <Route exact path="/groceries" element={<GroceryPage/>} />
+              <Route exact path="/groceries" element={<GroceryPage />} />
               <Route exact path="/receipt" element={<ReceiptPage />} />
-              
+
               <Route exact path="/authenticate" element={<Login />} />
-              <Route path="/dev-mode" element={token ? <AuthComponent /> : <Navigate to="/" replace />}/>
-              <Route path='/groceries/add-item' element={<CreateItem />}/>
+              <Route path="/dev-mode" element={token ? <AuthComponent /> : <Navigate to="/" replace />} />
+              <Route path='/groceries/add-item' element={<CreateItem />} />
               <Route path="*" element={<NoPage />} />
             </Routes>
           </Suspense>
         </BrowserRouter>
-        <ReactQueryDevtools initialIsOpem={false} position='bottom-right'/>
+        <ReactQueryDevtools initialIsOpem={false} position='bottom-right' />
       </QueryClientProvider>
     </>
   )
