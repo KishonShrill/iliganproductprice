@@ -7,6 +7,7 @@ import express from 'express';
 import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose';
 import multer from 'multer';
+import rateLimit from 'express-rate-limit';
 
 
 config();
@@ -112,6 +113,17 @@ app.use(cors(corsOptions));
     next();
 });*/
 
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requrest per windowMs
+    message: 'Too many requests from this IP, please try again after 15 minutes.',
+});
+app.use([
+    '/register',
+    '/login',
+    '/api',
+
+], limiter);
 
 
 /**

@@ -7,6 +7,8 @@ import React, { useState, lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
+import { SpeedInsights } from "@vercel/speed-insights/react"; // <-- add this at the top
+
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
 import './styles/App.scss'
@@ -44,6 +46,7 @@ function App() {
               <Route path="*" element={<NoPage />} />
             </Routes>
           </Suspense>
+          <SpeedInsights />
         </BrowserRouter>
         <ReactQueryDevtools initialIsOpem={false} position='bottom-right' />
       </QueryClientProvider>
