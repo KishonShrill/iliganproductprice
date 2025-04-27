@@ -96,22 +96,23 @@ const corsOptions = {
     },
     methods: ["POST", "GET", "PUT", "DELETE"],
     credentials: true, // Allow cookies, authorization headers if needed
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization']
 };
 app.use(cors(corsOptions));
 
 // Old Method
-/** app.use((req, res, next) => {
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
-    );
-    res.setHeader(
-      "Access-Control-Allow-Methods",
-      "GET, POST, PUT, DELETE, PATCH, OPTIONS"
-    );
-    next();
-});*/
+// /**app.use((req, res, next) => {
+//     res.setHeader("Access-Control-Allow-Origin", "https://productprice-iligan.vercel.app");
+//     res.setHeader(
+//       "Access-Control-Allow-Headers",
+//       "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
+//     );
+//     res.setHeader(
+//       "Access-Control-Allow-Methods",
+//       "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+//     );
+//     next();
+// });*/
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
