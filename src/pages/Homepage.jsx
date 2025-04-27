@@ -1,10 +1,8 @@
 import React, { useEffect, useState,  } from "react";
+import '../styles/homepage.scss'
 
 export default function HomePage() {
-  useEffect(() => {
-    document.title = "Homepage - Budget Buddy"
-    import('../styles/homepage.scss')
-  }, [])
+  document.title = "Homepage - Budget Buddy"
 
   const [message, setMessage] = useState("");
 

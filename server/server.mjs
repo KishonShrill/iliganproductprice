@@ -83,17 +83,34 @@ const corsOptions = {
     origin: function (origin, callback) {
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
+
         // Check if the origin is in the allowed origins list
-        if (!origin || allowedOrigins.includes(origin)) {
+        if (allowedOrigins.includes(origin)) {
+            // ✅ Origin is allowed
             callback(null, true);
         } else {
+            // ❌ Origin not allowed
             callback(new Error('Not allowed by CORS'));
         }
     },
     methods: ["POST", "GET", "PUT", "DELETE"],
-    credentials: true
+    credentials: true, // Allow cookies, authorization headers if needed
 };
 app.use(cors(corsOptions));
+
+// Old Method
+/** app.use((req, res, next) => {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+    );
+    next();
+});*/
 
 
 
