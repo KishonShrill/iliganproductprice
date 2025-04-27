@@ -16,13 +16,6 @@
     font-size: 1.8rem;
   }
 
-  &__name-container {
-    margin-left: 1rem;
-    display: grid;
-    align-items: center;
-    justify-content: center;
-  }
-
   &__nav {
     display: flex;
 
@@ -40,8 +33,31 @@
       gap: 1rem;
       justify-content: center;
       align-items: center;
-      grid-area: login;
       border-left: 1px solid var(--clr-outline);
     }
   }
 }
+
+.nav-link {
+  cursor: pointer;
+  color: var(--clr-secondary);
+  border: none;
+
+  &.logout__devmode {
+    background: none;
+
+    &:hover .svg-path {
+      color: var(--clr-primary);
+      stroke: var(--clr-primary);
+    }
+  }
+
+  &:hover {
+    color: var(--clr-primary);
+    stroke: var(--clr-primary); 
+  }
+}
+.svg-path {
+  stroke: var(--clr-secondary);
+}
+  

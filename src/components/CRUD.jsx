@@ -1,41 +1,101 @@
-import React, {useEffect, useRef} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
+import '../styles/crud.scss'
 
-const CreateItem = () => {
+const CRUDProduct = () => {
+  document.title = "Add New Product - Admin"
+
+  const [product, setProduct] = useState({
+    productName: '',
+    categoryId: '',
+    updatedPrice: '',
+    locationId: '',
+    productImage: null, // You might want to handle images differently (e.g., show preview)
+  })
+  const urlParams = new URLSearchParams(window.location.search);
+  const productId = urlParams.get('productId');
+  
   useEffect(() => {
-    document.title = "Add New Product - Admin"
-    import('../styles/crud.scss')
-  }, [])
+    fetch(`https://iliganproductprice-mauve.vercel.app/api/products/${productId}`)
+    .then(response => response.json())
+    .then(data => {
+      // Do something with the product data, like filling out a form
+      console.log(data);
+      setProduct({
+        productName: data.product_name || '',
+        categoryId: data.category_id || '',
+        updatedPrice: data.updated_price || '',
+        locationId: data.location_id || '',
+        productImage: data.productImage || null, // Assuming the API provides a productImage URL or path
+      });
+    })
+    .catch(error => console.error(error));
+  }, []);
 
   const formRef = useRef(null)
 
   return (
     <div className="container">
-      <h1>Add New Product</h1>
+      <h1>Update Product</h1>
 
       <form id="addProductForm" ref={formRef}>
-        <div className="form-group">
-          <label for="productName">Product Name:</label>
-          <input type="text" id="productName" name="productName" required/>
+      <div className="form-group">
+          <label htmlFor="productName">Product Name:</label>
+          <input
+            type="text"
+            id="productName"
+            name="productName"
+            defaultValue={product.productName} // Binding value from state
+            required
+          />
         </div>
 
         <div className="form-group">
-          <label for="categoryId">Category ID:</label>
-          <input type="text" id="categoryId" name="categoryId" required/>
+          <label htmlFor="categoryId">Category ID:</label>
+          <input
+            type="text"
+            id="categoryId"
+            name="categoryId"
+            defaultValue={product.categoryId}
+            required
+          />
         </div>
 
         <div className="form-group">
-          <label for="updatedPrice">Price:</label>
-          <input type="number" id="updatedPrice" name="updatedPrice" step="0.01" required/>
+          <label htmlFor="updatedPrice">Price:</label>
+          <input
+            type="number"
+            id="updatedPrice"
+            name="updatedPrice"
+            defaultValue={product.updatedPrice}
+            step="0.01"
+            required
+          />
         </div>
 
         <div className="form-group">
-          <label for="locationId">Location ID:</label>
-          <input type="text" id="locationId" name="locationId" required/>
+          <label htmlFor="locationId">Location ID:</label>
+          <input
+            type="text"
+            id="locationId"
+            name="locationId"
+            defaultValue={product.locationId}
+            required
+          />
         </div>
 
-          <div className="form-group">
-          <label for="productImage">Product Image:</label>
-          <input type="file" id="productImage" name="productImage" accept="image/*" required/>
+        <div className="form-group">
+          <label htmlFor="productImage">Product Image:</label>
+          <input
+            type="file"
+            id="productImage"
+            name="productImage"
+            accept="image/*"
+            onChange={(e) => setProduct((prevProduct) => ({
+              ...prevProduct,
+              productImage: e.target.files[0], // Handle file change if necessary
+            }))}
+            required
+          />
         </div>
 
         <button type="submit" className="submit-btn">Add Product</button>
@@ -44,7 +104,7 @@ const CreateItem = () => {
   );
 }
 
-export default CreateItem;
+export default CRUDProduct;
 
 {/* <script>
         const form = document.getElementById('addProductForm');
