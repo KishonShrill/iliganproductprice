@@ -1,12 +1,12 @@
 import { config } from 'dotenv';
-import express from 'express';
-import mongoose from 'mongoose';
-import cors from 'cors';
-import bcrypt from 'bcrypt'
-import jwt from 'jsonwebtoken'
 import auth from './auth.js'
-import multer from 'multer';
+import bcrypt from 'bcrypt'
 import { v2 as cloudinary } from 'cloudinary'; // Added for Cloudinary integration
+import cors from 'cors';
+import express from 'express';
+import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose';
+import multer from 'multer';
 
 
 config();

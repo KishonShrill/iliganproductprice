@@ -74,6 +74,8 @@ export default function GroceryPage() {
     </main>
   )}
 
+  console.log("Data:" + data.data)
+
   return (
     <section className="grocery">
       <main className='product-container' id="productContainer">
