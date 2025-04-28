@@ -36,11 +36,11 @@ export default function Header({ token }) {
         
         {(location.pathname != '/authenticate' || location.pathname != '/dev-mode') && (
           !token ? (
-            <Link to="/authenticate" className="phone" style={{display: "flex", justifyContent: "center"}}>
+            <Link to="/authenticate" className="phone" style={{justifyContent: "center"}}>
               <img src="/UI/user-03-stroke-rounded.svg" alt="Login Button" />
             </Link>
           ) : (
-            <Link className='nav-link login__devmode phone' to="/dev-mode" style={{display: "flex", justifyContent: "center"}}>
+            <Link className='nav-link login__devmode phone' to="/dev-mode" style={{justifyContent: "center"}}>
               <img src="/UI/user-03-stroke-rounded.svg" alt="Developer Mode" />
             </Link>
           )
