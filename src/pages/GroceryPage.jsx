@@ -9,6 +9,7 @@ export default function GroceryPage() {
 
   const { isLoading, data, isError, error, isFetching } = useProductsData()
   console.log({ isLoading, isFetching })
+  const [reciept, setReceipt] = useState("100%")
   
   // Initialize Cart for localStorage to persist
   const [cart, setCart] = useState(() => {
@@ -62,6 +63,11 @@ export default function GroceryPage() {
     });
   }, []);
 
+  function openReciept() {
+    if (reciept === "100%") setReceipt("0%")
+    if (reciept === "0%") setReceipt("100%")
+  }
+
   // Display when fetched elements are empty or is loading...
   if (isLoading || isFetching) {return(
     <main className='errorDisplay'>
@@ -90,7 +96,10 @@ export default function GroceryPage() {
         : <h2>No products found...</h2>
         }
       </main>
-      <Cart ref={cartRef} cart={cart} setCart={setCart}/>
+      <Cart ref={cartRef} cart={cart} setCart={setCart} reciept={reciept}/>
+      <button className="cart-btn phone fixed" onClick={openReciept}>
+        <img src="/UI/shopping-cart-02-stroke-rounded.svg" alt="My cart button" />
+      </button>
     </section>
   );
 }

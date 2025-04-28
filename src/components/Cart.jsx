@@ -1,10 +1,10 @@
 import React, { forwardRef } from "react";
 
-const Cart = React.memo(forwardRef(({cart, setCart}, ref) => {
+const Cart = React.memo(forwardRef(({cart, setCart, reciept}, ref) => {
   const total = Object.values(cart).reduce((acc, item) => acc + item.price * item.quantity, 0);
 
   return (
-    <div className="cart-summary">
+    <div className="cart-summary" style={{left: reciept}}>
       <h2>Shopping Cart</h2>
       <div className="cart-items" id="cartItems" ref={ref}>
         {Object.keys(cart).length === 0 ? (

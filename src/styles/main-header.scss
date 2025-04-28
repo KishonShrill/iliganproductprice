@@ -109,7 +109,7 @@
           width: 100%;
         }
 
-        & li:nth-child(5) .nav-link {
+        & > li:nth-child(6) .nav-link {
           border-bottom: 1px solid grey;
         }
       }
