@@ -10,6 +10,11 @@
   top: 0;
   z-index: 1000; /* Ensure header is on top */
 
+  &__menu,
+  &__cart {
+    display: none;
+  }
+
   &__name {
     margin: 0;
     color: #ee4d2d;
@@ -60,4 +65,107 @@
 .svg-path {
   stroke: var(--clr-secondary);
 }
-  
+
+.phone {display: none;}
+
+@media screen and (max-width: 700px) {
+  .phone {display: block;}
+  .computer {display: none;}
+  .header {
+    display: grid;
+    grid-template-columns: 30px 1fr 30px;
+    grid-template-areas: 'navigation logo login';
+    align-items: center;
+    justify-items: center;
+    
+    &__menu,
+    &__cart {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      display: block;
+      display: grid;
+      place-content: center;
+    }
+
+    &__nav {
+      position: absolute;
+      top: 0;
+      left: -300px;
+      height: 100dvh;
+      width: 300px;
+      flex-direction: column;
+      justify-content: space-between;
+      background-color: #2d2d2d;
+      transition: left 0.3s ease-in-out;
+
+      &-links {
+        width: 100%;
+        margin: 0;
+        flex-direction: column;
+        gap: 0;
+
+        & > li {
+          width: 100%;
+        }
+
+        & li:nth-child(5) .nav-link {
+          border-bottom: 1px solid grey;
+        }
+      }
+
+      &-login {
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 0;
+        border: none;
+      }
+
+      & .header__name {
+        grid-area: logo;
+        width: 100%;
+        height: 10rem;
+        padding-block: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
+    &__menu {
+      grid-area: navigation;
+      border: none;
+      background: none;
+
+      &.absolute {
+        top: 1rem;
+        left: 1rem
+      }
+    }
+
+    &__login {
+      grid-area: login;
+    }
+  }
+  .nav-link {
+    width: 100%;
+    height: 4rem;
+    padding-left: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 1rem;
+    font-size: 1.2rem;
+    color: white;
+    border-top: 1px solid grey;
+
+    &:hover {
+      color: white;
+      background-color: #535353;
+    }
+  }
+}

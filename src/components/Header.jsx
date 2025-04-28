@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Cookies from "universal-cookie";
 
@@ -7,7 +8,15 @@ import '../styles/main-header.scss'
 
 export default function Header({ token }) {
   const location = useLocation(); // ✅ also needs to be here, not in render logic
+  const [nav, setNav] = useState("-300px")
+
   console.log({ location })
+
+  // Menu Navigation
+  function openMenu() {
+    if (nav === "-300px") setNav("0")
+    if (nav === "0") setNav("-300px")
+  }
 
   // logout
   const logout = () => {
@@ -20,20 +29,67 @@ export default function Header({ token }) {
   return (
     <>
       <header className="header">
+        <button className="header__menu" onClick={openMenu}>
+          <img src="/UI/menu-02-stroke-rounded.svg" alt="Menu Button" />
+        </button>
         <Link to="/" className="header__name" style={{ fontWeight: 700 }}>Budget Buddy</Link>
-        <nav className="header__nav">
+        
+        {(location.pathname != '/authenticate' || location.pathname != '/dev-mode') && (
+          !token ? (
+            <Link to="/authenticate" className="phone">
+              <img src="/UI/user-03-stroke-rounded.svg" alt="Login Button" />
+            </Link>
+          ) : (
+            <Link className='nav-link login__devmode phone' to="/dev-mode">
+              <img src="/UI/user-03-stroke-rounded.svg" alt="Developer Mode" />
+            </Link>
+          )
+        )}
+
+        <nav className="header__nav" style={{left: nav}}>
           <ul className='header__nav-links'>
-            <li><Link className="nav-link" to="/">Home</Link></li>
-            <li><Link className="nav-link" to="/groceries">Groceries</Link></li>
-            <li><Link className="nav-link" to="#">Cuisines</Link></li>
-            <li><Link className="nav-link" to="#">About</Link></li>
+            <button className="header__menu absolute" onClick={openMenu}>
+              <img src="/UI/menu-02-stroke-rounded-white.svg" alt="Menu Button" />
+            </button>
+            <h1 className="header__name phone">Budget Buddy</h1>
+            <li>
+              <Link className="nav-link" to="/">
+                <img className="phone" src="/UI/dashboard-square-01-stroke-rounded-white.svg" alt="Home Icon" />
+                Home
+              </Link>
+            </li>
+            <li>
+              <Link className="nav-link" to="/groceries">
+                <img className="phone" src="/UI/package-stroke-rounded-white.svg" alt="" />
+                Groceries
+              </Link>
+            </li>
+            <li>
+              <Link className="nav-link" to="#">
+                <img className="phone" src="/UI/noodles-stroke-rounded-white.svg" alt="" />
+                Cuisines
+              </Link>
+            </li>
+            <li>
+              <Link className="nav-link" to="#">
+                <img className="phone" src="/UI/information-circle-stroke-rounded-white.svg" alt="About me Icon" />
+                About
+              </Link>
+            </li>
           </ul>
           <div className="header__nav-login">
-            {(location.pathname != '/authenticate') && (
+            {(location.pathname != '/authenticate' || location.pathname != '/dev-mode') && (
               !token ? (
                 <>
-                  <Link className='nav-link' to="/authenticate">Login</Link>
-                  <Link className="nav-link" to="/receipt">Cart</Link>
+                  <Link className="nav-link" to="/receipt">
+                    <img className="phone" src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="" />
+                    Cart
+                  </Link>
+                  <Link className='nav-link' to="/authenticate">
+                    <img className="phone" src="/UI/user-03-stroke-rounded-white.svg" alt="Login Icon" />
+                    <img className="computer" src="/UI/user-03-stroke-rounded.svg" alt="Login Icon" />
+                    <p className="phone">Login</p>
+                  </Link>
                 </>
               ) : (
                 <>

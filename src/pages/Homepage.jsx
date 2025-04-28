@@ -28,8 +28,9 @@ export default function HomePage() {
   return (
     <main className="homepage">
       <section className="homepage__hero">
-        <h2>Estimate Your Shopping Budget Effortlessly</h2>
-        <p>Stop collecting receipts! Use Budget Buddy to quickly add products and see your estimated total before you hit the checkout.</p>
+        <h2 className="homepage__hero-title">Estimate Your Shopping Budget Effortlessly</h2>
+        <p className="homepage__hero-subtitle computer">Stop collecting receipts!<br />Use Budget Buddy to quickly add products and see your estimated total before you hit the checkout.</p>
+        <p className="homepage__hero-subtitle phone">Stop collecting receipts!<br />Use Budget Buddy now!</p>
         <a href="/groceries" className="cta-button">Start Estimating Now!</a>
       </section>
 
@@ -55,8 +56,8 @@ export default function HomePage() {
       <section className="homepage__socials">
         <h3>Connect Online</h3>
         <ul>
-            <li><a href="#" target="_blank" style={{color: "black"}}>🔒 Facebook</a></li>
-            <li><a href="#" target="_blank" style={{color: "black"}}>🔒 Twitter</a></li>
+            <li><a href="#" style={{color: "black"}}>🔒 Facebook</a></li>
+            <li><a href="#" style={{color: "black"}}>🔒 Twitter</a></li>
             <li><a href="https://www.linkedin.com/in/chriscent-louis-june-pingol/" target="_blank">✅ LinkedIn</a></li>
             <li><a href="https://github.com/KishonShrill" target="_blank">✅ GitHub</a></li>
         </ul>

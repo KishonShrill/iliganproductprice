@@ -6,15 +6,17 @@
     padding: 60px 20px;
     margin-block: 30px;
 
-    & h2 {
+    &-title {
       margin-top: 0;
       font-size: 2.5em;
       margin-bottom: 15px;
     }
 
-    & p {
-      font-size: 1.2em;
+    &-subtitle {
+      width: 40ch;
+      margin-inline: auto;
       margin-bottom: 30px;
+      font-size: 1.2em;
     }
 
     & .cta-button {
@@ -90,30 +92,18 @@ footer {
 
 
 /* Responsive adjustments */
-@media screen and (max-width: 768px) {
-  .product-section {
-      flex-direction: column; /* Stack product grid and cart on smaller screens */
+@media screen and (max-width: 700px) {
+  .homepage {
+    &__hero {
+      padding: 60px 20px;
+      margin-block: 0 30px;
+      border-radius: 0;
+
+      &-title {font-size: 1.7rem;}
+      &-subtitle {
+        width: 100%;
+        font-size: 1.1rem;
+      }
+    }
   }
-
-  .cart-summary {
-      width: 100%; /* Full width when stacked */
-      position: static; /* Remove sticky positioning when stacked */
-      margin-bottom: 20px;
-  }
-
-   .product-container {
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* Adjust grid columns */
-   }
-
-   section {
-       padding: 30px 15px;
-   }
-
-   .hero {
-       padding: 40px 15px;
-   }
-
-   .hero h2 {
-       font-size: 2em;
-   }
 }

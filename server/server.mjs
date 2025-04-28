@@ -74,6 +74,7 @@ const Location = mongoose.model('Location', locationSchema, 'locations');
 // CORS Configuration
 const allowedOrigins = [
     'http://localhost:5173',
+    'http://192.168.1.10:5173',
     'http://localhost:4173',
     'https://productprice-iligan.vercel.app',
     'https://productprice-iligan-git-main-kishonshrills-projects.vercel.app',

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest",
-    "dev": "vite",
+    "dev": "vite --host",
     "start": "concurrently \"vite\" \"node ./server/server.mjs\"",
     "server": "node ./server/server.mjs",
     "build": "vite build",
