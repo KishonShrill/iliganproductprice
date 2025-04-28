@@ -58,7 +58,7 @@ const Login = () => {
   return(
     <main>
       <Form onSubmit={(e)=>handleSubmit(e)}>
-        <h2>LOGIN</h2>
+        <h2>DEVELOPER LOGIN</h2>
         <p>Insert your credentials</p>
         {/* email */}
         <Form.Group controlId="formBasicEmail">
