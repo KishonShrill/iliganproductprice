@@ -12,7 +12,6 @@ import rateLimit from 'express-rate-limit';
 
 config();
 
-const app = express();
 const PORT = process.env.PORT || 5000; // Choose your desired port
 
 // Configure Cloudinary (Replace with your credentials)
@@ -25,9 +24,6 @@ cloudinary.config({
 // Set up Multer for handling file uploads (in-memory storage is simple for relaying to Cloudinary)
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
-
-// Middleware to parse incoming JSON requests
-app.use(express.json());
 
 // MongoDB Atlas URL
 const uri = `mongodb+srv://${process.env.HIDDEN_USERNAME}:${process.env.HIDDEN_PASSWORD}@chirscentportfolio.qj3tx5b.mongodb.net/IliganCityStores?retryWrites=true&w=majority`;
@@ -101,7 +97,12 @@ const corsOptions = {
     credentials: true, // Allow cookies, authorization headers if needed
     allowedHeaders: ['Origin', 'X-Requested-With', 'Content', 'Accept', 'Content-Type', 'Authorization']
 };
+
+const app = express();
+app.set('trust proxy', 1); // Trust the first proxy since we are hosting in vercel
+app.use(express.json()); // Middleware to parse incoming JSON requests
 app.use(cors(corsOptions));
+
 
 // Old Method
 // /**app.use((req, res, next) => {
