@@ -1,3 +1,12 @@
+---
+name: Code_or_Feature_Enhancement
+about: Suggest a code or feature enhancement
+title: "[ENHANCEMENT]:"
+labels: ''
+assignees: ''
+
+---
+
 ### 🔧 Current Behavior
 _A brief description of the current behavior of the project or feature._
 

@@ -1,3 +1,12 @@
+---
+name: Documentation_Update
+about: Suggest documentation update for clearer readability
+title: "[DOCUMENTATION]: "
+labels: ''
+assignees: ''
+
+---
+
 ### 📚 Issue
 _What part of the documentation is unclear or missing?_
 

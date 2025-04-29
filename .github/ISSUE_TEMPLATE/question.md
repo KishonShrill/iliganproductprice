@@ -1,3 +1,12 @@
+---
+name: Question
+about: Have any question about the project?
+title: "[QUESTION]: "
+labels: ''
+assignees: ''
+
+---
+
 ### ❓ Question/Help Request
 _What is the question or issue you need help with?_
 
