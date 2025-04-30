@@ -8,6 +8,7 @@ import jwt from 'jsonwebtoken'
 import mongoose from 'mongoose';
 import multer from 'multer';
 import rateLimit from 'express-rate-limit';
+import streamifier from 'streamifier';
 
 
 config();
@@ -22,8 +23,17 @@ cloudinary.config({
 });
 
 // Set up Multer for handling file uploads (in-memory storage is simple for relaying to Cloudinary)
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Only image files are allowed!'), false);
+        }
+    },
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
+});
 
 // MongoDB Atlas URL
 const uri = process.env.HIDDEN_URI;
@@ -120,7 +130,7 @@ app.use(cors(corsOptions));
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requrest per windowMs
+    max: 1000, // limit each IP to 100 requrest per windowMs
     message: 'Too many requests from this IP, please try again after 15 minutes.',
 });
 app.use([
@@ -250,11 +260,28 @@ async function generateProductId() {
     return `${currentYear}-${formattedItemNumber}`;
 }
 
+const streamUpload = (reqFileBuffer) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream({
+                resource_type: 'image',
+                folder: 'iligancitystores_products',
+                public_id: req.body.productId,
+                overwrite: true,
+            },
+            (error, result) => {
+                if (result) resolve(result);
+                else reject(error);
+            }
+        )
+    
+        streamifier.createReadStream(reqFileBuffer).pipe(stream);
+    });
+};
+
 
 //! [ ] CHECK IF THIS WORKS
-// POST endpoint to create a new product
 // Using upload.single('productImage') middleware to handle the file upload
-// TODO: Let's disable this first and check if every steps works or not...
+// TODO: Edit works, let's make it detect for New Created Product...
 app.post('/api/products', upload.single('productImage'), async (req, res) => {
     // Check if file was uploaded
     if (!req.file) {
@@ -263,29 +290,25 @@ app.post('/api/products', upload.single('productImage'), async (req, res) => {
 
     // Upload image to Cloudinary
     try {
-        const result = await cloudinary.uploader.upload(req.file.buffer.toString('base64'), {
-            resource_type: "image",
-            folder: "iligancitystores_products" // Specified folder where pictures will be stored
-        });
+        const product = await Product.findOne({ product_id: req.body.productId });
+        if (!product) return res.status(404).json({ message: 'Product not found.' });
 
-        const newProductId = await generateProductId();
+        const uploadResult = await streamUpload(req.file.buffer);
 
-        const newProduct = new Product({
-            product_id: newProductId,
-            product_name: req.body.productName, // Match frontend field names
-            category_id: req.body.categoryId,
-            updated_price: req.body.updatedPrice,
-            // date_updated will be set by default in schema
-            location_id: req.body.locationId,
-            imageUrl: result.secure_url // Store the secure URL from Cloudinary
-        });
+        product.product_id = req.body.productId || product.product_id;
+        product.product_name = req.body.productName || product.product_name;
+        product.category_id = req.body.categoryId || product.category_id;
+        product.updated_price = req.body.updatedPrice || product.updated_price;
+        product.location_id = req.body.locationId || product.location_id;
+        product.imageUrl = uploadResult.secure_url || product.imageUrl;
+        product.date_updated = new Date().toISOString().split('T')[0];
 
         // Save the product to MongoDB
-        const savedProduct = await newProduct.save();
+        const updatedProduct = await product.save();
 
         res.status(201).json({
             message: 'Product added successfully!',
-            product: savedProduct
+            product: updatedProduct,
         });
 
     } catch (error) {

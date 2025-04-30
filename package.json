@@ -37,6 +37,7 @@
     "react-scan": "^0.3.3",
     "realm-web": "^2.0.0",
     "sass": "^1.75.0",
+    "streamifier": "^0.1.1",
     "universal-cookie": "^7.1.4"
   },
   "devDependencies": {
