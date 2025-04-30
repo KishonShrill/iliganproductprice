@@ -30,7 +30,7 @@ export default function HomePage() {
       <section className="homepage__hero">
         <h2 className="homepage__hero-title">Estimate Your Shopping Budget Effortlessly</h2>
         <p className="homepage__hero-subtitle computer">Stop collecting receipts!<br />Use Budget Buddy to quickly add products and see your estimated total before you hit the checkout.</p>
-        <p className="homepage__hero-subtitle phone">Stop collecting receipts!<br />Use Budget Buddy now!</p>
+        <p className="homepage__hero-subtitle phone-block">Stop collecting receipts!<br />Use Budget Buddy now!</p>
         <a href="/groceries" className="cta-button">Start Estimating Now!</a>
       </section>
 
@@ -47,8 +47,8 @@ export default function HomePage() {
       <section className="homepage__contacts">
         <h3>Contact the Developer</h3>
         <ul>
-          <li>Email: test@gmail.com</li>
-          <li>Phone: +63 9XX XXX XXXX</li>
+          <li>Email: <a href="mailto:chriscentlouisjune.pingol@g.msuiit.edu.ph?subject=Inquiry">Institutional Email</a></li>
+          <li>Email: <a href="mailto:crystalbluew@gmail.com?subject=Inquiry">Personal Email</a></li>
           <li>Location: Iligan City, Philippines</li>
         </ul>
       </section>

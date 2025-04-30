@@ -66,11 +66,7 @@
   stroke: var(--clr-secondary);
 }
 
-.phone {display: none;}
-
 @media screen and (max-width: 700px) {
-  .phone {display: flex;}
-  .computer {display: none;}
   .header {
     display: grid;
     grid-template-columns: 30px 1fr 30px;

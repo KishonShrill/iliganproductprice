@@ -6,7 +6,11 @@ const ProductCard = React.memo(({ item, onAdd }) => (
     data-product-name={item.product_name}
     data-product-price={item.updated_price}
   >
-    <div className="product-image-placeholder" style={{ backgroundColor: "#ffccaa" }}></div>
+    {item.imageUrl ? (
+      <img className="product-image" src={item.imageUrl} alt={`${item.product_id} Photo`} />
+    ) : (
+      <div className="product-image-placeholder" style={{ backgroundColor: "#ffccaa" }}></div>
+    )}
     <div className="product-details">
       <div className="product-name">{item.product_name}</div>
       <div className="product-info">{item.product_id} | {item.date_updated}</div>

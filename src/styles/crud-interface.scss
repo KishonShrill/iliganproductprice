@@ -194,7 +194,7 @@ th:nth-child(7) {width: 150px;}
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
     .container {
         padding: 15px;
     }
@@ -217,8 +217,17 @@ th:nth-child(7) {width: 150px;}
         font-size: 0.9em;
     }
 
-     .actions button {
+    th:nth-child(1) {width: 65px;}
+
+    .actions button {
         padding: 4px 8px;
-        font-size: 0.8em;
+        font-size: 1em;
+    }
+}
+
+@media screen and (max-width: 375px) {
+    .actions button {
+        padding: 4px 8px;
+        font-size: 0.6em !important;
     }
 }

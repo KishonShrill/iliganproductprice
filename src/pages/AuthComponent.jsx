@@ -38,6 +38,7 @@ export default function CRUDInterface() {
 
   function edit_product(productId) {
     window.location.href = `https://productprice-iligan.vercel.app/groceries/edit-item?productId=${productId}`;
+    // window.location.href = `http://localhost:5173/groceries/edit-item?productId=${productId}`;
   }
 
   // Display when fetched elements are empty or is loading...
@@ -89,10 +90,10 @@ export default function CRUDInterface() {
           <tr>
             <th>ID</th>
             <th>Name</th>
-            <th>Location</th>
-            <th>Category</th>
+            <th className="computer">Location</th>
+            <th className="computer">Category</th>
             <th>Price</th>
-            <th>Date Updated</th>
+            <th className="computer">Date Updated</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -102,10 +103,10 @@ export default function CRUDInterface() {
             <tr key={item._id}>
               <td>{item.product_id}</td>
               <td>{item.product_name}</td>
-              <td>{item.location_id}</td>
-              <td>{item.category_id}</td>
+              <td className="computer">{item.location_id}</td>
+              <td className="computer">{item.category_id}</td>
               <td>₱{(item.updated_price).toFixed(2)}</td>
-              <td>{item.date_updated}</td>
+              <td className="computer">{item.date_updated}</td>
               <td className="actions">
                 <button className="edit-btn" onClick={() => edit_product(item._id)}>Edit</button>
                 <button className="delete-btn" data-id={item._id}>Delete</button>

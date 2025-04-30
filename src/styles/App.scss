@@ -31,3 +31,11 @@ main {
 .relative {position: relative;}
 .sticky {position: sticky;}
 .fixed {position: fixed;}
+.phone {display: none;}
+.phone-block {display: none;}
+
+@media screen and (max-width: 700px) {
+  .computer {display: none;}
+  .phone {display: flex;}
+  .phone-block {display: block;}
+}

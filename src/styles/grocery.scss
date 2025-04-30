@@ -28,9 +28,16 @@ section.grocery {
   }
 
   /* Added hover effect to details or button if needed */
+  &-image {
+    width: 100%;
+    height: 15rem;
+    object-fit: cover;
+    overflow: hidden;
+  }
 
   &-image-placeholder {
     width: 100%;
+    height: 15rem;
     padding-top: 75%; /* 4:3 aspect ratio */
     background-color: #e0e0e0; /* Placeholder color */
     position: relative;
@@ -60,6 +67,12 @@ section.grocery {
     font-weight: bold;
     margin-bottom: 5px;
     color: #333;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2; 
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   &-info {
@@ -172,9 +185,6 @@ section.grocery {
     }
     &-name {
       font-size: 0.8rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
     }
   } 
   
