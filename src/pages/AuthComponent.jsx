@@ -1,25 +1,30 @@
 import React, { useEffect, useState,  } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import useProductsData from "../hooks/useProductsData";
+import useFetchProducts from "../hooks/useFetchProducts";
 
 import '../styles/crud-interface.scss'
+import { Link } from "react-router-dom";
 
 const cookies = new Cookies();
 const token = cookies.get("TOKEN");
 
-export default function CRUDInterface() {
+export default function CRUDInterface({ debugMode }) {
   document.title = 'Manage Products - Admin'
   
-  const { isLoading, data, isError, error, isFetching } = useProductsData()
+  const { isLoading, data, isError, error, isFetching } = useFetchProducts()
   const [message, setMessage] = useState("");
 
   // useEffect automatically executes once the page is fully loaded
   useEffect(() => {
     // set configurations for the API call here
+    let url = debugMode
+      ? "http://localhost:5000/auth-endpoint"
+      : "https://iliganproductprice-mauve.vercel.app/auth-endpoint";
+    
     const configuration = {
       method: "get",
-      url: "https://iliganproductprice-mauve.vercel.app/auth-endpoint",
+      url,
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -37,8 +42,10 @@ export default function CRUDInterface() {
   }, [])
 
   function edit_product(productId) {
-    window.location.href = `https://productprice-iligan.vercel.app/groceries/edit-item?productId=${productId}`;
-    // window.location.href = `http://localhost:5173/groceries/edit-item?productId=${productId}`;
+    let location = debugMode
+      ? `http://localhost:5173/groceries/edit-item?productId=${productId}&type=edit`
+      : `https://productprice-iligan.vercel.app/groceries/edit-item?productId=${productId}&type=edit`;
+    window.location.href = location;
   }
 
   // Display when fetched elements are empty or is loading...
@@ -59,7 +66,7 @@ export default function CRUDInterface() {
     <div className="crud-container">
       <h1>Manage Products</h1>
 
-      <a href="#" className="add-product-button">Add New Product</a>
+      <Link to="https://productprice-iligan.vercel.app/groceries/add-item" className="add-product-button">Add New Product</Link>
       <div className="controls">
         <div className="control-group">
           <label htmlFor="searchQuery">Search Name:</label>
@@ -100,11 +107,11 @@ export default function CRUDInterface() {
         <tbody>
           {data
           ? data?.data.map((item) => (
-            <tr key={item._id}>
+            <tr key={item._id} style={item.imageUrl ? {background: "#5cb85c", color: "white"} : {background: "rgb(169 169 169)"}}>
               <td>{item.product_id}</td>
               <td>{item.product_name}</td>
-              <td className="computer">{item.location_id}</td>
-              <td className="computer">{item.category_id}</td>
+              <td className="computer">{item.location_info?.location_name}</td>
+              <td className="computer">{item.category_info?.category_name}</td>
               <td>₱{(item.updated_price).toFixed(2)}</td>
               <td className="computer">{item.date_updated}</td>
               <td className="actions">

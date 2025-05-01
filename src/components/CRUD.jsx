@@ -2,7 +2,7 @@ import React, {useEffect, useState, useRef} from 'react'
 import '../styles/crud.scss'
 import axios from 'axios'
 
-const CRUDProduct = () => {
+const CRUDProduct = ({ debugMode }) => {
   document.title = "Add New Product - Admin"
 
   const [product, setProduct] = useState({
@@ -13,13 +13,18 @@ const CRUDProduct = () => {
     locationId: '',
     productImage: null,
   })
+
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get('productId');
-  
+  const type = urlParams.get('type');
+  console.log("Type: ", type)
   
   useEffect(() => {
-    ! fetch(`https://iliganproductprice-mauve.vercel.app/api/products/${productId}`)
-    // fetch(`http://localhost:5000/api/products/${productId}`)
+    let fetchLocation = debugMode
+      ? `http://localhost:5000/api/products/${productId}`
+      : `https://iliganproductprice-mauve.vercel.app/api/products/${productId}`;
+
+    fetch(fetchLocation)
     .then(response => response.json())
     .then(data => {
       // Do something with the product data, like filling out a form
@@ -46,10 +51,14 @@ const CRUDProduct = () => {
     formData.append('updatedPrice', product.updatedPrice);
     formData.append('locationId', product.locationId);
     formData.append('productImage', product.productImage);
+    formData.append('formType', type);
+
+    let postLocation = debugMode
+      ? 'http://localhost:5000/api/products'
+      : 'https://iliganproductprice-mauve.vercel.app/api/products';
 
     try {
-      const res = await axios.post('https://iliganproductprice-mauve.vercel.app/api/products', formData, {
-      // const res = await axios.post('http://localhost:5000/api/products', formData, {
+      const res = await axios.post(postLocation, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         }
@@ -57,6 +66,7 @@ const CRUDProduct = () => {
 
       console.log('Product added', res.data);
       alert('Product added successfully!');
+      window.location.href = `/dev-mode`;
     } catch (error) {
       console.error('Error uploading product:', error);
       alert('Failed to upload product');
@@ -89,7 +99,6 @@ const CRUDProduct = () => {
             id="categoryId"
             name="categoryId"
             defaultValue={product.categoryId}
-            required
           />
         </div>
 
@@ -112,7 +121,6 @@ const CRUDProduct = () => {
             id="locationId"
             name="locationId"
             defaultValue={product.locationId}
-            required
           />
         </div>
 

@@ -1,12 +1,17 @@
 import { useQuery } from 'react-query'
 import axios from 'axios'
 
-const DATBASE_URL = "https://iliganproductprice-mauve.vercel.app/api/database";
+const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
+
+const DATBASE_URL = DEVELOPMENT
+  ? `http://localhost:5000/api/products/`
+  : "https://iliganproductprice-mauve.vercel.app/api/products";
+
 const fetshProducts = () => {
   return axios.get(DATBASE_URL);
 }
 
-const useProductsData = () => {
+const useFetchProducts = () => {
   return useQuery(
     'fetshedProducts', 
     fetshProducts,
@@ -24,4 +29,4 @@ const useProductsData = () => {
     }
   )
 }
-export default useProductsData
+export default useFetchProducts

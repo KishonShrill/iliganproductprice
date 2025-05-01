@@ -23,8 +23,8 @@ const CRUDInterface = lazy(() => import("./pages/AuthComponent.jsx"))
 const CRUDProduct = lazy(() => import('./components/CRUD.jsx'));
 const NoPage = lazy(() => import("./pages/NoPage.jsx"))
 
-
 const queryClient = new QueryClient();
+const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 
 function App() {
   const token = cookies.get("TOKEN");
@@ -40,9 +40,10 @@ function App() {
               <Route exact path="/groceries" element={<GroceryPage />} />
               <Route exact path="/receipt" element={<ReceiptPage />} />
 
-              <Route exact path="/authenticate" element={<Login />} />
-              <Route path="/dev-mode" element={token ? <CRUDInterface /> : <Navigate to="/" replace />} />
-              <Route path='/groceries/edit-item' element={<CRUDProduct />} />
+              <Route exact path="/authenticate" element={<Login debugMode={DEVELOPMENT} />} />
+              <Route path="/dev-mode" element={token ? <CRUDInterface debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
+              <Route path='/groceries/edit-item' element={<CRUDProduct debugMode={DEVELOPMENT} />} />
+              <Route path='/groceries/add-item' element={<CRUDProduct debugMode={DEVELOPMENT} />} />
               <Route path="*" element={<NoPage />} />
             </Routes>
           </Suspense>

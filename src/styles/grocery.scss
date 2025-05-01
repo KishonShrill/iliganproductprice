@@ -75,10 +75,19 @@ section.grocery {
     text-overflow: ellipsis;
   }
 
-  &-info {
+  &-info-inline {
+    padding: 0.25rem;
+    left: 0;
+    bottom: 0;
+    color: white;
     font-size: 0.8em;
+    background: #333;
+  }
+
+  &-info {
     color: #666;
-    margin-bottom: 5px;
+    font-size: 0.8em;
+    margin-bottom: 0.25rem;
   }
 
   &-price {
@@ -108,7 +117,7 @@ section.grocery {
   &-summary {
     position: sticky; /* Make it sticky */
     height: fit-content; /* Adjust height based on content */
-    width: 280px;
+    width: 330px;
     min-width: 200px; /* Prevent shrinking too much */
     padding: 15px;
     align-self: flex-start;
@@ -168,6 +177,14 @@ section.grocery {
       color: #333;
       border-top: 1px solid #eee;
       padding-top: 10px;
+    }
+  }
+}
+
+@media screen and (max-width: 950px) {
+  .cart {
+    &-summary {
+      width: 280px;
     }
   }
 }

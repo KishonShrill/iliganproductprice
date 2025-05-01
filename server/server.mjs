@@ -58,7 +58,7 @@ const authenticationSchema = new mongoose.Schema({
 const productSchema = new mongoose.Schema({
     product_id: { type: String, unique: true, required: true },
     product_name: { type: String, required: true },
-    category_id: { type: String, required: true },
+    category_id: { type: String, required: false },
     updated_price: { type: Number, required: true },
     date_updated: String, //? Might come in handy someday { type: Date, default: Date.now }
     location_id: {
@@ -70,7 +70,23 @@ const productSchema = new mongoose.Schema({
 
 const locationSchema = new mongoose.Schema({
     location_name: String,
-    location_address: String,
+    address: {
+        street: String,
+        barangay: String,
+        city: String,
+        province: String,
+        region: String,
+    },
+    coordinates: {
+        lat: Number,
+        lng: Number,
+    },
+    store_hours: {
+        open: String,   // Format: "HH:mm"
+        close: String,  // Format: "HH:mm"
+    },
+    is_open_24hrs: { type: Boolean, default: false },
+    type: String,
 });
 
 const User = mongoose.model('Authentication', authenticationSchema, 'users');
@@ -130,7 +146,7 @@ app.use(cors(corsOptions));
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000, // limit each IP to 100 requrest per windowMs
+    max: 1000, // limit each IP to 100 requests per windowMs
     message: 'Too many requests from this IP, please try again after 15 minutes.',
 });
 app.use([
@@ -260,12 +276,13 @@ async function generateProductId() {
     return `${currentYear}-${formattedItemNumber}`;
 }
 
-const streamUpload = (reqFileBuffer) => {
+const streamUpload = (reqFileBuffer, publicId) => {
     return new Promise((resolve, reject) => {
+        console.log("PUBLIC ID: ", publicId)
         const stream = cloudinary.uploader.upload_stream({
                 resource_type: 'image',
                 folder: 'iligancitystores_products',
-                public_id: req.body.productId,
+                public_id: publicId,
                 overwrite: true,
             },
             (error, result) => {
@@ -279,29 +296,50 @@ const streamUpload = (reqFileBuffer) => {
 };
 
 
-//! [ ] CHECK IF THIS WORKS
+//? [ ] CHECK IF THIS WORKS
 // Using upload.single('productImage') middleware to handle the file upload
 // TODO: Edit works, let's make it detect for New Created Product...
 app.post('/api/products', upload.single('productImage'), async (req, res) => {
-    // Check if file was uploaded
-    if (!req.file) {
-        return res.status(400).json({ message: 'Product image is required.' });
-    }
+    // Initialize variable for image
+    var uploadResult = null;
+    var product = null;
 
     // Upload image to Cloudinary
     try {
-        const product = await Product.findOne({ product_id: req.body.productId });
-        if (!product) return res.status(404).json({ message: 'Product not found.' });
+        console.log("Type: ", req.body.formType)
+        if (req?.body.formType === "edit") {
+            product = await Product.findOne({ product_id: req.body.productId });
+            if (!product) return res.status(404).json({ message: 'Product not found.' });
 
-        const uploadResult = await streamUpload(req.file.buffer);
+            if (req.file) {
+                uploadResult = await streamUpload(req.file.buffer, req.body.productId);
+                product.imageUrl = uploadResult.secure_url || product.imageUrl;
+            }
 
-        product.product_id = req.body.productId || product.product_id;
-        product.product_name = req.body.productName || product.product_name;
-        product.category_id = req.body.categoryId || product.category_id;
-        product.updated_price = req.body.updatedPrice || product.updated_price;
-        product.location_id = req.body.locationId || product.location_id;
-        product.imageUrl = uploadResult.secure_url || product.imageUrl;
-        product.date_updated = new Date().toISOString().split('T')[0];
+            product.product_id = req.body.productId || product.product_id;
+            product.product_name = req.body.productName || product.product_name;
+            product.category_id = req.body.categoryId || product.category_id;
+            product.updated_price = req.body.updatedPrice || product.updated_price;
+            product.location_id = req.body.locationId || product.location_id;
+            product.date_updated = new Date().toISOString().split('T')[0];
+
+        } else {
+            const newProductId = await generateProductId();
+
+            if (req.file) {
+                uploadResult = await streamUpload(req.file.buffer, newProductId);
+            }
+
+            product = new Product({
+                product_id: newProductId,
+                product_name: req.body.productName,
+                category_id: req.body.categoryId || null,
+                updated_price: req.body.updatedPrice,
+                location_id: req.body.locationId || null,
+                date_updated: new Date().toISOString().split('T')[0],
+                imageUrl: uploadResult.secure_url || null, // cloudinary hosted image URL
+            });
+        }
 
         // Save the product to MongoDB
         const updatedProduct = await product.save();
@@ -326,9 +364,42 @@ app.post('/api/products', upload.single('productImage'), async (req, res) => {
 // This is similar to your existing /api/database but using the Product model name directly
 app.get('/api/products', async (req, res) => {
     try {
-        const products = await Product.find();
+        const products = await Product.aggregate([
+            {
+                $lookup: {
+                    from: "locations",
+                    localField: "location_id",
+                    foreignField: "_id",
+                    as: "location_info"
+                }
+            },
+            {
+                $lookup: {
+                    from: "category",
+                    localField: "category_id",
+                    foreignField: "_id",
+                    as: "category_info",
+                }
+            },
+            { $unwind: { path: "$location_info", preserveNullAndEmptyArrays: true } },
+            { $unwind: { path: "$category_info", preserveNullAndEmptyArrays: true } },
+            {
+                $project: {
+                    product_id: true,
+                    product_name: true,
+                    updated_price: true,
+                    date_updated: true,
+                    imageUrl: true,
+                    "location_info.location_name": true,
+                    "category_info.category_list": true,
+                    "category_info.category_name": true,
+                    "category_info.category_catalog": true,
+                }
+            },
+            { $sort: { date_updated: -1 } },
+        ]);
+
         res.json(products);
-        
         //TODO: See if we need pagination on this...
 
     } catch (error) {

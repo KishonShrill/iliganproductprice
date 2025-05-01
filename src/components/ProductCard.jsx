@@ -7,13 +7,23 @@ const ProductCard = React.memo(({ item, onAdd }) => (
     data-product-price={item.updated_price}
   >
     {item.imageUrl ? (
-      <img className="product-image" src={item.imageUrl} alt={`${item.product_id} Photo`} />
+      <div className="relative">
+        <img className="product-image" src={item.imageUrl} alt={`${item.product_id} Photo`} />
+        <div className="product-info-inline absolute">{`🌏 ${item.location_info.location_name}`}</div>
+      </div>
     ) : (
-      <div className="product-image-placeholder" style={{ backgroundColor: "#ffccaa" }}></div>
+      <div className="relative">
+        <div className="product-image-placeholder" style={{ backgroundColor: "#ffccaa" }}></div>
+        <div className="product-info-inline absolute">{`🌏 ${item.location_info.location_name}`}</div>
+      </div>
     )}
     <div className="product-details">
       <div className="product-name">{item.product_name}</div>
-      <div className="product-info">{item.product_id} | {item.date_updated}</div>
+      <div className="product-info">{`⏰ ${item.date_updated}`}</div>
+      { item?.category_info?.category_catalog
+        ? <div className="product-info">{`🌏 ${item?.category_info?.category_catalog}`}</div>
+        : <div className="product-info">{`🌏 NULL`}</div>
+      }
       <div className="product-price">₱{item.updated_price}</div>
       <button
         className="add-to-cart-btn"

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import useProductsData from '../hooks/useProductsData';
+import useFetchProducts from '../hooks/useFetchProducts';
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import '../styles/grocery.scss'
@@ -7,7 +7,7 @@ import '../styles/grocery.scss'
 export default function GroceryPage() {
   document.title = "Grocery List - Budget Buddy"
 
-  const { isLoading, data, isError, error, isFetching } = useProductsData()
+  const { isLoading, data, isError, error, isFetching } = useFetchProducts()
   console.log({ isLoading, isFetching })
   const [reciept, setReceipt] = useState("100%")
   

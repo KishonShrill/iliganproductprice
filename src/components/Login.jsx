@@ -7,7 +7,7 @@ import '../styles/login.scss'
 const cookies = new Cookies();
 // set the cookie
 
-const Login = () => {
+const Login = ({ debugMode }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [login, setLogin] = useState(false);
@@ -19,9 +19,16 @@ const Login = () => {
   const handleSubmit = (e) => {
     // prevent the form from refreshing the whole page
     e.preventDefault();
+    
+    let url = debugMode
+      ? "http://localhost:5000/login"
+      : "https://iliganproductprice-mauve.vercel.app/login";
+
+    console.log("URL: ", url)
+
     const configuration = {
       method: "post",
-      url: "https://iliganproductprice-mauve.vercel.app/login",
+      url,
       data: {
         email,
         password,

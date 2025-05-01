@@ -1,6 +1,8 @@
 import { useQuery } from 'react-query'
 import axios from 'axios'
 
+const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
+
 const useFetchProduct = (productId) => {
     const DATBASE_URL = `https://iliganproductprice-mauve.vercel.app/api/products/${productId}`;
     // const DATBASE_URL = `http://localhost:5000/api/products/${productId}`;
