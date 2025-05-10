@@ -1,8 +1,10 @@
 import React, { useState, useRef } from 'react'
-import axios from 'axios'
 import { Form, Button } from "react-bootstrap";
 import Cookies from "universal-cookie";
+import axios from 'axios'
 import '../styles/login.scss'
+
+import { useDebouncedCallback } from '../helpers/useDebounce';
 
 const cookies = new Cookies();
 // set the cookie
@@ -11,15 +13,24 @@ const Login = ({ debugMode }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [login, setLogin] = useState(false);
-  
+  const [loading, setLoading] = useState(false);
+
   const emailRef = useRef(null)
   const passwordRef = useRef(null)
   const logRef = useRef(null)
+  const submitRef = useRef(null);
+
+  const handleSubmitBtn = (e) => {
+    e.preventDefault();
+    debouncedLogin();
+  }
 
   const handleSubmit = (e) => {
     // prevent the form from refreshing the whole page
-    e.preventDefault();
+    setLoading(true);
+    submitRef.current.style.background = "#ee4d2da0";
     
+
     let url = debugMode
       ? "http://localhost:5000/login"
       : "https://iliganproductprice-mauve.vercel.app/login";
@@ -35,17 +46,7 @@ const Login = ({ debugMode }) => {
       },
     };
 
-    console.log({configuration})
-
-    axios(configuration)
-      .then((result) => {console.log(result);})
-      .catch((error) => {
-        console.error(error);
-        emailRef.current.style.border = "1px solid red"
-        passwordRef.current.style.border = "1px solid red"
-        logRef.current.textContent = "Email or Password does not exist"
-        logRef.current.style.color = "red"
-      })
+    console.log({ configuration })
 
     axios(configuration)
       .then((result) => {
@@ -56,15 +57,23 @@ const Login = ({ debugMode }) => {
         window.location.href = "/dev-mode";
       })
       .catch((error) => {
-        error = new Error();
-      });
+        console.error(error);
+        setLoading(false);
+        emailRef.current.style.borderColor = "red"
+        passwordRef.current.style.borderColor = "red"
+        logRef.current.textContent = "Email or Password does not exist"
+        logRef.current.style.color = "red"
+        submitRef.current.style.background = "#ee4d2d";
+      })
     // make a popup alert showing the "submitted" text
     // alert("Submited");
   }
 
-  return(
+  const debouncedLogin = useDebouncedCallback(handleSubmit, 1000)
+
+  return (
     <main>
-      <Form onSubmit={(e)=>handleSubmit(e)}>
+      <Form>
         <h2>DEVELOPER LOGIN</h2>
         <p>Insert your credentials</p>
         {/* email */}
@@ -97,11 +106,12 @@ const Login = ({ debugMode }) => {
 
         {/* submit button */}
         <Button
+          ref={submitRef}
           variant="primary"
           type="submit"
-          onClick={(e) => handleSubmit(e)}
+          onClick={(e) => handleSubmitBtn(e)}
         >
-          LOGIN
+          {loading ? "LOADING..." : "LOGIN"}
         </Button>
         {login ? (
           <p className="text-success">You Are Logged in Successfully</p>
