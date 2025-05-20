@@ -1,12 +1,15 @@
-<a href="https://github.com/KishonShrill/iliganproductprice/blob/main/public/">
-  <picture>
-    <img src="./public/budgetbuddy.svg" width="100px" alt="nvm project logo" />
-  </picture>
-</a>
+![](./assets/image-preview.png)
 
-
-# 💸 Budget Buddy ![License](https://img.shields.io/badge/license-MIT-green) ![Vercel](https://img.shields.io/badge/hosted%20on-Vercel-black)
-
+<h1 align=center style="display:flex; align-items: center; justify-content: center; gap: 1rem;">
+  <a align=center href="https://github.com/KishonShrill/iliganproductprice/blob/main/public/">
+    <picture>
+      <img src="./public/budgetbuddy.svg" width="100px" alt="nvm project logo" />
+    </picture>
+  </a>
+  Budget Buddy
+  <img src="https://img.shields.io/badge/license-MIT-green"></img>
+  <img src="https://img.shields.io/badge/hosted%20on-Vercel-black"></img>
+</h1>
 
 **Budget Buddy** is a simple and intuitive web app designed to help users manage their expenses, track their income, and stay on top of their budgets!  
 Built with love using **Express.js**, **React.js**, and hosted on **Vercel**. 🧡
