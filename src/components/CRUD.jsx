@@ -1,5 +1,6 @@
 import React, {useEffect, useState, useRef} from 'react'
 import '../styles/crud.scss'
+import '../styles/utils.scss'
 import axios from 'axios'
 
 const CRUDProduct = ({ debugMode }) => {
@@ -7,6 +8,7 @@ const CRUDProduct = ({ debugMode }) => {
 
   const [isChanged, setIsChanged] = useState(false);
   const [originalProduct, setOriginalProduct] = useState(null);
+  const [isLoading, setIsLoading] = useState(false)
   const [product, setProduct] = useState({
     productId: '',
     productName: '',
@@ -19,7 +21,6 @@ const CRUDProduct = ({ debugMode }) => {
   const urlParams = new URLSearchParams(window.location.search);
   const productId = urlParams.get('productId');
   const type = urlParams.get('type');
-  console.log("Type: ", type)
   
   useEffect(() => {
     let fetchLocation = debugMode
@@ -30,7 +31,6 @@ const CRUDProduct = ({ debugMode }) => {
     .then(response => response.json())
     .then(data => {
       // Do something with the product data, like filling out a form
-      console.log(data);
       const formattedProduct = {
         productId: data.product_id || '',
         productName: data.product_name || '',
@@ -54,10 +54,12 @@ const CRUDProduct = ({ debugMode }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
 
     // Check if the product is unchanged
     if (JSON.stringify(product) === JSON.stringify(originalProduct)) {
       alert("No changes detected. Nothing to update.");
+      setIsLoading(false)
       return;
     }
 
@@ -81,12 +83,13 @@ const CRUDProduct = ({ debugMode }) => {
         }
       });
 
-      console.log('Product added', res.data);
       alert('Product added successfully!');
+      setIsLoading(false)
       window.location.href = `/dev-mode`;
     } catch (error) {
       console.error('Error uploading product:', error);
       alert('Failed to upload product');
+      setIsLoading(false)
     }
   };
   
@@ -153,12 +156,11 @@ const CRUDProduct = ({ debugMode }) => {
               ...prevProduct,
               productImage: e.target.files[0],
             }))}
-            required
           />
         </div>
 
-        <button type="submit" className="submit-btn" disabled={!isChanged}>
-          {type === "edit" ? "Update Product" : "Add Product"}
+        <button type="submit" className="submit-btn" disabled={!isChanged || isLoading}>
+          {isLoading ? (<>Loading<span className="animated-dots"></span></>) : (type === "edit" ? "Update Product" : "Add Product")}
         </button>
       </form>
     </div>

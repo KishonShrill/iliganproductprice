@@ -2,9 +2,8 @@
 .errorDisplay {
   width: 100%;
   height: calc(100dvh - 66px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-content: center;
 }
 
 .animated-dots {
@@ -16,7 +15,7 @@
   content: '.';
   width: 1.2em; /* enough space for 3 dots */
   display: block;
-  font-size: 24px;
+  font-size: inherit;
   white-space: nowrap;
   overflow: hidden;
   animation: blinkDots 1.5s steps(3, end) infinite;
@@ -35,4 +34,35 @@
   80%, 100% {
     content: '...';
   }
+}
+
+
+/* Style for pagination controls (basic) */
+.pagination {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.pagination button {
+    padding: 8px 15px;
+    margin: 0 5px;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+    background-color: #ccc;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination span {
+    margin: 0 10px;
+    font-weight: bold;
 }

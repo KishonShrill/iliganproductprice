@@ -58,7 +58,9 @@
   cursor: pointer;
   width: 100%;
   padding: 12px 20px;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: white;
   font-size: 1.1em;
   border: none;
