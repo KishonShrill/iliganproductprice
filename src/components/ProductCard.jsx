@@ -37,4 +37,4 @@ const ProductCard = React.memo(({ item, onAdd }) => (
   </div>
 ));
 
-export default ProductCard;
+export default React.memo(ProductCard);

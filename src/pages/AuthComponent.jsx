@@ -10,10 +10,13 @@ const cookies = new Cookies();
 const token = cookies.get("TOKEN");
 
 export default function CRUDInterface({ debugMode }) {
-  document.title = 'Manage Products - Admin'
+  document.title = 'Admin - Manage Products'
   
   const { isLoading, data, isError, error, isFetching } = useFetchProducts()
+  console.log({ isLoading, isFetching })
   const [message, setMessage] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
 
   // useEffect automatically executes once the page is fully loaded
   useEffect(() => {
@@ -37,7 +40,7 @@ export default function CRUDInterface({ debugMode }) {
         setMessage(result.data.message);
       })
       .catch((error) => {
-        error = new Error();
+        new Error(error);
       });
   }, [])
 
@@ -60,7 +63,14 @@ export default function CRUDInterface({ debugMode }) {
     </main>
   )}
 
-  console.log("Data:" + data.data)
+  
+  const paginatedData = data?.data.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  
+  console.log("Data:" + paginatedData)
+  const totalPages = Math.ceil((data?.data.length || 0) / itemsPerPage);
 
   return (
     <div className="crud-container">
@@ -105,8 +115,8 @@ export default function CRUDInterface({ debugMode }) {
           </tr>
         </thead>
         <tbody>
-          {data
-          ? data?.data.map((item) => (
+          {paginatedData
+          ? paginatedData.map((item) => (
             <tr key={item._id} style={item.imageUrl ? {background: "#5cb85c", color: "white"} : {background: "rgb(169 169 169)"}}>
               <td>{item.product_id}</td>
               <td>{item.product_name}</td>
@@ -130,10 +140,26 @@ export default function CRUDInterface({ debugMode }) {
       </table>
 
       <div className="pagination">
-        <button id="prevPageBtn" disabled>&laquo; Previous</button>
-        <span>Page <span id="currentPageSpan">1</span> of <span id="totalPagesSpan">1</span></span>
-        <button id="nextPageBtn" disabled>Next &raquo;</button>
+        <button
+          id="prevPageBtn"
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          disabled={currentPage === 1}
+        >
+          &laquo; Previous
+        </button>
+        <span>
+          Page <span id="currentPageSpan">{currentPage}</span> of{" "}
+          <span id="totalPagesSpan">{totalPages}</span>
+        </span>
+        <button
+          id="nextPageBtn"
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          disabled={currentPage === totalPages}
+        >
+          Next &raquo;
+        </button>
       </div>
+
 
       <h3 id="messageArea" className="message-area text-center text-danger">{message}</h3>
     </div>

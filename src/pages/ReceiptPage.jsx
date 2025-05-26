@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import '../styles/receipt.scss';
 
-export default function ReceiptPage() {
+function ReceiptPage() {
   const [cart, setCart] = useState({});
 
   useEffect(() => {
@@ -40,3 +40,4 @@ export default function ReceiptPage() {
     </div>
   );
 }
+export default React.memo(ReceiptPage)

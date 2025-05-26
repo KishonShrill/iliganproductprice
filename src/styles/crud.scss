@@ -70,6 +70,10 @@
     background-color: #d7391f; /* Darker orange on hover */
   }
 }
+.submit-btn[disabled] {
+  cursor: not-allowed;
+  background-color: #c5958c; /* Shopee orange */
+}
 
 .message-area {
   text-align: center;

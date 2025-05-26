@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, Suspense } from "react";
 import useFetchProducts from '../hooks/useFetchProducts';
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
@@ -85,16 +85,18 @@ export default function GroceryPage() {
   return (
     <section className="grocery">
       <main className='product-container' id="productContainer">
-        {data
-        ? data?.data.map((item) => (
-          <ProductCard 
-            key={item._id} 
-            item={item} 
-            onAdd={(event) => handleClick(event.currentTarget)} 
-          />
-        ))
-        : <h2>No products found...</h2>
-        }
+        <Suspense fallback={<h2>Loading...</h2>}>
+          {data
+          ? data?.data.map((item) => (
+            <ProductCard 
+              key={item._id} 
+              item={item} 
+              onAdd={(event) => handleClick(event.currentTarget)} 
+            />
+          ))
+          : <h2>No products found...</h2>
+          }
+        </Suspense>
       </main>
       <Cart ref={cartRef} cart={cart} setCart={setCart} reciept={reciept}/>
       <button className="cart-btn phone fixed" onClick={openReciept}>

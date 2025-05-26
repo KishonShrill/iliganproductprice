@@ -5,6 +5,8 @@ import axios from 'axios'
 const CRUDProduct = ({ debugMode }) => {
   document.title = "Add New Product - Admin"
 
+  const [isChanged, setIsChanged] = useState(false);
+  const [originalProduct, setOriginalProduct] = useState(null);
   const [product, setProduct] = useState({
     productId: '',
     productName: '',
@@ -29,20 +31,35 @@ const CRUDProduct = ({ debugMode }) => {
     .then(data => {
       // Do something with the product data, like filling out a form
       console.log(data);
-      setProduct({
+      const formattedProduct = {
         productId: data.product_id || '',
         productName: data.product_name || '',
         categoryId: data.category_id || '',
         updatedPrice: data.updated_price || '',
         locationId: data.location_id || '',
-        productImage: data.productImage || null, // Assuming the API provides a productImage URL or path
-      });
+        productImage: data.productImage || null,  // Assuming the API provides a productImage URL or path
+      };
+      setOriginalProduct(formattedProduct)
+      setProduct(formattedProduct);
     })
     .catch(error => console.error(error));
   }, [])
 
+  useEffect(() => {
+    if (!originalProduct) return;
+
+    const isSame = JSON.stringify(product) === JSON.stringify(originalProduct);
+    setIsChanged(!isSame);
+  }, [product, originalProduct]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check if the product is unchanged
+    if (JSON.stringify(product) === JSON.stringify(originalProduct)) {
+      alert("No changes detected. Nothing to update.");
+      return;
+    }
 
     const formData = new FormData();
     formData.append('productId', product.productId);
@@ -73,14 +90,11 @@ const CRUDProduct = ({ debugMode }) => {
     }
   };
   
-
-  const formRef = useRef(null)
-
   return (
     <div className="container">
       <h1>Update Product</h1>
 
-      <form id="addProductForm" ref={formRef} onSubmit={handleSubmit}>
+      <form id="addProductForm" onSubmit={handleSubmit}>
       <div className="form-group">
           <label htmlFor="productName">Product Name:</label>
           <input
@@ -88,6 +102,7 @@ const CRUDProduct = ({ debugMode }) => {
             id="productName"
             name="productName"
             defaultValue={product.productName}
+            onChange={(e) => setProduct({ ...product, productName: e.target.value })}
             required
           />
         </div>
@@ -99,6 +114,7 @@ const CRUDProduct = ({ debugMode }) => {
             id="categoryId"
             name="categoryId"
             defaultValue={product.categoryId}
+            onChange={(e) => setProduct({ ...product, categoryId: e.target.value })}
           />
         </div>
 
@@ -111,6 +127,7 @@ const CRUDProduct = ({ debugMode }) => {
             defaultValue={product.updatedPrice}
             step="0.01"
             required
+            onChange={(e) => setProduct({ ...product, updatedPrice: e.target.value })}
           />
         </div>
 
@@ -121,6 +138,7 @@ const CRUDProduct = ({ debugMode }) => {
             id="locationId"
             name="locationId"
             defaultValue={product.locationId}
+            onChange={(e) => setProduct({ ...product, locationId: e.target.value })}
           />
         </div>
 
@@ -139,7 +157,9 @@ const CRUDProduct = ({ debugMode }) => {
           />
         </div>
 
-        <button type="submit" className="submit-btn">Add Product</button>
+        <button type="submit" className="submit-btn" disabled={!isChanged}>
+          {type === "edit" ? "Update Product" : "Add Product"}
+        </button>
       </form>
     </div>
   );

@@ -17,7 +17,7 @@ const useFetchProduct = (productId) => {
             // cacheTime: 3000,// int - keeps the data longer
             staleTime: 30000, // staleTime: int - default is 0 sec
             // refetchOnMount: boolean or 'always' - data updater
-            // refetshOnWindowFocus: boolean or 'always' - self explanatory
+            refetshOnWindowFocus: false, //boolean or 'always' - self explanatory
             // refetshInterval: int millisec
             enabled: true, // - will control for automatic fetch
             // select: (data) => {

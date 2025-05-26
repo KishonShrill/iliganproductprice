@@ -91,20 +91,20 @@ router.get('/api/products', async (req, res) => {
             },
             { $unwind: { path: "$location_info", preserveNullAndEmptyArrays: true } },
             { $unwind: { path: "$category_info", preserveNullAndEmptyArrays: true } },
+            { $sort: { "product_id": -1 } },
             {
                 $project: {
-                    product_id: true,
-                    product_name: true,
-                    updated_price: true,
-                    date_updated: true,
-                    imageUrl: true,
+                    "product_id": true,
+                    "product_name": true,
+                    "updated_price": true,
+                    "date_updated": true,
+                    "imageUrl": true,
                     "location_info.location_name": true,
                     "category_info.category_list": true,
                     "category_info.category_name": true,
                     "category_info.category_catalog": true,
                 }
             },
-            { $sort: { date_updated: -1 } },
         ]);
 
         res.json(products);
