@@ -4,6 +4,7 @@ import Cookies from "universal-cookie";
 import useFetchProducts from "../hooks/useFetchProducts";
 
 import '../styles/crud-interface.scss'
+import '../styles/utils.scss'
 import { Link } from "react-router-dom";
 
 const cookies = new Cookies();
@@ -54,7 +55,7 @@ export default function CRUDInterface({ debugMode }) {
   // Display when fetched elements are empty or is loading...
   if (isLoading || isFetching) {return(
     <main className='errorDisplay'>
-      <h2>Loading...</h2>
+      <h2>Loading</h2><span className="animated-dots"></span>
     </main>
   )}
   if (isError) {return(

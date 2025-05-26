@@ -3,6 +3,8 @@ import useFetchProducts from '../hooks/useFetchProducts';
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import '../styles/grocery.scss'
+import '../styles/utils.scss'
+
 
 export default function GroceryPage() {
   document.title = "Grocery List - Budget Buddy"
@@ -71,7 +73,7 @@ export default function GroceryPage() {
   // Display when fetched elements are empty or is loading...
   if (isLoading || isFetching) {return(
     <main className='errorDisplay'>
-      <h2>Loading...</h2>
+      <h2>Loading<span className="animated-dots">...</span></h2>
     </main>
   )}
   if (isError) {return(
