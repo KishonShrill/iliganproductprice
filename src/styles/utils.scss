@@ -4,6 +4,10 @@
   height: calc(100dvh - 66px);
   display: grid;
   place-content: center;
+
+  & h2 {
+    display: flex;
+  }
 }
 
 .animated-dots {

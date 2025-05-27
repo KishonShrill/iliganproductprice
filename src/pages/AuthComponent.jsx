@@ -55,7 +55,7 @@ export default function CRUDInterface({ debugMode }) {
   // Display when fetched elements are empty or is loading...
   if (isLoading || isFetching) {return(
     <main className='errorDisplay'>
-      <h2>Loading</h2><span className="animated-dots"></span>
+      <h2>Loading<span className="animated-dots"></span></h2>
     </main>
   )}
   if (isError) {return(

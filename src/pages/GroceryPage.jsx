@@ -73,7 +73,7 @@ export default function GroceryPage() {
   // Display when fetched elements are empty or is loading...
   if (isLoading || isFetching) {return(
     <main className='errorDisplay'>
-      <h2>Loading<span className="animated-dots">...</span></h2>
+      <h2>Loading<span className="animated-dots"></span></h2>
     </main>
   )}
   if (isError) {return(
