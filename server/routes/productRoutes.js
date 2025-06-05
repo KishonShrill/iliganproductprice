@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import cloudinary from '../cloudinary.js'; // adjust if separate
 import getPaginationParams from '../helpers/getPaginationParams.js'; // adjust if separate
 
-import { Product } from '../models/models.js'; // adjust path
+import { Product, Location } from '../models/models.js'; // adjust path
 
 const router = express.Router();
 
@@ -223,40 +223,66 @@ router.get('/api/products/category/:categoryId', async (req, res) => {
     }
 });
 
+//! [*] CHECK IF THIS WORKS
+router.get('/api/locations', async (req, res) => {
+    try {
+        const locations = await Location.find().sort({location_name: -1})
+
+        res.json(locations)
+
+    } catch (error) {
+        console.error(`Error fetching locations:`, error);
+        res.status(500).json({ message: 'Failed to fetch locations.', error: error.message });
+    }
+});
+
 //! [ ] CHECK IF THIS WORKS
-// 3. Fetch items according to location with pagination
-// GET /api/products/location/:locationId?page=1&limit=20
-router.get('/api/products/location/:locationId', async (req, res) => {
+router.get('/api/locations/:locationId', async (req, res) => {
     const locationId = req.params.locationId;
-    const { page, limit, skip } = getPaginationParams(req);
-
-    // Optional: If location_id in schema was ObjectId and frontend sends ObjectIds, validate here:
-    // if (!mongoose.Types.ObjectId.isValid(locationId)) {
-    //     return res.status(400).json({ message: 'Invalid location ID format' });
-    // }
-
+    const locationObjectId = new mongoose.Types.ObjectId(locationId);
 
     try {
-        // Build the filter by location_id
-        const filter = { location_id: locationId };
+        const products = await Product.aggregate([
+            {
+                $match: {
+                    location_id: locationObjectId
+                }
+            },
+            {
+                $lookup: {
+                    from: "locations",
+                    localField: "location_id",
+                    foreignField: "_id",
+                    as: "location_info"
+                }
+            },
+            {
+                $lookup: {
+                    from: "category",
+                    localField: "category_id",
+                    foreignField: "_id",
+                    as: "category_info",
+                }
+            },
+            { $unwind: { path: "$location_info", preserveNullAndEmptyArrays: true } },
+            { $unwind: { path: "$category_info", preserveNullAndEmptyArrays: true } },
+            { $sort: { "product_id": -1 } },
+            {
+                $project: {
+                    "product_id": true,
+                    "product_name": true,
+                    "updated_price": true,
+                    "date_updated": true,
+                    "imageUrl": true,
+                    "location_info.location_name": true,
+                    "category_info.category_list": true,
+                    "category_info.category_name": true,
+                    "category_info.category_catalog": true,
+                }
+            },
+        ]);
 
-        // Get total count of products in this location
-        const totalProducts = await Product.countDocuments(filter);
-
-        // Get the paginated products in this location
-        const products = await Product.find(filter)
-            .skip(skip)
-            .limit(limit);
-
-        const totalPages = Math.ceil(totalProducts / limit);
-
-        res.json({
-            message: `Products for location ${locationId} fetched successfully`,
-            products,
-            totalProducts,
-            totalPages,
-            currentPage: page
-        });
+        res.json(products);
 
     } catch (error) {
         console.error(`Error fetching products for location ${locationId}:`, error);
@@ -264,6 +290,20 @@ router.get('/api/products/location/:locationId', async (req, res) => {
     }
 });
 
+
+//! [ ] CHECK IF THIS WORKS
+// Get endpoint to fetch a single product by _id
+router.get('/api/products/', async (req, res) => {
+    try {
+        
+
+        res.json(products);
+        //TODO: See if we need pagination on this...
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+})
 
 
 //? [ ] CHECK IF THIS WORKS

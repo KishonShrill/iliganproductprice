@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState, Suspense } from "react";
-import useFetchProducts from '../hooks/useFetchProducts';
+import useFetchProductsByLocation from '../hooks/useFetchProductsByLocation'
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import '../styles/grocery.scss'
@@ -8,9 +8,16 @@ import '../styles/utils.scss'
 
 export default function GroceryPage() {
   document.title = "Grocery List - Budget Buddy"
+  
+  const path = window.location.pathname;  // "/locations/link"
+  const segments = path.split('/');  // ["", "locations", "link"]
+  const location = segments[segments.length - 1];  // "link"
 
-  const { isLoading, data, isError, error, isFetching } = useFetchProducts()
+  console.log("Location: " + location)
+
+  const { isLoading, data, isError, error, isFetching } = useFetchProductsByLocation(location)
   console.log({ isLoading, isFetching })
+
   const [reciept, setReceipt] = useState("100%")
   
   // Initialize Cart for localStorage to persist

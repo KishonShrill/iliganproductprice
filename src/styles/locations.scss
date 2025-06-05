@@ -1,0 +1,19 @@
+.location {    
+    &-container {
+        max-height: 310px;  
+        border: 1px solid black;
+
+        &:hover .location__details {
+            color: black;
+            font-weight: 700;
+        }
+    }
+
+    &__image {
+        max-width: 250px;
+        aspect-ratio: 1/1;
+    }
+    &__details {
+        text-align: center;
+    }
+}

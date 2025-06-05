@@ -90,7 +90,7 @@ function Header({ token }) {
               </Link>
             </li>
             <li>
-              <Link className="nav-link" to="/groceries" onClick={openMenu}>
+              <Link className="nav-link" to="/locations" onClick={openMenu}>
                 <img className="phone" src="/UI/package-stroke-rounded-white.svg" alt="" />
                 Groceries
               </Link>
