@@ -1,7 +1,7 @@
-import React, {useEffect, useState, useRef} from 'react'
+import { useEffect, useState } from 'react'
+import axios from 'axios'
 import '../styles/crud.scss'
 import '../styles/utils.scss'
-import axios from 'axios'
 
 const CRUDProduct = ({ debugMode }) => {
   document.title = "Add New Product - Admin"

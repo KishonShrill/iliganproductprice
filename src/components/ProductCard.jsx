@@ -1,6 +1,7 @@
 import React from "react";
+import PropTypes from "prop-types";
 
-const ProductCard = React.memo(({ item, onAdd }) => (
+const ProductCard = ({ item, onAdd }) => (
   <div className="product-card" 
     data-product-id={item._id}
     data-product-name={item.product_name}
@@ -35,6 +36,25 @@ const ProductCard = React.memo(({ item, onAdd }) => (
       </button>
     </div>
   </div>
-));
+);
+
+ProductCard.propTypes = {
+  item: PropTypes.shape({
+    _id: PropTypes.string,
+    product_id: PropTypes.string,
+    product_name: PropTypes.string,
+    updated_price: PropTypes.number,
+    imageUrl: PropTypes.string,
+    date_updated: PropTypes.string,
+    location_info: PropTypes.shape({
+      location_name: PropTypes.string,
+    }),
+    category_info: PropTypes.shape({
+      category_catalog: PropTypes.string,
+    }),
+  }).isRequired,
+  onAdd: PropTypes.func.isRequired,
+};
+
 
 export default React.memo(ProductCard);

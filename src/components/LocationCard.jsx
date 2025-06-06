@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 
 import StoreLogo from './StoreLogo.jsx'
@@ -19,5 +20,18 @@ const LocationCard = React.memo(({ item }) => (
         </div>
     </Link>
 ));
+
+// ✅ Display name for React DevTools
+LocationCard.displayName = "LocationCard";
+
+// ✅ PropTypes validation
+LocationCard.propTypes = {
+  item: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    location_name: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    is_open_24hrs: PropTypes.bool,
+  }).isRequired,
+};
 
 export default React.memo(LocationCard);

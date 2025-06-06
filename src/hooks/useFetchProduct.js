@@ -4,8 +4,10 @@ import axios from 'axios'
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 
 const useFetchProduct = (productId) => {
-    const DATBASE_URL = `https://iliganproductprice-mauve.vercel.app/api/products/${productId}`;
-    // const DATBASE_URL = `http://localhost:5000/api/products/${productId}`;
+    const DATBASE_URL = DEVELOPMENT 
+        ? `http://localhost:5000/api/products/${productId}`
+        : `https://iliganproductprice-mauve.vercel.app/api/products/${productId}`;
+
     const fetshProduct = () => {
         return axios.get(DATBASE_URL);
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState,  } from "react";
+import { useEffect, useState,  } from "react";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import useFetchProducts from "../hooks/useFetchProducts";
@@ -133,7 +133,7 @@ export default function CRUDInterface({ debugMode }) {
           ))
           : (
             <tr>
-              <td colspan="7" style="text-align: center;">Loading products...</td>
+              <td colSpan="7" style="text-align: center;">Loading products...</td>
             </tr>
           )
           }

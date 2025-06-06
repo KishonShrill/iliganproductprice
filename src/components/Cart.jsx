@@ -1,4 +1,5 @@
 import React, { forwardRef } from "react";
+import PropTypes from "prop-types";
 
 const Cart = React.memo(forwardRef(({cart, setCart, reciept}, ref) => {
   const total = Object.values(cart).reduce((acc, item) => acc + item.price * item.quantity, 0);
@@ -36,5 +37,21 @@ const Cart = React.memo(forwardRef(({cart, setCart, reciept}, ref) => {
     </div>
   );
 }));
+
+// 👇 Give the component a name for debugging purposes
+Cart.displayName = "Cart";
+
+// 👇 Define PropTypes
+Cart.propTypes = {
+  cart: PropTypes.objectOf(
+    PropTypes.shape({
+      name: PropTypes.string.isRequired,
+      quantity: PropTypes.number.isRequired,
+      price: PropTypes.number.isRequired,
+    })
+  ).isRequired,
+  setCart: PropTypes.func.isRequired,
+  reciept: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+};
 
 export default Cart;

@@ -4,10 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "test": "vitest",
-    "dev": "vite --host",
     "start": "concurrently --names \"FRONTEND,SERVER\" --prefix-colors \"magenta,blue\" \"vite --host\" \"node ./server/server.mjs\"",
+    "dev": "vite --host",
     "server": "node ./server/server.mjs",
+    "test": "vitest",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -28,6 +28,7 @@
     "mongoose": "^8.3.2",
     "multer": "^1.4.5-lts.2",
     "nodemon": "^3.1.0",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-auth": "^1.0.0",
     "react-bootstrap": "^2.10.2",

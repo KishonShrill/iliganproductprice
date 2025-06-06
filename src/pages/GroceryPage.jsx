@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState, Suspense } from "react";
+import { useCallback, useEffect, useRef, useState, Suspense } from "react";
 import useFetchProductsByLocation from '../hooks/useFetchProductsByLocation'
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
