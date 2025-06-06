@@ -1,6 +1,9 @@
 .location {    
     &-container {
-        max-height: 310px;  
+        height: auto;
+        padding-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
         border: 1px solid black;
 
         &:hover .location__details {
@@ -10,7 +13,10 @@
     }
 
     &__image {
+        padding: 1rem;
         max-width: 250px;
+        width: 100%;
+        object-fit: contain;
         aspect-ratio: 1/1;
     }
     &__details {

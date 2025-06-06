@@ -1,5 +1,6 @@
 // routes/locationRoutes.js
 import express from 'express';
+import mongoose from 'mongoose';
 
 import { Product, Location } from '../models/models.js'; // adjust path
 

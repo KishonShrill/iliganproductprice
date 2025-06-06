@@ -6,7 +6,7 @@
   "scripts": {
     "test": "vitest",
     "dev": "vite --host",
-    "start": "concurrently \"vite --host\" \"node ./server/server.mjs\"",
+    "start": "concurrently --names \"FRONTEND,SERVER\" --prefix-colors \"magenta,blue\" \"vite --host\" \"node ./server/server.mjs\"",
     "server": "node ./server/server.mjs",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",

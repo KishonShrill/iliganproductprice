@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
+import StoreLogo from './StoreLogo.jsx'
+
 const LocationCard = React.memo(({ item }) => (
     <Link className="location-container" to={`/locations/${item._id}`}
         data-location-id={item._id}
@@ -9,7 +11,7 @@ const LocationCard = React.memo(({ item }) => (
         data-location-24h={item.is_open_24hrs}
     >
         <div>
-            <img className="location__image" src="" alt="" />
+            <StoreLogo storeName={item.location_name} />
         </div>
         <div>
             <p className="location__details">{item.location_name}</p>
