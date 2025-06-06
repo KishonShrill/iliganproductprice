@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 import cloudinary from '../cloudinary.js'; // adjust if separate
 import getPaginationParams from '../helpers/getPaginationParams.js'; // adjust if separate
 
-import { Product, Location } from '../models/models.js'; // adjust path
+import { Product } from '../models/models.js'; // adjust path
 
 const router = express.Router();
 
@@ -67,7 +67,7 @@ async function generateProductId() {
     return `${currentYear}-${formattedItemNumber}`;
 }
 
-//! [ ] CHECK IF THIS WORKS
+//! [*] CHECK IF THIS WORKS
 // GET endpoint to fetch all products (consider adding pagination here too, or replace with search)
 // Display to Groceries and to Dev Mode
 router.get('/api/products', async (req, res) => {
@@ -223,31 +223,12 @@ router.get('/api/products/category/:categoryId', async (req, res) => {
     }
 });
 
-//! [*] CHECK IF THIS WORKS
-router.get('/api/locations', async (req, res) => {
-    try {
-        const locations = await Location.find().sort({location_name: -1})
-
-        res.json(locations)
-
-    } catch (error) {
-        console.error(`Error fetching locations:`, error);
-        res.status(500).json({ message: 'Failed to fetch locations.', error: error.message });
-    }
-});
 
 //! [ ] CHECK IF THIS WORKS
-router.get('/api/locations/:locationId', async (req, res) => {
-    const locationId = req.params.locationId;
-    const locationObjectId = new mongoose.Types.ObjectId(locationId);
-
+// Get endpoint to fetch a single product by _id
+router.get('/api/products/', async (req, res) => {
     try {
         const products = await Product.aggregate([
-            {
-                $match: {
-                    location_id: locationObjectId
-                }
-            },
             {
                 $lookup: {
                     from: "locations",
@@ -283,22 +264,7 @@ router.get('/api/locations/:locationId', async (req, res) => {
         ]);
 
         res.json(products);
-
-    } catch (error) {
-        console.error(`Error fetching products for location ${locationId}:`, error);
-        res.status(500).json({ message: 'Failed to fetch products by location.', error: error.message });
-    }
-});
-
-
-//! [ ] CHECK IF THIS WORKS
-// Get endpoint to fetch a single product by _id
-router.get('/api/products/', async (req, res) => {
-    try {
-        
-
-        res.json(products);
-        //TODO: See if we need pagination on this...
+        // TODO [ ]: See if we need pagination on this...
 
     } catch (error) {
         res.status(500).json({ message: error.message });
