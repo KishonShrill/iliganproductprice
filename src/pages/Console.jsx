@@ -13,7 +13,7 @@ export default function CRUDInterface({ debugMode }) {
   document.title = 'Admin - Manage Products'
   
   const { isLoading, data, isError, error, isFetching } = useFetchProducts()
-  console.log({ isLoading, isFetching })
+  // console.log({ isLoading, isFetching })
   const [message, setMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -69,7 +69,7 @@ export default function CRUDInterface({ debugMode }) {
     currentPage * itemsPerPage
   );
   
-  console.log("Data:" + paginatedData)
+  // console.log("Data:" + paginatedData)
   const totalPages = Math.ceil((data?.data.length || 0) / itemsPerPage);
 
   return (
@@ -120,8 +120,8 @@ export default function CRUDInterface({ debugMode }) {
             <tr key={item._id} style={item.imageUrl ? {background: "#5cb85c", color: "white"} : {background: "rgb(169 169 169)"}}>
               <td>{item.product_id}</td>
               <td>{item.product_name}</td>
-              <td className="computer">{item.location_info?.location_name}</td>
-              <td className="computer">{item.category_info?.category_name}</td>
+              <td className="computer">{item.location?.name}</td>
+              <td className="computer">{item.category?.name}</td>
               <td>₱{(item.updated_price).toFixed(2)}</td>
               <td className="computer">{item.date_updated}</td>
               <td className="actions">

@@ -12,10 +12,8 @@ export default function GroceryPage() {
   const segments = path.split('/');  // ["", "locations", "link"]
   const location = segments[segments.length - 1];  // "link"
 
-  console.log("Location: " + location)
-
   const { isLoading, data, isError, error, isFetching } = useFetchProductsByLocation(location)
-  console.log({ isLoading, isFetching })
+  // console.log({ isLoading, isFetching })
 
   const [reciept, setReceipt] = useState("100%")
   
@@ -88,12 +86,16 @@ export default function GroceryPage() {
     </main>
   )}
 
-  console.log("Data:" + data.data)
+  // console.log("Data:" + data.data)
 
   return (
     <section className="grocery">
       <main className='product-container' id="productContainer">
-        <Suspense fallback={<h2>Loading...</h2>}>
+        <Suspense fallback={(
+          <main className='errorDisplay'>
+            <h2>Loading<span className="animated-dots"></span></h2>
+          </main>
+        )}>
           {data
           ? data?.data.map((item) => (
             <ProductCard 

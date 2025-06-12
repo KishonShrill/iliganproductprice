@@ -9,7 +9,7 @@ export default function LocationPage() {
   document.title = "Locations - Budget Buddy"
 
   const { isLoading, data, isError, error, isFetching } = useFetchLocations()
-  console.log({ isLoading, isFetching })
+  // console.log({ isLoading, isFetching })
 
   // Display when fetched elements are empty or is loading...
   if (isLoading || isFetching) {return(
@@ -23,12 +23,16 @@ export default function LocationPage() {
     </main>
   )}
 
-  console.log("Data:" + data.data)
+  // console.log("Data:" + data.data)
 
   return (
     <section className="grocery">
       <main className='product-container' id="productContainer">
-        <Suspense fallback={<h2>Loading...</h2>}>
+        <Suspense fallback={(
+          <main className='errorDisplay'>
+            <h2>Loading<span className="animated-dots"></span></h2>
+          </main>
+        )}>
           {data
           ? data?.data.map((item) => (
             <LocationCard 

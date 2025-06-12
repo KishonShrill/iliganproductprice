@@ -35,8 +35,6 @@ const Login = ({ debugMode }) => {
       ? "http://localhost:5000/login"
       : "https://iliganproductprice-mauve.vercel.app/login";
 
-    console.log("URL: ", url)
-
     const configuration = {
       method: "post",
       url,
@@ -46,7 +44,7 @@ const Login = ({ debugMode }) => {
       },
     };
 
-    console.log({ configuration })
+    // console.log({ configuration })
 
     axios(configuration)
       .then((result) => {

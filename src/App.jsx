@@ -32,7 +32,7 @@ function App() {
     <Routes>
       <Route exact path="/" element={<Homepage />} />
       <Route exact path="/locations" element={<LocationPage />} />
-      <Route exact path="/locations/*" element={<GroceryPage />} />
+      <Route exact path="/location/*" element={<GroceryPage />} />
       <Route exact path="/receipt" element={<ReceiptPage />} />
       <Route path="*" element={<NoPage />} />
 
@@ -48,7 +48,11 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <Header token={token} />
-          <Suspense fallback={<div>Loading...</div>}>
+          <Suspense fallback={(
+            <div className='errorDisplay'>
+              <h2>Loading<span className="animated-dots"></span></h2>
+            </div>
+          )}>
             {routes}
           </Suspense>
           <SpeedInsights />

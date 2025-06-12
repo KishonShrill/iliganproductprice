@@ -23,17 +23,18 @@ const CRUDProduct = ({ debugMode }) => {
   
   useEffect(() => {
     let fetchLocation = debugMode
-      ? `http://localhost:5000/api/products/${productId}`
-      : `https://iliganproductprice-mauve.vercel.app/api/products/${productId}`;
+      ? `http://localhost:5000/api/product/${productId}`
+      : `https://iliganproductprice-mauve.vercel.app/api/product/${productId}`;
 
     fetch(fetchLocation)
     .then(response => response.json())
     .then(data => {
       // Do something with the product data, like filling out a form
+      console.log(data)
       const formattedProduct = {
         productId: data.product_id || '',
         productName: data.product_name || '',
-        categoryId: data.category_id || '',
+        categoryId: data.category.name || '',
         updatedPrice: data.updated_price || '',
         locationId: data.location_id || '',
         productImage: data.productImage || null,  // Assuming the API provides a productImage URL or path

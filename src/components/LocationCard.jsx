@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import StoreLogo from './StoreLogo.jsx'
 
 const LocationCard = React.memo(({ item }) => (
-    <Link className="location-container" to={`/locations/${item._id}`}
+    <Link className="location-container" to={`/location/${item._id}`}
         data-location-id={item._id}
         data-location-name={item.location_name}
         data-location-type={item.type}
@@ -28,7 +28,9 @@ LocationCard.displayName = "LocationCard";
 LocationCard.propTypes = {
   item: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    location_name: PropTypes.string.isRequired,
+    location: PropTypes.shape({
+        name: PropTypes.string.isRequired,
+    }),
     type: PropTypes.string.isRequired,
     is_open_24hrs: PropTypes.bool,
   }).isRequired,
