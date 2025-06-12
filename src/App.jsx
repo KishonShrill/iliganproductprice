@@ -11,7 +11,6 @@ import { SpeedInsights } from "@vercel/speed-insights/react"; // <-- add this at
 
 import Cookies from "universal-cookie";
 const cookies = new Cookies();
-import './styles/App.scss'
 
 import Header from "./components/Header.jsx"
 import Homepage from "./pages/Homepage.jsx"
@@ -19,7 +18,7 @@ const LocationPage = lazy(() => import("./pages/LocationPage.jsx"))
 const GroceryPage = lazy(() => import("./pages/GroceryPage.jsx"))
 const ReceiptPage = lazy(() => import("./pages/ReceiptPage.jsx"))
 const Login = lazy(() => import("./components/Login.jsx"))
-const CRUDInterface = lazy(() => import("./pages/AuthComponent.jsx"))
+const CRUDInterface = lazy(() => import("./pages/Console.jsx"))
 const CRUDProduct = lazy(() => import('./components/CRUD.jsx'));
 const NoPage = lazy(() => import("./pages/NoPage.jsx"))
 

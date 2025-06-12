@@ -3,7 +3,6 @@ import useFetchLocations from '../hooks/useFetchLocations';
 import LocationCard from "../components/LocationCard";
 import '../styles/grocery.scss'
 import '../styles/locations.scss'
-import '../styles/utils.scss'
 
 
 export default function LocationPage() {

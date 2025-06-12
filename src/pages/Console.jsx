@@ -3,8 +3,7 @@ import axios from "axios";
 import Cookies from "universal-cookie";
 import useFetchProducts from "../hooks/useFetchProducts";
 
-import '../styles/crud-interface.scss'
-import '../styles/utils.scss'
+import '../styles/admin_console.scss'
 import { Link } from "react-router-dom";
 
 const cookies = new Cookies();

@@ -3,7 +3,6 @@ import useFetchProductsByLocation from '../hooks/useFetchProductsByLocation'
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import '../styles/grocery.scss'
-import '../styles/utils.scss'
 
 
 export default function GroceryPage() {

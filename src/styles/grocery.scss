@@ -1,3 +1,7 @@
+@import 'utils/variables';
+@import 'utils/loading';
+@import 'utils/pagination';
+
 section.grocery {
   max-width: 100%;
   min-height: calc(100dvh - 66px);
@@ -14,20 +18,19 @@ section.grocery {
     width: 100%;
     height: 100%;
     display: grid;
+    grid-template-columns: repeat(auto-fill, 250px);
     justify-content: center;
     align-items: start;
-    grid-template-columns: repeat(auto-fill, 250px);
     gap: 20px;
   }
 
   &-card {
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
     display: flex;
     flex-direction: column;
-    /* Removed cursor pointer and transition from card itself */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background-color: #fff;
+    overflow: hidden;
   }
 
   /* Added hover effect to details or button if needed */
@@ -39,11 +42,11 @@ section.grocery {
   }
 
   &-image-placeholder {
+    position: relative;
     width: 100%;
     height: 15rem;
     padding-top: 75%; /* 4:3 aspect ratio */
     background-color: #e0e0e0; /* Placeholder color */
-    position: relative;
     overflow: hidden;
   }
 
@@ -66,85 +69,87 @@ section.grocery {
   }
 
   &-name {
-    height: 42px;
-
+    height: 44px;
+    margin-bottom: 5px;
+    display: -webkit-box;
     font-size: 1.1em;
     font-weight: bold;
-    margin-bottom: 5px;
     color: #333;
 
-    display: -webkit-box;
     -webkit-line-clamp: 2; 
     -webkit-box-orient: vertical;
+
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   &-info-inline {
-    padding: 0.25rem;
     left: 0;
     bottom: 0;
+    padding: 0.25rem;
     color: white;
     font-size: 0.8em;
     background: #333;
   }
 
   &-info {
+    margin-bottom: 0.25rem;
     color: #666;
     font-size: 0.8em;
-    margin-bottom: 0.25rem;
   }
 
   &-price {
+    margin-block: auto 5px;
     font-size: 1.2em;
-    color: #ee4d2d; /* Shopee-like orange */
-    margin-top: auto; /* Push price to the bottom */
-    margin-bottom: 5px;
+    color: $primary-color; /* Shopee-like orange */
+    // margin-top: auto; /* Push price to the bottom */
+    // margin-bottom: 5px;
   }
 }
 
 .add-to-cart-btn {
-  background-color: #ee4d2d;
-  color: white;
-  border: none;
   padding: 10px 15px;
-  border-radius: 5px;
   cursor: pointer;
+  color: white;
   font-size: 1em;
+  border: none;
+  border-radius: 5px;
+  background-color: $primary-color;
   transition: background-color 0.3s ease;
-}
-
-.add-to-cart-btn:hover {
-  background-color: #d7391f;
+    
+  &:hover {
+    background-color: #d7391f;
+  }
 }
 
 .cart {
   &-summary {
     position: sticky; /* Make it sticky */
-    height: fit-content; /* Adjust height based on content */
+    top: calc(20px + 60px); /* Stick below header, plus some gap */
     width: 330px;
     min-width: 200px; /* Prevent shrinking too much */
+    height: fit-content; /* Adjust height based on content */
     padding: 15px;
     align-self: flex-start;
-    top: calc(20px + 60px); /* Stick below header, plus some gap */
-    background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
     transition: left 0.3s ease-in-out;
 
     & h2 {
-      margin-top: 0;
-      font-size: 1.3em;
-      color: #333;
-      border-bottom: 1px solid #eee;
+      margin-block: 0 10px;
       padding-bottom: 10px;
-      margin-bottom: 10px;
+      // margin-top: 0;
+      // margin-bottom: 10px;
+      color: #333;
+      font-size: 1.3em;
+      border-bottom: 1px solid #eee;
     }
   }
 
   &-items {
-    margin-bottom: 15px;
     max-height: 300px; /* Add max height for scrolling if many items */
+    margin-bottom: 15px;
     overflow-y: auto; /* Add scroll if items exceed max height */
   }
 
@@ -170,27 +175,25 @@ section.grocery {
     }
 
     & span {
-      float: right; /* Float the price to the right */
-      font-weight: bold;
-      color: #333;
       margin-left: 10px; /* Add space between name and price */
+      float: right; /* Float the price to the right */
+      color: #333;
+      font-weight: bold;
     }
 
     &-total {
+      padding-top: 10px;
+      color: #333;
       font-size: 1.1em;
       font-weight: bold;
-      color: #333;
       border-top: 1px solid #eee;
-      padding-top: 10px;
     }
   }
 }
 
 @media screen and (max-width: 950px) {
-  .cart {
-    &-summary {
-      width: 280px;
-    }
+  .cart-summary {
+    width: 280px;
   }
 }
 
@@ -206,7 +209,7 @@ section.grocery {
       gap: 12px;
     }
     &-name {
-      height: 30px;
+      height: 32px;
       font-size: 0.8rem;
     }
   } 
@@ -216,13 +219,12 @@ section.grocery {
       position: fixed; /* Make it sticky */
       bottom: 0;
       left: 0%;
-      height: calc(100dvh - 66px); /* Adjust height based on content */
       width: 100%;
+      height: calc(100dvh - 66px); /* Adjust height based on content */
       border-radius: 0;
     }
   }
   .cart-btn {
-    cursor: pointer;
     --btn-size: 3rem;
     width: var(--btn-size);
     height: var(--btn-size);
@@ -236,5 +238,6 @@ section.grocery {
     0px 0px 23px rgba(0, 0, 0, 0.09),
     0px 0px 41px rgba(0, 0, 0, 0.12),
     0px 0px 64px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
   }
 }

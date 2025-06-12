@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import '../styles/crud.scss'
-import '../styles/utils.scss'
 
 const CRUDProduct = ({ debugMode }) => {
   document.title = "Add New Product - Admin"

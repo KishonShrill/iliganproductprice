@@ -1,3 +1,5 @@
+@import 'utils/loading';
+
 .location {    
     &-container {
         height: auto;
@@ -13,9 +15,9 @@
     }
 
     &__image {
-        padding: 1rem;
-        max-width: 250px;
         width: 100%;
+        max-width: 250px;
+        padding: 1rem;
         object-fit: contain;
         aspect-ratio: 1/1;
     }

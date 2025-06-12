@@ -1,13 +1,15 @@
+@import 'utils/variables';
+
 .header {
   position: sticky;
+  top: 0;
   width: 100%;
   padding: 15px 20px;
   display: flex;
   justify-content: space-between;
-  background-color: #fff;
-  border-bottom: 1px solid var(--clr-outline);
+  border-bottom: 1px solid $outline-color;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  top: 0;
+  background-color: #fff;
   z-index: 1000; /* Ensure header is on top */
 
   &__menu,
@@ -17,7 +19,7 @@
 
   &__name {
     margin: 0;
-    color: #ee4d2d;
+    color: $primary-color;
     font-size: 1.8rem;
   }
 
@@ -27,18 +29,18 @@
     &-links {
       margin-right: 1rem;
       display: flex;
-      gap: 1rem ;
       align-items: center;
+      gap: 1rem ;
       list-style-type: none;
     }
 
     &-login {
       padding-inline: 1rem;
       display: flex;
-      gap: 1rem;
       justify-content: center;
       align-items: center;
-      border-left: 1px solid var(--clr-outline);
+      gap: 1rem;
+      border-left: 1px solid $outline-color;
     }
   }
 }
@@ -52,14 +54,14 @@
     background: none;
 
     &:hover .svg-path {
-      color: var(--clr-primary);
-      stroke: var(--clr-primary);
+      color: $primary-color;
+      stroke: $primary-color;
     }
   }
 
   &:hover {
-    color: var(--clr-primary);
-    stroke: var(--clr-primary); 
+    color: $primary-color;
+    stroke: $primary-color; 
   }
 }
 .svg-path {
@@ -79,7 +81,7 @@
       width: 30px;
       height: 30px;
       cursor: pointer;
-      display: block;
+      // display: block;
       display: grid;
       place-content: center;
     }
@@ -113,9 +115,9 @@
       &-login {
         padding: 0;
         display: flex;
+        flex-direction: column;
         align-items: center;
         justify-content: center;
-        flex-direction: column;
         gap: 0;
         border: none;
       }
@@ -155,8 +157,8 @@
     align-items: center;
     justify-content: start;
     gap: 1rem;
-    font-size: 1.2rem;
     color: white;
+    font-size: 1.2rem;
     border-top: 1px solid grey;
 
     &:hover {

@@ -4,17 +4,13 @@
     flex-direction: column;
 }
 
-main {
-    height: 100%;
-}
-
 form {
     margin: 2rem auto;
     padding: 2rem;
     max-width: 400px;
-    background-color: white;
     border: 2px solid black;
     border-radius: 6px;
+    background-color: white;
     box-shadow: 0.5rem 0.5rem #ee4d2d;
 
     & h2,
