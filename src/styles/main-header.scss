@@ -1,4 +1,5 @@
 @import 'utils/variables';
+@import 'utils/mixins';
 
 .header {
   position: sticky;
@@ -46,9 +47,10 @@
 }
 
 .nav-link {
-  cursor: pointer;
+  @include grid-center;
   color: var(--clr-secondary);
   border: none;
+  cursor: pointer;
 
   &.logout__devmode {
     background: none;

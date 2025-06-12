@@ -1,0 +1,85 @@
+// Screen breakpoints for responsive design
+$breakpoints: (
+  phone: 700px,
+  tablet: 950px
+);
+
+@mixin respond-max($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (max-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint `#{$breakpoint}` not found in $breakpoints.";
+  }
+}
+
+@mixin respond-min($breakpoint) {
+  @if map-has-key($breakpoints, $breakpoint) {
+    @media (min-width: map-get($breakpoints, $breakpoint)) {
+      @content;
+    }
+  } @else {
+    @warn "Breakpoint `#{$breakpoint}` not found in $breakpoints.";
+  }
+}
+
+// Essential styles for designs
+@mixin border-stroke($val, $clr: black ) {
+    @if $val == light {
+        border: 1px solid $clr;
+    }
+    @else if $val == medium {
+        border: 3px solid $clr;
+    }
+    @else if $val == heavy {
+        border: 6px solid $clr;
+    }
+    @else if $val == none {
+        border: none;
+    }
+    @else {
+        @error "Property #{$var} must either be light, medium, heavy, or none.";
+    }
+}
+
+@mixin text-ellipsis {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+@mixin button-reset {
+    padding: 0;
+    color: inherit;
+    font: inherit;
+    border: none;
+    cursor: pointer;
+    background: none;
+}
+
+
+// Mixins for placements
+@mixin flex-center($gap: 0) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: #{$gap}px;
+}
+
+@mixin flex-center-column($gap: 0) {
+    display: flex;
+    justify-content: center;
+    gap: #{$gap}px;
+}
+
+@mixin flex-center-row($gap: 0) {
+    display: flex;
+    align-items: center;
+    gap: #{$gap}px;
+}
+
+@mixin grid-center {
+    display: grid;
+    place-content: center;
+}
