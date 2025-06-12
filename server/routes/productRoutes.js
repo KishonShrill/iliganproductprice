@@ -68,47 +68,19 @@ async function generateProductId() {
 }
 
 //! [*] CHECK IF THIS WORKS
-// GET endpoint to fetch all products (consider adding pagination here too, or replace with search)
 // Display to Groceries and to Dev Mode
 router.get('/api/products', async (req, res) => {
     try {
-        const products = await Product.aggregate([
+        const products = await Product.find(
+            {},
             {
-                $lookup: {
-                    from: "locations",
-                    localField: "location_id",
-                    foreignField: "_id",
-                    as: "location_info"
-                }
-            },
-            {
-                $lookup: {
-                    from: "category",
-                    localField: "category_id",
-                    foreignField: "_id",
-                    as: "category_info",
-                }
-            },
-            { $unwind: { path: "$location_info", preserveNullAndEmptyArrays: true } },
-            { $unwind: { path: "$category_info", preserveNullAndEmptyArrays: true } },
-            { $sort: { "product_id": -1 } },
-            {
-                $project: {
-                    "product_id": true,
-                    "product_name": true,
-                    "updated_price": true,
-                    "date_updated": true,
-                    "imageUrl": true,
-                    "location_info.location_name": true,
-                    "category_info.category_list": true,
-                    "category_info.category_name": true,
-                    "category_info.category_catalog": true,
-                }
-            },
-        ]);
+                "category.catalog": 0,
+                "location.id": 0,
+            }
+        ).sort({product_id: -1});
 
         res.json(products);
-        //TODO: See if we need pagination on this...
+        //TODO: See if we need pagination on this... probably...
 
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -117,7 +89,7 @@ router.get('/api/products', async (req, res) => {
 
 //! [ ] CHECK IF THIS WORKS
 // Get endpoint to fetch a single product by _id
-router.get('/api/products/:id', async (req, res) => {
+router.get('/api/product/:id', async (req, res) => {
     const id = req.params.id; // This is the MongoDB _id
 
     // Validate if the ID is a valid MongoDB ObjectId format
@@ -141,52 +113,52 @@ router.get('/api/products/:id', async (req, res) => {
 //! [ ] CHECK IF THIS WORKS
 // 1. Fetch items that match the query with pagination
 // GET /api/products/search?query=search_term&page=1&limit=20
-router.get('/api/products/search', async (req, res) => {
-    const searchTerm = req.query.query;
-    const { page, limit, skip } = getPaginationParams(req);
+// router.get('/api/products/search', async (req, res) => {
+//     const searchTerm = req.query.query;
+//     const { page, limit, skip } = getPaginationParams(req);
 
-    if (!searchTerm) {
-        // If no search term, return an empty list or perhaps recent items (optional)
-        // For now, return an empty list
-        return res.status(200).json({
-            message: 'Please provide a search query.',
-            products: [],
-            totalProducts: 0,
-            totalPages: 0,
-            currentPage: page
-        });
-    }
+//     if (!searchTerm) {
+//         // If no search term, return an empty list or perhaps recent items (optional)
+//         // For now, return an empty list
+//         return res.status(200).json({
+//             message: 'Please provide a search query.',
+//             products: [],
+//             totalProducts: 0,
+//             totalPages: 0,
+//             currentPage: page
+//         });
+//     }
 
-    try {
-        // Create a case-insensitive regex for searching product name
-        const queryRegex = new RegExp(searchTerm, 'i');
+//     try {
+//         // Create a case-insensitive regex for searching product name
+//         const queryRegex = new RegExp(searchTerm, 'i');
 
-        // Build the search query filter
-        const filter = { product_name: queryRegex };
+//         // Build the search query filter
+//         const filter = { product_name: queryRegex };
 
-        // Get total count of matching products (for pagination info)
-        const totalProducts = await Product.countDocuments(filter);
+//         // Get total count of matching products (for pagination info)
+//         const totalProducts = await Product.countDocuments(filter);
 
-        // Get the paginated products
-        const products = await Product.find(filter)
-            .skip(skip)
-            .limit(limit);
+//         // Get the paginated products
+//         const products = await Product.find(filter)
+//             .skip(skip)
+//             .limit(limit);
 
-        const totalPages = Math.ceil(totalProducts / limit);
+//         const totalPages = Math.ceil(totalProducts / limit);
 
-        res.json({
-            message: 'Products fetched successfully',
-            products,
-            totalProducts,
-            totalPages,
-            currentPage: page
-        });
+//         res.json({
+//             message: 'Products fetched successfully',
+//             products,
+//             totalProducts,
+//             totalPages,
+//             currentPage: page
+//         });
 
-    } catch (error) {
-        console.error('Error fetching products by search term:', error);
-        res.status(500).json({ message: 'Failed to fetch products.', error: error.message });
-    }
-});
+//     } catch (error) {
+//         console.error('Error fetching products by search term:', error);
+//         res.status(500).json({ message: 'Failed to fetch products.', error: error.message });
+//     }
+// });
 
 //! [ ] CHECK IF THIS WORKS
 // 2. Fetch items according to category with pagination
@@ -222,54 +194,6 @@ router.get('/api/products/category/:categoryId', async (req, res) => {
         res.status(500).json({ message: 'Failed to fetch products by category.', error: error.message });
     }
 });
-
-
-//! [ ] CHECK IF THIS WORKS
-// Get endpoint to fetch a single product by _id
-router.get('/api/products/', async (req, res) => {
-    try {
-        const products = await Product.aggregate([
-            {
-                $lookup: {
-                    from: "locations",
-                    localField: "location_id",
-                    foreignField: "_id",
-                    as: "location_info"
-                }
-            },
-            {
-                $lookup: {
-                    from: "category",
-                    localField: "category_id",
-                    foreignField: "_id",
-                    as: "category_info",
-                }
-            },
-            { $unwind: { path: "$location_info", preserveNullAndEmptyArrays: true } },
-            { $unwind: { path: "$category_info", preserveNullAndEmptyArrays: true } },
-            { $sort: { "product_id": -1 } },
-            {
-                $project: {
-                    "product_id": true,
-                    "product_name": true,
-                    "updated_price": true,
-                    "date_updated": true,
-                    "imageUrl": true,
-                    "location_info.location_name": true,
-                    "category_info.category_list": true,
-                    "category_info.category_name": true,
-                    "category_info.category_catalog": true,
-                }
-            },
-        ]);
-
-        res.json(products);
-        // TODO [ ]: See if we need pagination on this...
-
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-})
 
 
 //? [ ] CHECK IF THIS WORKS

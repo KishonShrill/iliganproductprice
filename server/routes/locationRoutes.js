@@ -21,7 +21,7 @@ router.get('/api/locations', async (req, res) => {
 });
 
 //! [*] CHECK IF THIS WORKS
-router.get('/api/locations/:locationId', async (req, res) => {
+router.get('/api/location/:locationId', async (req, res) => {
     const locationId = req.params.locationId;
     const locationObjectId = new mongoose.Types.ObjectId(locationId);
 
@@ -29,27 +29,9 @@ router.get('/api/locations/:locationId', async (req, res) => {
         const products = await Product.aggregate([
             {
                 $match: {
-                    location_id: locationObjectId
+                    "location.id": locationObjectId
                 }
             },
-            {
-                $lookup: {
-                    from: "locations",
-                    localField: "location_id",
-                    foreignField: "_id",
-                    as: "location_info"
-                }
-            },
-            {
-                $lookup: {
-                    from: "category",
-                    localField: "category_id",
-                    foreignField: "_id",
-                    as: "category_info",
-                }
-            },
-            { $unwind: { path: "$location_info", preserveNullAndEmptyArrays: true } },
-            { $unwind: { path: "$category_info", preserveNullAndEmptyArrays: true } },
             { $sort: { "product_id": -1 } },
             {
                 $project: {
@@ -58,10 +40,10 @@ router.get('/api/locations/:locationId', async (req, res) => {
                     "updated_price": true,
                     "date_updated": true,
                     "imageUrl": true,
-                    "location_info.location_name": true,
-                    "category_info.category_list": true,
-                    "category_info.category_name": true,
-                    "category_info.category_catalog": true,
+                    "location.name": true,
+                    "category.list": true,
+                    "category.name": true,
+                    "category.catalog": true,
                 }
             },
         ]);
