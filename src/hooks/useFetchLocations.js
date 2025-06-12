@@ -7,14 +7,14 @@ const DATBASE_URL = DEVELOPMENT
   ? `http://localhost:5000/api/locations`
   : "https://iliganproductprice-mauve.vercel.app/api/locations";
 
-const fetchLocations = () => {
+const fetchURL = () => {
   return axios.get(DATBASE_URL);
 }
 
 const useFetchLocations = () => {
   return useQuery(
     'fetchedLocations', 
-    fetchLocations,
+    fetchURL,
     {
       cacheTime: 1000 * 60 * 5,// int - keeps the data longer
       staleTime: 30000, // staleTime: int - default is 0 sec

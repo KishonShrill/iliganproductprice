@@ -5,8 +5,8 @@ const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 
 const useFetchProductsByLocation = (location) => {
     const DATBASE_URL = DEVELOPMENT
-        ? `http://localhost:5000/api/locations/${location}`
-        : `https://iliganproductprice-mauve.vercel.app/api/locations/${location}`;
+        ? `http://localhost:5000/api/location/${location}`
+        : `https://iliganproductprice-mauve.vercel.app/api/location/${location}`;
 
     const fetchURL = () => {
         return axios.get(DATBASE_URL);

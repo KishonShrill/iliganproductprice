@@ -4,17 +4,17 @@ import axios from 'axios'
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 
 const DATBASE_URL = DEVELOPMENT
-  ? `http://localhost:5000/api/products/`
+  ? `http://localhost:5000/api/products`
   : "https://iliganproductprice-mauve.vercel.app/api/products";
 
-const fetshProducts = () => {
+const fetchURL = () => {
   return axios.get(DATBASE_URL);
 }
 
 const useFetchProducts = () => {
   return useQuery(
-    'fetshedProducts', 
-    fetshProducts,
+    'fetchedProducts_Admin',
+    fetchURL,
     {
       cacheTime: 1000 * 60 * 5,// int - keeps the data longer
       staleTime: 30000, // staleTime: int - default is 0 sec
