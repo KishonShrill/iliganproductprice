@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
+import locationRoutes from './routes/locationRoutes.js';
 
 
 config();
@@ -24,6 +25,7 @@ const allowedOrigins = process.env.VITE_DEVELOPMENT
 const corsOptions = {
     origin: function (origin, callback) {
         console.log("Origin Requests: " + origin);
+        console.log("Non-browser: " + !origin);
 
         // Allow requests with no origin (like mobile apps or curl requests)
         if (!origin) return callback(null, true);
@@ -95,6 +97,7 @@ app.use([
 // User Routes
 app.use(authRoutes);
 app.use(productRoutes);
+app.use(locationRoutes);
 
 // Fallback for undefined routes
 app.use((req, res) => {

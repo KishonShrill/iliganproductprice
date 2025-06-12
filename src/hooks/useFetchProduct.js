@@ -4,17 +4,19 @@ import axios from 'axios'
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 
 const useFetchProduct = (productId) => {
-    const DATBASE_URL = `https://iliganproductprice-mauve.vercel.app/api/products/${productId}`;
-    // const DATBASE_URL = `http://localhost:5000/api/products/${productId}`;
-    const fetshProduct = () => {
+    const DATBASE_URL = DEVELOPMENT 
+        ? `http://localhost:5000/api/product/${productId}`
+        : `https://iliganproductprice-mauve.vercel.app/api/product/${productId}`;
+
+    const fetchURL = () => {
         return axios.get(DATBASE_URL);
     }
 
     return useQuery(
         'fetshedItemForEdit',
-        fetshProduct,
+        fetchURL,
         {
-            // cacheTime: 3000,// int - keeps the data longer
+            cacheTime: 1000 * 60 * 5,// int - keeps the data longer
             staleTime: 30000, // staleTime: int - default is 0 sec
             // refetchOnMount: boolean or 'always' - data updater
             refetshOnWindowFocus: false, //boolean or 'always' - self explanatory

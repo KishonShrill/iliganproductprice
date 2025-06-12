@@ -1,17 +1,17 @@
 .receipt-container {
+  width: 90%;
+  max-width: 450px;
   margin: 2rem auto;
   padding: 1.5rem;
-  max-width: 350px;
-  width: 90%;
-  background-color: #fffdfa;
+  font-family: 'Courier New', Courier, monospace;
   border: 2px dashed #aaa;
   border-radius: 8px;
-  font-family: 'Courier New', Courier, monospace;
-  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  background-color: #fffdfa;
 
   & h2 {
-    text-align: center;
     margin-bottom: 1.5rem;
+    text-align: center;
   }
 }
 
@@ -22,10 +22,10 @@
 }
 
 .receipt-item {
+  padding-bottom: 0.5rem;
   display: flex;
   justify-content: space-between;
   border-bottom: 1px dotted #ccc;
-  padding-bottom: 0.5rem;
   font-size: 0.95rem;
 }
 
@@ -43,8 +43,8 @@
 
 .receipt-total {
   margin-top: 1.5rem;
-  font-weight: bold;
   text-align: right;
+  font-weight: bold;
   font-size: 1.1rem;
 }
 
@@ -53,14 +53,14 @@
 }
 
 .start-shopping-btn {
-  display: inline-block;
   margin-top: 1rem;
   padding: 0.5rem 1rem;
-  background-color: #0066cc;
+  display: inline-block;
+  text-decoration: none;
   color: white;
   border-radius: 4px;
-  text-decoration: none;
-  transition: background 0.3s;
+  background-color: #0066cc;
+  // transition: background 0.3s;
 
   &:hover {
     background-color: #004999;

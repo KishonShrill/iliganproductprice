@@ -1,10 +1,7 @@
-import React, { useEffect, useState,  } from "react";
 import '../styles/homepage.scss'
 
 export default function HomePage() {
   document.title = "Homepage - Budget Buddy"
-
-  const [message, setMessage] = useState("");
 
   // // useEffect automatically executes once the page is fully loaded
   // useEffect(() => {
@@ -36,12 +33,13 @@ export default function HomePage() {
 
       <section className="homepage__purpose">
         <h3>Why Use Budget Buddy?</h3>
-        <p>Budget Buddy is designed to help you keep track of your potential spending while shopping. Simply add the items you're considering to your cart, and watch the total update instantly. It's a handy web app that's with you whenever you're online, making budget estimation quick and easy.</p>
+        <p>Budget Buddy is designed to help you keep track of your potential spending while shopping. Simply add the items you&#39;re considering to your cart, and watch the total update instantly. It&#39;s a handy web app that&#39;s with you whenever you&#39;re online, making budget estimation quick and easy.</p>
+        {/* <p>Budget Buddy is designed to help you keep track of your potential spending while shopping. Simply add the items you're considering to your cart, and watch the total update instantly. It's a handy web app that's with you whenever you're online, making budget estimation quick and easy.</p> */}
       </section>
 
       <section className="homepage__persistence">
         <h3>Your Cart Stays With You</h3>
-        <p>Worried about losing your progress? Don't be! Budget Buddy saves your current cart directly on your device using local storage. Close the tab, shut down your browser – when you come back on the same device, your items will still be right there in the cart, ready for you to continue.</p>
+        <p>Worried about losing your progress? Don&#39;t be! Budget Buddy saves your current cart directly on your device using local storage. Close the tab, shut down your browser – when you come back on the same device, your items will still be right there in the cart, ready for you to continue.</p>
       </section>
 
       <section className="homepage__contacts">

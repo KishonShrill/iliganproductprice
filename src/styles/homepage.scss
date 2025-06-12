@@ -1,15 +1,18 @@
+@import 'utils/variables';
+
 .homepage {
   &__hero {
-    background-color: #ee4d2d; /* Shopee orange */
-    color: white;
-    text-align: center;
-    padding: 60px 20px;
     margin-block: 30px;
+    padding: 60px 20px;
+    color: $light;
+    text-align: center;
+    background-color: $primary-color; /* Shopee orange */
 
     &-title {
-      margin-top: 0;
+      // margin-top: 0;
+      // margin-bottom: 15px;
+      margin-block: 0 15px;
       font-size: 2.5em;
-      margin-bottom: 15px;
     }
 
     &-subtitle {
@@ -20,40 +23,46 @@
     }
 
     & .cta-button {
-      display: inline-block;
-      background-color: #fff;
-      color: #ee4d2d;
       padding: 12px 25px;
+      display: inline-block;
+      color: $primary-color;
+      font-size: 1.1em;
       text-decoration: none;
       border-radius: 5px;
-      border: 1px solid #fff;
-      font-size: 1.1em;
+      border: 1px solid $light;
+      background-color: $light;
       font-weight: bold;
       transition: background-color 0.3s ease, color 0.3s ease;
     
       &:hover {
-        background-color: #ee4d2d;
-        color: #fff;
+        color: $light;
+        background-color: $primary-color;
       }
     }
   }
 
   &__contacts ul,
   &__socials ul {
-    list-style: none;
     padding: 0;
+    list-style: none;
   }
 
   &__contacts li, &__socials li {
     margin-bottom: 10px;
   }
 
+  &__socials ul {
+    margin-top: 3rem;
+    display: flex;
+    justify-content: center;
+  }
+
   &__socials a {
-    display: inline-block;
     margin-right: 15px;
-    color: #ee4d2d;
-    text-decoration: none;
+    display: inline-block;
+    color: $primary-color;
     font-weight: bold;
+    text-decoration: none;
 
     &:hover {
       text-decoration: underline;
@@ -62,32 +71,32 @@
 }
 
 section {
+  max-width: 900px; /* Limit width for readability */
+  margin: 0 auto 30px;
   padding: 40px 20px;
-  margin-bottom: 30px;
-  background-color: #fff;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
   border-radius: 8px;
-  max-width: 900px; /* Limit width for readability */
-  margin-left: auto;
-  margin-right: auto;
+  background-color: $light;
+  // margin-bottom: 30px;
+  // margin-left: auto;
+  // margin-right: auto;
 
   & h3 {
-    color: #ee4d2d;
-    margin-top: 0;
-    font-size: 1.6em;
-    margin-bottom: 15px;
-    border-bottom: 2px solid #eee;
+    margin-block: 0 15px;
     padding-bottom: 10px;
+    color: $primary-color;
+    font-size: 1.6em;
+    border-bottom: 2px solid #eee;
   }
 }
 
 footer {
-  background-color: #333;
-  color: white;
-  text-align: center;
-  padding: 40px;
   margin-top: 30px;
+  padding: 40px;
+  color: white;
   font-size: 0.9em;
+  text-align: center;
+  background-color: $dark;
 }
 
 
@@ -95,8 +104,8 @@ footer {
 @media screen and (max-width: 700px) {
   .homepage {
     &__hero {
-      padding: 60px 20px;
       margin-block: 0 30px;
+      padding: 60px 20px;
       border-radius: 0;
 
       &-title {font-size: 1.7rem;}
@@ -104,6 +113,10 @@ footer {
         width: 100%;
         font-size: 1.1rem;
       }
+    }
+    &__socials ul {
+      margin-top: 0;
+      flex-direction: column;
     }
   }
 }

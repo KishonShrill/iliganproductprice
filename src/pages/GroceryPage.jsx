@@ -1,16 +1,20 @@
-import React, { useCallback, useEffect, useRef, useState, Suspense } from "react";
-import useFetchProducts from '../hooks/useFetchProducts';
+import { useCallback, useEffect, useRef, useState, Suspense } from "react";
+import useFetchProductsByLocation from '../hooks/useFetchProductsByLocation'
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import '../styles/grocery.scss'
-import '../styles/utils.scss'
 
 
 export default function GroceryPage() {
   document.title = "Grocery List - Budget Buddy"
+  
+  const path = window.location.pathname;  // "/locations/link"
+  const segments = path.split('/');  // ["", "locations", "link"]
+  const location = segments[segments.length - 1];  // "link"
 
-  const { isLoading, data, isError, error, isFetching } = useFetchProducts()
-  console.log({ isLoading, isFetching })
+  const { isLoading, data, isError, error, isFetching } = useFetchProductsByLocation(location)
+  // console.log({ isLoading, isFetching })
+
   const [reciept, setReceipt] = useState("100%")
   
   // Initialize Cart for localStorage to persist
@@ -82,12 +86,16 @@ export default function GroceryPage() {
     </main>
   )}
 
-  console.log("Data:" + data.data)
+  // console.log("Data:" + data.data)
 
   return (
     <section className="grocery">
       <main className='product-container' id="productContainer">
-        <Suspense fallback={<h2>Loading...</h2>}>
+        <Suspense fallback={(
+          <main className='errorDisplay'>
+            <h2>Loading<span className="animated-dots"></span></h2>
+          </main>
+        )}>
           {data
           ? data?.data.map((item) => (
             <ProductCard 

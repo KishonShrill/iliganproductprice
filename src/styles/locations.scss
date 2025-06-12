@@ -1,0 +1,31 @@
+@import 'utils/loading';
+@import 'utils/variables';
+@import 'utils/mixins';
+
+.location {    
+    &-container {
+        height: auto;
+        padding-bottom: 1rem;
+        display: flex;
+        flex-direction: column;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        background-color: $light;
+
+        &:hover .location__details {
+            color: black;
+            font-weight: 700;
+        }
+    }
+
+    &__image {
+        width: 100%;
+        max-width: 250px;
+        padding: 1rem;
+        object-fit: contain;
+        aspect-ratio: 1/1;
+    }
+    &__details {
+        text-align: center;
+    }
+}

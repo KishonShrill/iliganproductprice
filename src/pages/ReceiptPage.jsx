@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import '../styles/receipt.scss';
 
 function ReceiptPage() {
@@ -21,7 +22,7 @@ function ReceiptPage() {
       {Object.keys(cart).length === 0 ? (
         <div className="empty-receipt">
           <p>Your receipt is empty.</p>
-          <a href="/groceries" className="start-shopping-btn">Start Adding Items</a>
+          <Link to="/locations" className="start-shopping-btn">Start Adding Items</Link>
         </div>
       ) : (
         <>
