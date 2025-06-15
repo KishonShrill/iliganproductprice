@@ -23,7 +23,7 @@ export default function LocationPage() {
     </main>
   )}
 
-  // console.log("Data:" + data.data)
+  console.log("Data:" + JSON.stringify(data.data))
 
   return (
     <section className="grocery">

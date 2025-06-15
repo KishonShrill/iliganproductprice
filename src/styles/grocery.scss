@@ -161,6 +161,7 @@ section.grocery {
     margin-bottom: 5px;
     padding-bottom: 5px;
     border-bottom: 1px dotted #eee;
+    user-select: none;
     cursor: pointer; /* Indicate it's clickable */
     transition: color 0.2s ease;
 

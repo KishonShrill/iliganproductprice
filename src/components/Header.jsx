@@ -7,7 +7,8 @@ const cookies = new Cookies();
 import '../styles/main-header.scss'
 
 function Header({ token }) {
-  const location = useLocation(); // ✅ also needs to be here, not in render logic
+  const location = window.location.pathname;
+  // const location = useLocation(); // ✅ also needs to be here, not in render logic
   const [nav, setNav] = useState("-300px")
 
   // Menu Navigation
@@ -18,13 +19,9 @@ function Header({ token }) {
 
   // logout
   const logout = () => {
-    // destroy the cookie
     cookies.remove("TOKEN", { path: "/" });
-    // redirect user to the landing page
     window.location.href = "/";
   }
-
-  console.log(location.pathname)
 
   // const renderIfDevMode = useMemo(() => [
   //   <>
