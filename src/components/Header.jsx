@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
@@ -7,8 +7,8 @@ const cookies = new Cookies();
 import '../styles/main-header.scss'
 
 function Header({ token }) {
-  const location = window.location.pathname;
-  // const location = useLocation(); // ✅ also needs to be here, not in render logic
+  // const location = window.location.pathname;
+  const { pathname } = useLocation(); // ✅ also needs to be here, not in render logic
   const [nav, setNav] = useState("-300px")
 
   // Menu Navigation
@@ -16,6 +16,10 @@ function Header({ token }) {
     if (nav === "-300px") setNav("0")
     if (nav === "0") setNav("-300px")
   }
+
+  const shouldShowAuthLinks = useMemo(() => {
+    return pathname !== "/authenticate" && pathname !== "/dev-mode";
+  }, [pathname]);
 
   // logout
   const logout = () => {
@@ -83,7 +87,7 @@ function Header({ token }) {
         </>
       );
     }
-  }, [location.pathname, token]);
+  }, [token]);
   // I swear, I feel like I am over engineering my web portfolio just to make it run faster -w-
 
   return (
@@ -94,7 +98,7 @@ function Header({ token }) {
         </button>
         <Link to="/" className="header__name" style={{ fontWeight: 700 }}>Budget Buddy</Link>
         
-        {(location.pathname != '/authenticate' || location.pathname != '/dev-mode') && (
+        {shouldShowAuthLinks && (
           !token ? (
             <Link to="/authenticate" className="phone" style={{justifyContent: "center"}}>
               <img src="/UI/user-03-stroke-rounded.svg" alt="Login Button" />
@@ -142,6 +146,7 @@ function Header({ token }) {
           </div>
         </nav>
       </header>
+      <Outlet />
     </>
   );
 }
