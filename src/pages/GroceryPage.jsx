@@ -5,9 +5,21 @@ import ProductCard from '../components/ProductCard';
 import '../styles/grocery.scss'
 
 
-export default function GroceryPage() {
+function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   document.title = "Grocery List - Budget Buddy"
   
+  const [reciept, setReceipt] = useState("100%")
+  // const storedCart = localStorage.getItem('cart');
+  // const [cart, setCart] = useState(() => {
+  //   return storedCart ? JSON.parse(storedCart) : {};
+  // })
+
+  // cartItems = JSON.parse(storedCart)
+  // console.log(JSON.stringify(cartItems))
+
+  const cartRef = useRef(null)
+
+  // Fetch Location and put into useHook
   const path = window.location.pathname;  // "/locations/link"
   const segments = path.split('/');  // ["", "locations", "link"]
   const location = segments[segments.length - 1];  // "link"
@@ -15,36 +27,36 @@ export default function GroceryPage() {
   const { isLoading, data, isError, error, isFetching } = useFetchProductsByLocation(location)
   // console.log({ isLoading, isFetching })
 
-  const [reciept, setReceipt] = useState("100%")
   
-  // Initialize Cart for localStorage to persist
-  const [cart, setCart] = useState(() => {
-    const storedCart = localStorage.getItem('cart');
-    return storedCart ? JSON.parse(storedCart) : {};
-  })
+  // Update Cart for localStorage to persist
   useEffect(() => {
-    localStorage.setItem('cart', JSON.stringify(cart));
-  }, [cart]);
+    if (cartItems?.cart) {
+      localStorage.setItem('cart', JSON.stringify(cartItems.cart));
+    } else {
+      localStorage.setItem('cart', JSON.stringify(cartItems));
+    }
+  }, [cartItems]);
+
   
-  // cartRef from <Cart />
-  const cartRef = useRef(null)
 
   // Remove Item from <Cart /> on Element Click
   useEffect(() => {
     if (cartRef.current) {
       cartRef.current.onItemClick = (productId) => {
-        setCart(prev => {
-          const updated = { ...prev };
-          if (updated[productId].quantity > 1) {
-            updated[productId].quantity -= 1;
-          } else {
-            delete updated[productId];
-          }
-          return updated;
-        });
+        // setCart(prev => {
+        //   const updated = { ...prev };
+        //   if (updated[productId].quantity > 1) {
+        //     updated[productId].quantity -= 1;
+        //   } else {
+        //     delete updated[productId];
+        //   }
+        //   return updated;
+        // });
+        removeCartItem(productId);
       };
     }
   }, [cartRef.current])
+
 
   // Add item on <Cart /> on Button Click on <ProductCard />
   const handleClick = useCallback((el) => {
@@ -52,27 +64,30 @@ export default function GroceryPage() {
     const productName = el.dataset.productName;
     const productPrice = parseFloat(el.dataset.productPrice);
 
-    // Check if product is already in the cart
-    setCart(prevCart => {
-      const updatedCart = {...prevCart}
+    console.log(`${productId} | ${productName} | ${productPrice}`)
+    // setCart(prevCart => {
+    //   const updatedCart = {...prevCart}
 
-      if (updatedCart[productId]) {
-        updatedCart[productId].quantity += 1;
-      } else {
-        updatedCart[productId] = {
-          name: productName,
-          price: productPrice, // Store the original price
-          quantity: 1
-        };
-      }
-      return updatedCart;
-    });
+    //   if (updatedCart[productId]) {
+    //     updatedCart[productId].quantity += 1;
+    //   } else {
+    //     updatedCart[productId] = {
+    //       name: productName,
+    //       price: productPrice,
+    //       quantity: 1
+    //     };
+    //   }
+    //   return updatedCart;
+    // });
+    addNewCartItem(productId, productName, productPrice);
   }, []);
+
 
   function openReciept() {
     if (reciept === "100%") setReceipt("0%")
     if (reciept === "0%") setReceipt("100%")
   }
+
 
   // Display when fetched elements are empty or is loading...
   if (isLoading || isFetching) {return(
@@ -85,8 +100,6 @@ export default function GroceryPage() {
       <h2>Error: {error.message}</h2>
     </main>
   )}
-
-  // console.log("Data:" + data.data)
 
   return (
     <section className="grocery">
@@ -108,10 +121,12 @@ export default function GroceryPage() {
           }
         </Suspense>
       </main>
-      <Cart ref={cartRef} cart={cart} setCart={setCart} reciept={reciept}/>
+      <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept}/>
       <button className="cart-btn phone fixed" onClick={openReciept}>
         <img src="/UI/shopping-cart-02-stroke-rounded.svg" alt="My cart button" />
       </button>
     </section>
   );
 }
+
+export default GroceryPage

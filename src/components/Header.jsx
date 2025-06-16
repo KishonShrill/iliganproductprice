@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
@@ -7,7 +7,8 @@ const cookies = new Cookies();
 import '../styles/main-header.scss'
 
 function Header({ token }) {
-  const location = useLocation(); // ✅ also needs to be here, not in render logic
+  // const location = window.location.pathname;
+  const { pathname } = useLocation(); // ✅ also needs to be here, not in render logic
   const [nav, setNav] = useState("-300px")
 
   // Menu Navigation
@@ -16,15 +17,9 @@ function Header({ token }) {
     if (nav === "0") setNav("-300px")
   }
 
-  // logout
-  const logout = () => {
-    // destroy the cookie
-    cookies.remove("TOKEN", { path: "/" });
-    // redirect user to the landing page
-    window.location.href = "/";
-  }
-
-  console.log(location.pathname)
+  const shouldShowAuthLinks = useMemo(() => {
+    return pathname !== "/authenticate" && pathname !== "/dev-mode";
+  }, [pathname]);
 
   // const renderIfDevMode = useMemo(() => [
   //   <>
@@ -56,38 +51,6 @@ function Header({ token }) {
   //     )}
   //   </>
   // ], [])  
-  
-  const renderIfDevMode = useMemo(() => {
-    if (!token) {
-      return (
-        <>
-          <Link className="nav-link" to="/receipt" onClick={openMenu}>
-            <img className="phone" src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="" />
-            Cart
-          </Link>
-          <Link className='nav-link' to="/authenticate" onClick={openMenu}>
-            <img className="phone" src="/UI/user-03-stroke-rounded-white.svg" alt="Login Icon" />
-            <img className="computer" src="/UI/user-03-stroke-rounded.svg" alt="Login Icon" />
-            <p className="phone">Login</p>
-          </Link>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <Link className='nav-link login__devmode' to="/dev-mode" onClick={openMenu}>Dev Mode</Link>
-          <button className="nav-link logout__devmode" type="submit" variant="danger" onClick={logout}>
-            <svg className="computer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#000000" fill="none">
-              <path className="svg-path" d="M6 6.50006C4.15875 8.14802 3 10.3345 3 13C3 17.9706 7.02944 22 12 22C16.9706 22 21 17.9706 21 13C21 10.3345 19.8412 8.14802 18 6.50006" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-              <path className="svg-path" d="M12 2V11M12 2C11.2998 2 9.99153 3.9943 9.5 4.5M12 2C12.7002 2 14.0085 3.9943 14.5 4.5" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-            </svg>
-            <p className="phone">Logout</p>
-          </button>
-        </>
-      );
-    }
-  }, [location.pathname, token]);
-  // I swear, I feel like I am over engineering my web portfolio just to make it run faster -w-
 
   return (
     <>
@@ -97,7 +60,7 @@ function Header({ token }) {
         </button>
         <Link to="/" className="header__name" style={{ fontWeight: 700 }}>Budget Buddy</Link>
         
-        {(location.pathname != '/authenticate' || location.pathname != '/dev-mode') && (
+        {shouldShowAuthLinks && (
           !token ? (
             <Link to="/authenticate" className="phone" style={{justifyContent: "center"}}>
               <img src="/UI/user-03-stroke-rounded.svg" alt="Login Button" />
@@ -141,12 +104,51 @@ function Header({ token }) {
             </li>
           </ul>
           <div className="header__nav-login">
-            {renderIfDevMode}
+            <DevMode token={token} openMenu={openMenu} />
           </div>
         </nav>
       </header>
+      <Outlet />
     </>
   );
 }
+
+function DevModeComponent({token, openMenu}) {
+    // logout
+  const logout = () => {
+    cookies.remove("TOKEN", { path: "/" });
+    window.location.href = "/";
+  }
+
+  return (
+    (!token) ? (
+      <>
+        <Link className="nav-link" to="/receipt" onClick={openMenu}>
+          <img className="phone" src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="" />
+          Cart
+        </Link>
+        <Link className='nav-link' to="/authenticate" onClick={openMenu}>
+          <img className="phone" src="/UI/user-03-stroke-rounded-white.svg" alt="Login Icon" />
+          <img className="computer" src="/UI/user-03-stroke-rounded.svg" alt="Login Icon" />
+          <p className="phone">Login</p>
+        </Link>
+      </>
+    ) : (
+      <>
+        <Link className='nav-link login__devmode' to="/dev-mode" onClick={openMenu}>Dev Mode</Link>
+        <button className="nav-link logout__devmode" type="submit" variant="danger" onClick={logout}>
+          <svg className="computer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#000000" fill="none">
+            <path className="svg-path" d="M6 6.50006C4.15875 8.14802 3 10.3345 3 13C3 17.9706 7.02944 22 12 22C16.9706 22 21 17.9706 21 13C21 10.3345 19.8412 8.14802 18 6.50006" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+            <path className="svg-path" d="M12 2V11M12 2C11.2998 2 9.99153 3.9943 9.5 4.5M12 2C12.7002 2 14.0085 3.9943 14.5 4.5" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
+          </svg>
+          <p className="phone">Logout</p>
+        </button>
+      </>
+    )
+  );
+}
+
+const DevMode = React.memo(DevModeComponent)
+// I swear, I feel like I am over engineering my web portfolio just to make it run faster -w-
 
 export default React.memo(Header)

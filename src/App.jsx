@@ -8,53 +8,61 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
 import { SpeedInsights } from "@vercel/speed-insights/react"; // <-- add this at the top
-
+import { Provider } from 'react-redux';
 import Cookies from "universal-cookie";
-const cookies = new Cookies();
+import store from './redux/store/store.js';
 
 import Header from "./components/Header.jsx"
 import Homepage from "./pages/Homepage.jsx"
+
 const LocationPage = lazy(() => import("./pages/LocationPage.jsx"))
-const GroceryPage = lazy(() => import("./pages/GroceryPage.jsx"))
+const GroceryPage = lazy(() => import("./containers/GroceryPageContainer.jsx"))
 const ReceiptPage = lazy(() => import("./pages/ReceiptPage.jsx"))
-const Login = lazy(() => import("./components/Login.jsx"))
-const CRUDInterface = lazy(() => import("./pages/Console.jsx"))
-const CRUDProduct = lazy(() => import('./components/CRUD.jsx'));
+const LoginPage = lazy(() => import("./pages/LoginPage.jsx"))
+const ConsolePage = lazy(() => import("./pages/Console.jsx"))
+const CRUDPage = lazy(() => import('./components/CRUD.jsx'));
 const NoPage = lazy(() => import("./pages/NoPage.jsx"))
 
 const queryClient = new QueryClient();
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
+const cookies = new Cookies();
+const token = cookies.get("TOKEN");
 
 function App() {
-  const token = cookies.get("TOKEN");
 
-  const routes = useMemo(() => (
-    <Routes>
-      <Route exact path="/" element={<Homepage />} />
-      <Route exact path="/locations" element={<LocationPage />} />
-      <Route exact path="/location/*" element={<GroceryPage />} />
-      <Route exact path="/receipt" element={<ReceiptPage />} />
-      <Route path="*" element={<NoPage />} />
+  // const routes = useMemo(() => (
+    
+  // ), [token, DEVELOPMENT]);
 
-      <Route exact path="/authenticate" element={<Login debugMode={DEVELOPMENT} />} />
-      <Route path="/dev-mode" element={token ? <CRUDInterface debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
-      <Route path='/groceries/edit-item' element={<CRUDProduct debugMode={DEVELOPMENT} />} />
-      <Route path='/groceries/add-item' element={<CRUDProduct debugMode={DEVELOPMENT} />} />
-    </Routes>
-  ), [token, DEVELOPMENT]);
+  const renderLoading = () => {
+    return (
+      <div className='errorDisplay'>
+        <h2>Loading<span className="animated-dots"></span></h2>
+      </div>
+    )
+  }
 
   return (
     <>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <Header token={token} />
-          <Suspense fallback={(
-            <div className='errorDisplay'>
-              <h2>Loading<span className="animated-dots"></span></h2>
-            </div>
-          )}>
-            {routes}
-          </Suspense>
+          <Provider store={store}>
+            <Routes>
+              <Route path="/" element={<Header token={token} />}>
+                <Route index element={<Homepage />} />
+                <Route path="locations" element={<Suspense fallback={renderLoading}><LocationPage /></Suspense>} />
+                <Route path="location/*" element={<Suspense fallback={renderLoading}><GroceryPage /></Suspense>} />
+                <Route path="receipt" element={<Suspense fallback={renderLoading}><ReceiptPage /></Suspense>} />
+
+                <Route path="dev-mode" element={token ? <Suspense fallback={renderLoading}><ConsolePage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/" replace />} />
+                <Route path='groceries/edit-item' element={token ? <CRUDPage debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
+                <Route path='groceries/add-item' element={token ? <CRUDPage debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
+
+                <Route path="authenticate" element={!token ? <Suspense fallback={renderLoading}><LoginPage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/dev-mode" replace />} />
+                <Route path="*" element={<NoPage />} />
+              </Route>
+            </Routes>
+          </Provider>
           <SpeedInsights />
         </BrowserRouter>
         <ReactQueryDevtools initialIsOpem={false} position='bottom-right' />

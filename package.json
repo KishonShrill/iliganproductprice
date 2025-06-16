@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^2.8.2",
     "@vercel/speed-insights": "^1.2.0",
     "axios": "^1.6.8",
     "bcrypt": "^5.1.1",
@@ -23,6 +24,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-rate-limit": "^7.5.0",
+    "html2canvas": "^1.4.1",
     "jquery": "^3.7.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.3.2",
@@ -34,9 +36,11 @@
     "react-bootstrap": "^2.10.2",
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
+    "react-redux": "^9.2.0",
     "react-router-dom": "^6.22.3",
     "react-scan": "^0.3.3",
     "realm-web": "^2.0.0",
+    "redux": "^5.0.1",
     "sass": "^1.75.0",
     "streamifier": "^0.1.1",
     "universal-cookie": "^7.1.4"

@@ -1,10 +1,10 @@
-import { useEffect, useState,  } from "react";
+import { useEffect, useState, useMemo } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import useFetchProducts from "../hooks/useFetchProducts";
-
+import Pagination from "../components/Pagination";
 import '../styles/admin_console.scss'
-import { Link } from "react-router-dom";
 
 const cookies = new Cookies();
 const token = cookies.get("TOKEN");
@@ -14,9 +14,67 @@ export default function CRUDInterface({ debugMode }) {
   
   const { isLoading, data, isError, error, isFetching } = useFetchProducts()
   // console.log({ isLoading, isFetching })
+
+  const [search, setSearch] = useState("")
   const [message, setMessage] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedLocation, setSelectedLocation] = useState("");
+  const [filters, setFilters] = useState({
+    category: "",
+    location: "",
+  });
+  
+  // Populate data for the category and location select inputs
+  const { uniqueLocations, uniqueCategories } = useMemo(() => {
+    const locationsSet = new Set();
+    const categorySet = new Set();
+
+    data?.data.forEach(item => {
+      if (item.location?.name) locationsSet.add(item.location.name);
+      if (item.category?.name) categorySet.add(item.category.name);
+    });
+
+    //?? Output
+    console.log("Locations:", Array.from(locationsSet));
+    console.log("Categories:", Array.from(categorySet));
+    
+    return {
+      uniqueLocations: Array.from(locationsSet),
+      uniqueCategories: Array.from(categorySet)
+    };
+  }, [data]);
+  
+  // Normalize search terms
+  const searchTerm = (search || "").toLowerCase();
+  
+  // Apply filters BEFORE pagination
+  const filteredData = data?.data.filter(item => {
+    const matchesCategory = filters.category === '' || item.category?.name === filters.category;
+    const matchesLocation = filters.location === '' || item.location?.name === filters.location;
+    const matchesSearch = 
+      filters.search === '' ||
+      item.product_name?.toLowerCase().includes(searchTerm) ||
+      item.product_id?.toString().toLowerCase().includes(searchTerm);
+      
+    return matchesCategory && matchesLocation && matchesSearch;
+  }) || [];
+  
   const itemsPerPage = 10;
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+  
+  // console.log("Data:" + paginatedData)
+  const totalPages = Math.ceil((filteredData.length || 0) / itemsPerPage);
+
+  function edit_product(productId) {
+    let location = debugMode
+      ? `http://localhost:5173/groceries/edit-item?productId=${productId}&type=edit`
+      : `https://productprice-iligan.vercel.app/groceries/edit-item?productId=${productId}&type=edit`;
+    window.location.href = location;
+  }
 
   // useEffect automatically executes once the page is fully loaded
   useEffect(() => {
@@ -44,12 +102,6 @@ export default function CRUDInterface({ debugMode }) {
       });
   }, [])
 
-  function edit_product(productId) {
-    let location = debugMode
-      ? `http://localhost:5173/groceries/edit-item?productId=${productId}&type=edit`
-      : `https://productprice-iligan.vercel.app/groceries/edit-item?productId=${productId}&type=edit`;
-    window.location.href = location;
-  }
 
   // Display when fetched elements are empty or is loading...
   if (isLoading || isFetching) {return(
@@ -63,15 +115,6 @@ export default function CRUDInterface({ debugMode }) {
     </main>
   )}
 
-  
-  const paginatedData = data?.data.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-  
-  // console.log("Data:" + paginatedData)
-  const totalPages = Math.ceil((data?.data.length || 0) / itemsPerPage);
-
   return (
     <div className="crud-container">
       <h1>Manage Products</h1>
@@ -80,25 +123,37 @@ export default function CRUDInterface({ debugMode }) {
       <div className="controls">
         <div className="control-group">
           <label htmlFor="searchQuery">Search Name:</label>
-          <input type="text" id="searchQuery" placeholder="Enter product name" />
+          <input type="text" id="searchQuery" value={search} onChange={(e) => (setSearch(e.target.value))} placeholder="Enter product name" />
         </div>
 
         <div className="control-group">
           <label htmlFor="categoryFilter">Category:</label>
-          <select id="categoryFilter">
+          <select id="categoryFilter" onChange={(e) => setSelectedCategory(e.target.value)}>
             <option value="">All Categories</option>
+            {uniqueCategories.map((category, index) => (
+              <option key={index} value={category}>{category}</option>
+            ))}
           </select>
         </div>
 
         <div className="control-group">
           <label htmlFor="locationFilter">Location:</label>
-          <select id="locationFilter">
+          <select id="locationFilter" onChange={(e) => setSelectedLocation(e.target.value)}>
             <option value="">All Locations</option>
+            {uniqueLocations.map((location, index) => (
+              <option key={index} value={location}>{location}</option>
+            ))}
           </select>
         </div>
 
         <div className="control-group">
-          <button id="applyFiltersBtn">Apply Filters</button>
+          <button 
+            id="applyFiltersBtn"
+            onClick={() => setFilters({
+              category: selectedCategory,
+              location: selectedLocation,
+            })}
+          >Apply Filters</button>
         </div>
       </div>
 
@@ -139,26 +194,7 @@ export default function CRUDInterface({ debugMode }) {
         </tbody>
       </table>
 
-      <div className="pagination">
-        <button
-          id="prevPageBtn"
-          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-          disabled={currentPage === 1}
-        >
-          &laquo; Previous
-        </button>
-        <span>
-          Page <span id="currentPageSpan">{currentPage}</span> of{" "}
-          <span id="totalPagesSpan">{totalPages}</span>
-        </span>
-        <button
-          id="nextPageBtn"
-          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-          disabled={currentPage === totalPages}
-        >
-          Next &raquo;
-        </button>
-      </div>
+      <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} />
 
 
       <h3 id="messageArea" className="message-area text-center text-danger">{message}</h3>
