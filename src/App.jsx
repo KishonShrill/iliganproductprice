@@ -58,7 +58,7 @@ function App() {
                 <Route path='groceries/edit-item' element={token ? <CRUDPage debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
                 <Route path='groceries/add-item' element={token ? <CRUDPage debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
 
-                <Route path="authenticate" element={<Suspense fallback={renderLoading}><LoginPage debugMode={DEVELOPMENT} /></Suspense>} />
+                <Route path="authenticate" element={!token ? <Suspense fallback={renderLoading}><LoginPage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/dev-mode" replace />} />
                 <Route path="*" element={<NoPage />} />
               </Route>
             </Routes>
