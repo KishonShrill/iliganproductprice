@@ -18,9 +18,9 @@ import Homepage from "./pages/Homepage.jsx"
 const LocationPage = lazy(() => import("./pages/LocationPage.jsx"))
 const GroceryPage = lazy(() => import("./containers/GroceryPageContainer.jsx"))
 const ReceiptPage = lazy(() => import("./pages/ReceiptPage.jsx"))
-const Login = lazy(() => import("./components/Login.jsx"))
-const CRUDInterface = lazy(() => import("./pages/Console.jsx"))
-const CRUDProduct = lazy(() => import('./components/CRUD.jsx'));
+const LoginPage = lazy(() => import("./pages/LoginPage.jsx"))
+const ConsolePage = lazy(() => import("./pages/Console.jsx"))
+const CRUDPage = lazy(() => import('./components/CRUD.jsx'));
 const NoPage = lazy(() => import("./pages/NoPage.jsx"))
 
 const queryClient = new QueryClient();
@@ -46,23 +46,23 @@ function App() {
     <>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
-          <Header token={token} />
-            <Suspense fallback={renderLoading}>
-              <Provider store={store}>
-                <Routes>
-                  <Route exact path="/" element={<Homepage />} />
-                  <Route exact path="/locations" element={<LocationPage />} />
-                  <Route exact path="/location/*" element={<GroceryPage />} />
-                  <Route exact path="/receipt" element={<ReceiptPage />} />
-                  <Route path="*" element={<NoPage />} />
+          <Provider store={store}>
+            <Routes>
+              <Route path="/" element={<Header token={token} />}>
+                <Route index element={<Homepage />} />
+                <Route path="locations" element={<Suspense fallback={renderLoading}><LocationPage /></Suspense>} />
+                <Route path="location/*" element={<Suspense fallback={renderLoading}><GroceryPage /></Suspense>} />
+                <Route path="receipt" element={<Suspense fallback={renderLoading}><ReceiptPage /></Suspense>} />
 
-                  <Route exact path="/authenticate" element={<Login debugMode={DEVELOPMENT} />} />
-                  <Route path="/dev-mode" element={token ? <CRUDInterface debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
-                  <Route path='/groceries/edit-item' element={<CRUDProduct debugMode={DEVELOPMENT} />} />
-                  <Route path='/groceries/add-item' element={<CRUDProduct debugMode={DEVELOPMENT} />} />
-                </Routes>
-              </Provider>
-            </Suspense>
+                <Route path="dev-mode" element={token ? <Suspense fallback={renderLoading}><ConsolePage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/" replace />} />
+                <Route path='groceries/edit-item' element={token ? <CRUDPage debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
+                <Route path='groceries/add-item' element={token ? <CRUDPage debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
+
+                <Route path="authenticate" element={<Suspense fallback={renderLoading}><LoginPage debugMode={DEVELOPMENT} /></Suspense>} />
+                <Route path="*" element={<NoPage />} />
+              </Route>
+            </Routes>
+          </Provider>
           <SpeedInsights />
         </BrowserRouter>
         <ReactQueryDevtools initialIsOpem={false} position='bottom-right' />

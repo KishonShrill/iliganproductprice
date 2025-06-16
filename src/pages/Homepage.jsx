@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import '../styles/homepage.scss'
 
 export default function HomePage() {
@@ -28,7 +29,7 @@ export default function HomePage() {
         <h2 className="homepage__hero-title">Estimate Your Shopping Budget Effortlessly</h2>
         <p className="homepage__hero-subtitle computer">Stop collecting receipts!<br />Use Budget Buddy to quickly add products and see your estimated total before you hit the checkout.</p>
         <p className="homepage__hero-subtitle phone-block">Stop collecting receipts!<br />Use Budget Buddy now!</p>
-        <a href="/groceries" className="cta-button">Start Estimating Now!</a>
+        <Link to="/locations" className="cta-button">Start Estimating Now!</Link>
       </section>
 
       <section className="homepage__purpose">
