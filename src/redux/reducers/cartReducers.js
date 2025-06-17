@@ -25,6 +25,7 @@ const cartReducer = (state = initialState, action) => {
                         name: action.payload.product_name,
                         price: action.payload.product_price,
                         quantity: 1,
+                        location: action.payload.product_location,
                     }
             };
 

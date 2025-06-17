@@ -9,6 +9,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   document.title = "Grocery List - Budget Buddy"
   
   const [reciept, setReceipt] = useState("100%")
+  const [active, setActive] = useState(false)
   // const storedCart = localStorage.getItem('cart');
   // const [cart, setCart] = useState(() => {
   //   return storedCart ? JSON.parse(storedCart) : {};
@@ -63,8 +64,9 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     const productId = el.dataset.productId;
     const productName = el.dataset.productName;
     const productPrice = parseFloat(el.dataset.productPrice);
+    const productLocation = el.dataset.productLocation;
 
-    console.log(`${productId} | ${productName} | ${productPrice}`)
+    console.log(`${productId} | ${productName} | ${productPrice} | ${productLocation}`)
     // setCart(prevCart => {
     //   const updatedCart = {...prevCart}
 
@@ -79,11 +81,12 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     //   }
     //   return updatedCart;
     // });
-    addNewCartItem(productId, productName, productPrice);
+    addNewCartItem(productId, productName, productPrice, productLocation);
   }, []);
 
 
   function openReciept() {
+    setActive((prev) => !prev)
     if (reciept === "100%") setReceipt("0%")
     if (reciept === "0%") setReceipt("100%")
   }
@@ -122,8 +125,11 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
         </Suspense>
       </main>
       <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept}/>
-      <button className="cart-btn phone fixed" onClick={openReciept}>
-        <img src="/UI/shopping-cart-02-stroke-rounded.svg" alt="My cart button" />
+      <button className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
+        {active 
+          ? <img src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="My cart button" /> 
+          : <img src="/UI/shopping-cart-02-stroke-rounded.svg" alt="My cart button" />
+        }
       </button>
     </section>
   );

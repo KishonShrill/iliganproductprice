@@ -14,23 +14,49 @@ function ReceiptPage() {
     }
   }, []);
 
+  const cartItemQuantity = Object.keys(cart).length;
+  const groupedEntries = Object.entries(cart).reduce((acc, [id, item]) => {
+    // console.log(id)
+    if (!acc[item.location]) acc[item.location] = []
+    acc[item.location].push({...item, id})
+    return acc;
+  }, {});
+  const cartItemEntries = Object.entries(groupedEntries);
   const total = Object.values(cart).reduce(
     (acc, item) => acc + item.price * item.quantity, 0
   );
 
-  // H<elper function to generate receipt text
+  // Helper function to generate receipt text
+  // ! DEPRECATED
+  // const generateReceiptText = () => {
+  //   let receiptText = "🧾 Receipt\n\n";
+  //   if (Object.keys(cart).length === 0) {
+  //     receiptText += "Your receipt is empty.\n";
+  //   } else {
+  //     Object.entries(cart).forEach(([productId, item]) => {
+  //       receiptText += `${item.name} x${item.quantity} ₱${(item.price * item.quantity).toFixed(2)}\n`;
+  //     });
+  //     receiptText += `\nTotal: ₱${total.toFixed(2)}\n`;
+  //   }
+  //   return receiptText;
+  // };
   const generateReceiptText = () => {
     let receiptText = "🧾 Receipt\n\n";
     if (Object.keys(cart).length === 0) {
       receiptText += "Your receipt is empty.\n";
     } else {
-      Object.entries(cart).forEach(([productId, item]) => {
-        receiptText += `${item.name} x${item.quantity} ₱${(item.price * item.quantity).toFixed(2)}\n`;
+      cartItemEntries.forEach(([location, items]) => {
+        receiptText += `📍 ${location}\n`;
+        items.forEach((item) => {
+          receiptText += `  - ${item.name} x${item.quantity} ₱${(item.price * item.quantity).toFixed(2)}\n`;
+        });
+        receiptText += `\n`;
       });
-      receiptText += `\nTotal: ₱${total.toFixed(2)}\n`;
+      receiptText += `Total: ₱${total.toFixed(2)}\n`;
     }
     return receiptText;
   };
+
 
   // Function to copy receipt as text
   const copyReceiptAsText = async () => {
@@ -76,7 +102,7 @@ function ReceiptPage() {
   return (
     <div className="receipt-container" ref={receiptRef}>
       <h2>🧾 Receipt</h2>
-      {Object.keys(cart).length === 0 ? (
+      {cartItemQuantity === 0 ? (
         <div className="empty-receipt">
           <p>Your receipt is empty.</p>
           <Link to="/locations" className="start-shopping-btn">Start Adding Items</Link>
@@ -84,13 +110,34 @@ function ReceiptPage() {
       ) : (
         <>
           <div className="receipt-items">
-            {Object.entries(cart).map(([productId, item]) => (
+            {/* {Object.entries(cart).map(([productId, item]) => (
               <div key={productId} className="receipt-item">
                 <span className="item-name">{item.name}</span>
                 <span className="item-qty">x{item.quantity}</span>
                 <span className="item-price">₱{(item.price * item.quantity).toFixed(2)}</span>
               </div>
-            ))}
+            ))} */}
+
+            {cartItemEntries.map(([category, items]) => {
+              return (
+                <div key={category} className='receipt-category-group'>
+                  <p className='receipt-category'>{category}</p>
+                  <div>
+                    {items.map((item) => {
+                      // console.log(item)
+                      return (
+                        <div key={item.id} className="receipt-item">
+                          <span className="item-name">{item.name}</span>
+                          <span className="item-qty">x{item.quantity}</span>
+                          <span className="item-price">₱{(item.price * item.quantity).toFixed(2)}</span>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )
+            })}
+
           </div>
           <div className="receipt-total">Total: ₱{total.toFixed(2)}</div>
           <div className="receipt-actions">
