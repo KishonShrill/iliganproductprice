@@ -1,6 +1,7 @@
 @import 'utils/variables';
 @import 'utils/loading';
 @import 'utils/pagination';
+@import 'utils/mixins';
 
 section.grocery {
   max-width: 100%;
@@ -130,9 +131,12 @@ section.grocery {
     min-width: 200px; /* Prevent shrinking too much */
     height: fit-content; /* Adjust height based on content */
     padding: 15px;
+    display: flex;
+    flex-direction: column;
     align-self: flex-start;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow-y: hidden;
     background-color: #fff;
     transition: left 0.3s ease-in-out;
 
@@ -148,19 +152,19 @@ section.grocery {
   }
 
   &-items {
-    max-height: 300px; /* Add max height for scrolling if many items */
-    margin-bottom: 15px;
+    height: 300px; /* Add max height for scrolling if many items */
+    // margin-bottom: 15px;
     overflow-y: auto; /* Add scroll if items exceed max height */
   }
 
   &-item {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9em;
-    color: #555;
     margin-bottom: 5px;
     padding-bottom: 5px;
-    border-bottom: 1px dotted #eee;
+    display: flex;
+    justify-content: space-between;
+    color: #555;
+    font-size: 0.9em;
+    border-bottom: 1px dotted #717171;
     user-select: none;
     cursor: pointer; /* Indicate it's clickable */
     transition: color 0.2s ease;
@@ -175,30 +179,48 @@ section.grocery {
       padding-bottom: 0;
     }
 
-    & span {
+    &-quantity {
+      display: inline-block;
+      color: $secondary-color;
+    }
+
+    & > span {
       margin-left: 10px; /* Add space between name and price */
       float: right; /* Float the price to the right */
       color: #333;
       font-weight: bold;
     }
+  }
 
-    &-total {
-      padding-top: 10px;
-      color: #333;
-      font-size: 1.1em;
-      font-weight: bold;
-      border-top: 1px solid #eee;
+  &-total {
+    padding-top: 10px;
+    color: #333;
+    font-size: 1.1em;
+    font-weight: bold;
+    @include border-stroke(light, #cecece, "top");
+  }
+
+  &-category {
+    margin-block: 15px 0;
+    padding-bottom: 10px;
+    color: $primary-color;
+    font-size: 1em;
+    // border-bottom: 2px solid #eee;
+
+    &-group:nth-child(1) > & {
+      margin-block: 0;
+      user-select: none;
     }
   }
 }
 
-@media screen and (max-width: 950px) {
+@include respond-max("tablet") {
   .cart-summary {
     width: 280px;
   }
 }
 
-@media screen and (max-width: 700px) {
+@include respond-max("phone") {
   section.grocery {
     padding: 12px;
   }
@@ -222,23 +244,34 @@ section.grocery {
       left: 0%;
       width: 100%;
       height: calc(100dvh - 66px); /* Adjust height based on content */
+      padding-bottom: 7rem;
       border-radius: 0;
     }
-  }
-  .cart-btn {
-    --btn-size: 3rem;
-    width: var(--btn-size);
-    height: var(--btn-size);
-    padding: 0.5rem;
-    bottom: 2rem;
-    // border: none;
-    border-radius: 50%;
-    /* http://smoothshadows.com/#djEsMSw1LDAuMTUsNjQsMCwwLCMwMDAwMDAsI2ZmZmZmZiwjZmZmZmZmLDI%3D */
-    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.03),
-    0px 0px 10px rgba(0, 0, 0, 0.06),
-    0px 0px 23px rgba(0, 0, 0, 0.09),
-    0px 0px 41px rgba(0, 0, 0, 0.12),
-    0px 0px 64px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
+
+    &-btn {
+      --btn-size: 3rem;
+      width: var(--btn-size);
+      height: var(--btn-size);
+      padding: 0.5rem;
+      bottom: 2rem;
+      // border: none;
+      border-radius: 50%;
+      /* http://smoothshadows.com/#djEsMSw1LDAuMTUsNjQsMCwwLCMwMDAwMDAsI2ZmZmZmZiwjZmZmZmZmLDI%3D */
+      box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.03),
+      0px 0px 10px rgba(0, 0, 0, 0.06),
+      0px 0px 23px rgba(0, 0, 0, 0.09),
+      0px 0px 41px rgba(0, 0, 0, 0.12),
+      0px 0px 64px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+
+      &.active {
+        background-color: $primary-color;
+      }
+    }
+
+    &-items {
+      // height: 600px;
+      flex-grow: 1;
+    }
   }
 }
