@@ -5,7 +5,7 @@ const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 
 const useFetchProduct = (productId) => {
     const DATBASE_URL = DEVELOPMENT 
-        ? `http://localhost:5000/api/product/${productId}`
+        ? `http://192.168.1.10:5000/api/product/${productId}`
         : `https://iliganproductprice-mauve.vercel.app/api/product/${productId}`;
 
     const fetchURL = () => {

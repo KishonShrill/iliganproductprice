@@ -4,7 +4,7 @@ import axios from 'axios'
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 
 const DATBASE_URL = DEVELOPMENT
-  ? `http://localhost:5000/api/locations`
+  ? `http://192.168.1.10:5000/api/locations`
   : "https://iliganproductprice-mauve.vercel.app/api/locations";
 
 const fetchURL = () => {
