@@ -31,7 +31,7 @@ const LoginForm = ({ debugMode }) => {
         submitRef.current.style.background = "#ee4d2da0";
 
         let url = debugMode
-            ? "http://localhost:5000/login"
+            ? "http://192.168.1.10:5000/login"
             : "https://iliganproductprice-mauve.vercel.app/login";
 
         const configuration = {
@@ -48,6 +48,9 @@ const LoginForm = ({ debugMode }) => {
         axios(configuration)
             .then((result) => {
                 setLogin(true);
+                emailRef.current.style.borderColor = "green";
+                passwordRef.current.style.borderColor = "green";
+                logRef.current.style.color = "green";
                 cookies.set("TOKEN", result.data.token, {
                     path: "/",
                 });

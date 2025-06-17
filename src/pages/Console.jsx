@@ -62,13 +62,14 @@ export default function CRUDInterface({ debugMode }) {
   }) || [];
   
   const itemsPerPage = 10;
+  const itemQuantity = filteredData.length;
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
   
   // console.log("Data:" + paginatedData)
-  const totalPages = Math.ceil((filteredData.length || 0) / itemsPerPage);
+  const totalPages = Math.ceil((itemQuantity || 0) / itemsPerPage);
 
   function edit_product(productId) {
     let location = debugMode
@@ -123,7 +124,10 @@ export default function CRUDInterface({ debugMode }) {
       <Link to="https://productprice-iligan.vercel.app/groceries/add-item" className="add-product-button">Add New Product</Link>
       <div className="controls">
         <div className="control-group">
-          <label htmlFor="searchQuery">Search Name:</label>
+          <div style={{display: "flex", justifyContent: "space-between"}}>
+            <label htmlFor="searchQuery">Search Name:</label>
+            <label>{itemQuantity} :Items</label>
+          </div>
           <input type="text" id="searchQuery" value={search} onChange={(e) => (setSearch(e.target.value))} placeholder="Enter product name" />
         </div>
 
