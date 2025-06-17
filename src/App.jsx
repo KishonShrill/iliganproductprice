@@ -30,10 +30,6 @@ const token = cookies.get("TOKEN");
 
 function App() {
 
-  // const routes = useMemo(() => (
-    
-  // ), [token, DEVELOPMENT]);
-
   const renderLoading = () => {
     return (
       <div className='errorDisplay'>
@@ -65,7 +61,7 @@ function App() {
           </Provider>
           <SpeedInsights />
         </BrowserRouter>
-        <ReactQueryDevtools initialIsOpem={false} position='bottom-right' />
+        {DEVELOPMENT ? <ReactQueryDevtools initialIsOpen={false} position='bottom-right' /> : <></>}
       </QueryClientProvider>
     </>
   )

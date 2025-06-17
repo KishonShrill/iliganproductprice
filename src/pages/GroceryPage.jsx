@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useRef, useState, Suspense } from "react";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import useFetchProductsByLocation from '../hooks/useFetchProductsByLocation'
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
+import Searchbar from "../components/Searchbar";
+
 import '../styles/grocery.scss'
 
 
@@ -11,6 +14,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   
   const [reciept, setReceipt] = useState("100%")
   const [active, setActive] = useState(false)
+  const [search, setSearch] = useState('')
   // const storedCart = localStorage.getItem('cart');
   // const [cart, setCart] = useState(() => {
   //   return storedCart ? JSON.parse(storedCart) : {};
@@ -20,6 +24,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   // console.log(JSON.stringify(cartItems))
 
   const cartRef = useRef(null)
+  const searchbarRef = useRef(null)
 
   // Fetch Location and put into useHook
   const path = window.location.pathname;  // "/locations/link"
@@ -85,6 +90,14 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     addNewCartItem(productId, productName, productPrice, productLocation);
   }, []);
 
+  const searchTerm = (search || "").toLowerCase();
+  const filteredData = data?.data.filter(item => {
+    const matchesSearch = 
+      searchTerm === '' ||
+      item.product_name?.toLowerCase().includes(searchTerm);
+      
+    return matchesSearch;
+  }) || [];
 
   function openReciept() {
     setActive((prev) => !prev)
@@ -106,33 +119,49 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   )}
 
   return (
-    <section className="grocery">
-      <main className='product-container' id="productContainer">
-        <Suspense fallback={(
-          <main className='errorDisplay'>
-            <h2>Loading<span className="animated-dots"></span></h2>
-          </main>
-        )}>
-          {data
-          ? data?.data.map((item) => (
-            <ProductCard 
-              key={item._id} 
-              item={item} 
-              onAdd={(event) => handleClick(event.currentTarget)} 
-            />
-          ))
-          : <h2>No products found...</h2>
+    <>
+      <div style={{
+        padding: "1rem",
+        display: "flex", 
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "1rem",
+      }}>
+        <Searchbar ref={searchbarRef} type={"text"} onChange={(e) => setSearch(e.target.value)}>
+          <Link to={"/locations"}>
+            <img className="go-back" src="/UI/arrow-left-02-stroke-rounded.svg" alt="Go Back!" />
+          </Link>
+        </Searchbar>
+        
+      </div>
+      <section className="grocery">
+        <main className='product-container' id="productContainer">
+          <Suspense fallback={(
+            <main className='errorDisplay'>
+              <h2>Loading<span className="animated-dots"></span></h2>
+            </main>
+          )}>
+            {data
+            ? filteredData.map((item) => (
+              <ProductCard 
+                key={item._id} 
+                item={item} 
+                onAdd={(event) => handleClick(event.currentTarget)} 
+              />
+            ))
+            : <h2>No products found...</h2>
+            }
+          </Suspense>
+        </main>
+        <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept}/>
+        <button className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
+          {active 
+            ? <img src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="My cart button" /> 
+            : <img src="/UI/shopping-cart-02-stroke-rounded.svg" alt="My cart button" />
           }
-        </Suspense>
-      </main>
-      <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept}/>
-      <button className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
-        {active 
-          ? <img src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="My cart button" /> 
-          : <img src="/UI/shopping-cart-02-stroke-rounded.svg" alt="My cart button" />
-        }
-      </button>
-    </section>
+        </button>
+      </section>
+    </>
   );
 }
 

@@ -156,6 +156,11 @@ Header.displayName = "Header"
 Header.propTypes = {
   token: PropTypes.string,
 }
+DevModeComponent.propTypes = {
+  token: PropTypes.string,
+  openMenu: PropTypes.func,
+}
+
 
 const DevMode = React.memo(DevModeComponent)
 // I swear, I feel like I am over engineering my web portfolio just to make it run faster -w-
