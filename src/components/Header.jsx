@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import PropTypes from "prop-types";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import Cookies from "universal-cookie";
 
@@ -146,6 +147,14 @@ function DevModeComponent({token, openMenu}) {
       </>
     )
   );
+}
+
+// 👇 Give the component a name for debugging purposes
+Header.displayName = "Header"
+
+// 👇 Define PropTypes
+Header.propTypes = {
+  token: PropTypes.string,
 }
 
 const DevMode = React.memo(DevModeComponent)

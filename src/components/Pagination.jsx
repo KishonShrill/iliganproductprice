@@ -1,3 +1,5 @@
+import PropTypes from "prop-types"
+
 const Pagination = ({ setCurrentPage, currentPage, totalPages }) => {
     return (
         <div className="pagination">
@@ -21,6 +23,16 @@ const Pagination = ({ setCurrentPage, currentPage, totalPages }) => {
             </button>
         </div>
     )
+}
+
+// 👇 Give the component a name for debugging purposes
+Pagination.displayName = "Pagination"
+
+// 👇 Define PropTypes
+Pagination.propTypes = {
+    setCurrentPage: PropTypes.number.isRequired,
+    currentPage: PropTypes.number.isRequired,
+    totalPages: PropTypes.number.isRequired,
 }
 
 export default Pagination

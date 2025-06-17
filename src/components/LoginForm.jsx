@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react'
+import { useState, useRef } from 'react'
 import { Form, Button } from "react-bootstrap";
+import PropTypes from 'prop-types';
 import Cookies from "universal-cookie";
 import axios from 'axios'
 import '../styles/login.scss'
@@ -24,7 +25,7 @@ const LoginForm = ({ debugMode }) => {
         debouncedLogin();
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = () => {
         // prevent the form from refreshing the whole page
         setLoading(true);
         submitRef.current.style.background = "#ee4d2da0";
@@ -118,5 +119,13 @@ const LoginForm = ({ debugMode }) => {
         </Form>
     );
 };
+
+// 👇 Give the component a name for debugging purposes
+LoginForm.displayName = "Debug Form"
+
+// 👇 Define PropTypes
+LoginForm.propTypes = {
+    debugMode: PropTypes.bool.isRequired,
+}
 
 export default LoginForm

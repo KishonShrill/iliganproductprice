@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState, Suspense } from "react";
+import PropTypes from "prop-types";
 import useFetchProductsByLocation from '../hooks/useFetchProductsByLocation'
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
@@ -134,5 +135,24 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     </section>
   );
 }
+
+// 👇 Give the component a name for debugging purposes
+GroceryPage.displayName = "Grocery Page"
+
+// 👇 Define PropTypes
+GroceryPage.propTypes = {
+  cartItems: PropTypes.shape({
+    cart: PropTypes.objectOf(
+      PropTypes.shape({
+        name: PropTypes.string.isRequired,
+        price: PropTypes.number.isRequired,
+        quantity: PropTypes.number.isRequired,
+        location: PropTypes.string.isRequired,
+      })
+    )
+  }).isRequired,
+  addNewCartItem: PropTypes.func.isRequired,
+  removeCartItem: PropTypes.func.isRequired,
+};
 
 export default GroceryPage

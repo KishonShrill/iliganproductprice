@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
 import axios from 'axios'
 import '../styles/crud.scss'
 
@@ -165,6 +166,14 @@ const CRUDProduct = ({ debugMode }) => {
       </form>
     </div>
   );
+}
+
+// 👇 Give the component a name for debugging purposes
+CRUDProduct.displayName = "Product Editor";
+
+// 👇 Define PropTypes
+CRUDProduct.propTypes = {
+  debugMode: PropTypes.bool.isRequired,
 }
 
 export default CRUDProduct;

@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
+import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Cookies from "universal-cookie";
@@ -196,8 +197,15 @@ export default function CRUDInterface({ debugMode }) {
 
       <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} />
 
-
       <h3 id="messageArea" className="message-area text-center text-danger">{message}</h3>
     </div>
   );
+}
+
+// 👇 Give the component a name for debugging purposes
+CRUDInterface.displayName = "Console";
+
+// 👇 Define PropTypes
+CRUDInterface.propTypes = {
+  debugMode: PropTypes.bool.isRequired,
 }

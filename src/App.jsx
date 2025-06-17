@@ -3,7 +3,7 @@ import { scan } from 'react-scan'
 // --- React Query Setup ---
 scan({ enabled: import.meta.env.VITE_SCAN === "true", });
 
-import React, { useState, lazy, Suspense, useMemo } from 'react'
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
