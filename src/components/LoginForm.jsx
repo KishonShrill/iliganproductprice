@@ -7,6 +7,7 @@ import '../styles/login.scss'
 
 import { useThrottleCallback } from '../helpers/useDebounce';
 
+const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 const cookies = new Cookies();
 
 const LoginForm = ({ debugMode }) => {
@@ -31,7 +32,7 @@ const LoginForm = ({ debugMode }) => {
         submitRef.current.style.background = "#ee4d2da0";
 
         let url = debugMode
-            ? "http://192.168.1.10:5000/login"
+            ? `http://${LOCALHOST}:5000/login`
             : "https://iliganproductprice-mauve.vercel.app/login";
 
         const configuration = {

@@ -2,18 +2,19 @@ import { useQuery } from 'react-query'
 import axios from 'axios'
 
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
-
-const DATBASE_URL = DEVELOPMENT
-  ? `http://192.168.1.10:5000/api/locations`
-  : "https://iliganproductprice-mauve.vercel.app/api/locations";
-
-const fetchURL = () => {
-  return axios.get(DATBASE_URL);
-}
+const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 
 const useFetchLocations = () => {
+  const DATBASE_URL = DEVELOPMENT
+    ? `http://${LOCALHOST}:5000/api/locations`
+    : "https://iliganproductprice-mauve.vercel.app/api/locations";
+
+  const fetchURL = () => {
+    return axios.get(DATBASE_URL);
+  }
+
   return useQuery(
-    'fetchedLocations', 
+    'fetchedLocations',
     fetchURL,
     {
       cacheTime: 1000 * 60 * 5,// int - keeps the data longer
