@@ -1,110 +1,21 @@
-@import 'utils/variables';
 @import 'utils/loading';
+@import 'utils/variables';
+@import 'utils/mixins';
 @import 'utils/pagination';
+@import 'components/searchbar';
+@import 'components/product-container';
+
 
 section.grocery {
   max-width: 100%;
-  min-height: calc(100dvh - 66px);
+  height: calc(100vh - #{$height-header} - #{$height-searchbar});
   margin: 0;
   padding: 20px;
   display: flex;
   justify-content: center;
   gap: 20px;
+  overflow-y: auto;
   background-color: #f8f8f8;
-}
-
-.product {
-    &-container {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 250px);
-    justify-content: center;
-    align-items: start;
-    gap: 20px;
-  }
-
-  &-card {
-    display: flex;
-    flex-direction: column;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    background-color: #fff;
-    overflow: hidden;
-  }
-
-  /* Added hover effect to details or button if needed */
-  &-image {
-    width: 100%;
-    height: 15rem;
-    object-fit: cover;
-    overflow: hidden;
-  }
-
-  &-image-placeholder {
-    position: relative;
-    width: 100%;
-    height: 15rem;
-    padding-top: 75%; /* 4:3 aspect ratio */
-    background-color: #e0e0e0; /* Placeholder color */
-    overflow: hidden;
-  }
-
-  &-image-placeholder::before {
-    content: 'Image Placeholder';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #666;
-    font-size: 0.9em;
-  }
-
-
-  &-details {
-    padding: 15px;
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-  }
-
-  &-name {
-    height: 44px;
-    margin-bottom: 5px;
-    display: -webkit-box;
-    font-size: 1.1em;
-    font-weight: bold;
-    color: #333;
-
-    -webkit-line-clamp: 2; 
-    -webkit-box-orient: vertical;
-
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  &-info-inline {
-    left: 0;
-    bottom: 0;
-    padding: 0.25rem;
-    color: white;
-    font-size: 0.8em;
-    background: #333;
-  }
-
-  &-info {
-    margin-bottom: 0.25rem;
-    color: #666;
-    font-size: 0.8em;
-  }
-
-  &-price {
-    margin-block: auto 5px;
-    font-size: 1.2em;
-    color: $primary-color; /* Shopee-like orange */
-    // margin-top: auto; /* Push price to the bottom */
-    // margin-bottom: 5px;
-  }
 }
 
 .add-to-cart-btn {
@@ -125,17 +36,20 @@ section.grocery {
 .cart {
   &-summary {
     position: sticky; /* Make it sticky */
-    top: calc(20px + 60px); /* Stick below header, plus some gap */
+    top: 0; /* Stick below header, plus some gap */
     width: 330px;
     min-width: 200px; /* Prevent shrinking too much */
     height: fit-content; /* Adjust height based on content */
     padding: 15px;
+    display: flex;
+    flex-direction: column;
     align-self: flex-start;
     border-radius: 8px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    overflow-y: hidden;
     background-color: #fff;
     transition: left 0.3s ease-in-out;
-
+    
     & h2 {
       margin-block: 0 10px;
       padding-bottom: 10px;
@@ -148,19 +62,19 @@ section.grocery {
   }
 
   &-items {
-    max-height: 300px; /* Add max height for scrolling if many items */
-    margin-bottom: 15px;
+    height: 300px; /* Add max height for scrolling if many items */
+    // margin-bottom: 15px;
     overflow-y: auto; /* Add scroll if items exceed max height */
   }
 
   &-item {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.9em;
-    color: #555;
     margin-bottom: 5px;
     padding-bottom: 5px;
-    border-bottom: 1px dotted #eee;
+    display: flex;
+    justify-content: space-between;
+    color: #555;
+    font-size: 0.9em;
+    border-bottom: 1px dotted #717171;
     user-select: none;
     cursor: pointer; /* Indicate it's clickable */
     transition: color 0.2s ease;
@@ -175,30 +89,57 @@ section.grocery {
       padding-bottom: 0;
     }
 
-    & span {
+    &-quantity {
+      display: inline-block;
+      color: $secondary-color;
+    }
+
+    & > span {
       margin-left: 10px; /* Add space between name and price */
       float: right; /* Float the price to the right */
       color: #333;
       font-weight: bold;
     }
+  }
 
-    &-total {
-      padding-top: 10px;
-      color: #333;
-      font-size: 1.1em;
-      font-weight: bold;
-      border-top: 1px solid #eee;
+  &-total {
+    padding-top: 10px;
+    color: #333;
+    font-size: 1.1em;
+    font-weight: bold;
+    @include border-stroke(light, #cecece, "top");
+  }
+
+  &-category {
+    margin-block: 15px 0;
+    padding-bottom: 10px;
+    color: $primary-color;
+    font-size: 1em;
+    // border-bottom: 2px solid #eee;
+
+    &-group:nth-child(1) > & {
+      margin-block: 0;
+      user-select: none;
     }
   }
 }
 
-@media screen and (max-width: 950px) {
+.go-back {
+  // height: 40px;
+  padding: 0.5rem;
+  border-radius: 7px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+@include respond-max("tablet") {
   .cart-summary {
     width: 280px;
+    z-index: 4;
   }
 }
 
-@media screen and (max-width: 700px) {
+@include respond-max("phone") {
   section.grocery {
     padding: 12px;
   }
@@ -218,27 +159,40 @@ section.grocery {
   .cart {
     &-summary {
       position: fixed; /* Make it sticky */
+      top: calc(20px + 60px); /* Stick below header, plus some gap */
       bottom: 0;
       left: 0%;
       width: 100%;
       height: calc(100dvh - 66px); /* Adjust height based on content */
+      padding-bottom: 7rem;
       border-radius: 0;
     }
-  }
-  .cart-btn {
-    --btn-size: 3rem;
-    width: var(--btn-size);
-    height: var(--btn-size);
-    padding: 0.5rem;
-    bottom: 2rem;
-    // border: none;
-    border-radius: 50%;
-    /* http://smoothshadows.com/#djEsMSw1LDAuMTUsNjQsMCwwLCMwMDAwMDAsI2ZmZmZmZiwjZmZmZmZmLDI%3D */
-    box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.03),
-    0px 0px 10px rgba(0, 0, 0, 0.06),
-    0px 0px 23px rgba(0, 0, 0, 0.09),
-    0px 0px 41px rgba(0, 0, 0, 0.12),
-    0px 0px 64px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
+
+    &-btn {
+      --btn-size: 3rem;
+      width: var(--btn-size);
+      height: var(--btn-size);
+      padding: 0.5rem;
+      bottom: 2rem;
+      // border: none;
+      border-radius: 50%;
+      /* http://smoothshadows.com/#djEsMSw1LDAuMTUsNjQsMCwwLCMwMDAwMDAsI2ZmZmZmZiwjZmZmZmZmLDI%3D */
+      box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.03),
+      0px 0px 10px rgba(0, 0, 0, 0.06),
+      0px 0px 23px rgba(0, 0, 0, 0.09),
+      0px 0px 41px rgba(0, 0, 0, 0.12),
+      0px 0px 64px rgba(0, 0, 0, 0.15);
+      cursor: pointer;
+      z-index: 5;
+
+      &.active {
+        background-color: $primary-color;
+      }
+    }
+
+    &-items {
+      // height: 600px;
+      flex-grow: 1;
+    }
   }
 }

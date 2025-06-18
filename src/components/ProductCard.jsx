@@ -31,6 +31,7 @@ const ProductCard = ({ item, onAdd }) => (
         data-product-id={item._id}
         data-product-name={item.product_name}
         data-product-price={item.updated_price}
+        data-product-location={item.location.name}
         onClick={onAdd}>
         Add to Cart
       </button>

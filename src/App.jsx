@@ -3,7 +3,7 @@ import { scan } from 'react-scan'
 // --- React Query Setup ---
 scan({ enabled: import.meta.env.VITE_SCAN === "true", });
 
-import React, { useState, lazy, Suspense, useMemo } from 'react'
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
@@ -29,10 +29,6 @@ const cookies = new Cookies();
 const token = cookies.get("TOKEN");
 
 function App() {
-
-  // const routes = useMemo(() => (
-    
-  // ), [token, DEVELOPMENT]);
 
   const renderLoading = () => {
     return (
@@ -65,7 +61,7 @@ function App() {
           </Provider>
           <SpeedInsights />
         </BrowserRouter>
-        <ReactQueryDevtools initialIsOpem={false} position='bottom-right' />
+        {DEVELOPMENT ? <ReactQueryDevtools initialIsOpen={false} position='bottom-right' /> : <></>}
       </QueryClientProvider>
     </>
   )

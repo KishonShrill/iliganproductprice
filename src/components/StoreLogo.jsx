@@ -1,5 +1,5 @@
 // StoreLogo.jsx
-import React from 'react'
+import PropTypes from "prop-types"
 
 const storeImages = {
   'gaisano': '/images/logos/gaisano-logo.jpg',
@@ -8,7 +8,7 @@ const storeImages = {
   // Add more mappings as needed
 }
 
-const StoreLogo = ({ storeName, width = 80 }) => {
+const StoreLogo = ({ storeName }) => {
   if (!storeName) return null
 
   const lowerName = storeName.toLowerCase()
@@ -24,5 +24,12 @@ const StoreLogo = ({ storeName, width = 80 }) => {
     />
   )
 }
+
+StoreLogo.displayName = "Store Logo";
+
+// 👇 Define PropTypes
+StoreLogo.propTypes = {
+  storeName: PropTypes.string,
+};
 
 export default StoreLogo

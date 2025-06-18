@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 import useFetchLocations from '../hooks/useFetchLocations';
 import LocationCard from "../components/LocationCard";
-import '../styles/grocery.scss'
+// import '../styles/grocery.scss'
 import '../styles/locations.scss'
 
 
@@ -26,8 +26,8 @@ export default function LocationPage() {
   console.log("Data:" + JSON.stringify(data.data))
 
   return (
-    <section className="grocery">
-      <main className='product-container' id="productContainer">
+    <section className="locations">
+      <main className='product-container' id="productContainer" style={{gridAutoRows: "auto"}}>
         <Suspense fallback={(
           <main className='errorDisplay'>
             <h2>Loading<span className="animated-dots"></span></h2>

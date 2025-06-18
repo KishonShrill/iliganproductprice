@@ -1,6 +1,20 @@
 @import 'utils/loading';
 @import 'utils/variables';
 @import 'utils/mixins';
+@import 'components/product-container';
+
+section.locations {
+  max-width: 100%;
+//   height: calc(100vh - 66px);
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  overflow-y: auto;
+  box-shadow: none;
+  background-color: #f8f8f8;
+}
 
 .location {    
     &-container {

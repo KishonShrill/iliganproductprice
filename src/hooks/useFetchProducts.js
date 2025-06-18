@@ -2,16 +2,17 @@ import { useQuery } from 'react-query'
 import axios from 'axios'
 
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
-
-const DATBASE_URL = DEVELOPMENT
-  ? `http://localhost:5000/api/products`
-  : "https://iliganproductprice-mauve.vercel.app/api/products";
-
-const fetchURL = () => {
-  return axios.get(DATBASE_URL);
-}
+const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 
 const useFetchProducts = () => {
+  const DATBASE_URL = DEVELOPMENT
+    ? `http://${LOCALHOST}:5000/api/products`
+    : "https://iliganproductprice-mauve.vercel.app/api/products";
+
+  const fetchURL = () => {
+    return axios.get(DATBASE_URL);
+  }
+
   return useQuery(
     'fetchedProducts_Admin',
     fetchURL,

@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from "react";
+import PropTypes from "prop-types";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import Cookies from "universal-cookie";
 
@@ -147,6 +148,19 @@ function DevModeComponent({token, openMenu}) {
     )
   );
 }
+
+// 👇 Give the component a name for debugging purposes
+Header.displayName = "Header"
+
+// 👇 Define PropTypes
+Header.propTypes = {
+  token: PropTypes.string,
+}
+DevModeComponent.propTypes = {
+  token: PropTypes.string,
+  openMenu: PropTypes.func,
+}
+
 
 const DevMode = React.memo(DevModeComponent)
 // I swear, I feel like I am over engineering my web portfolio just to make it run faster -w-

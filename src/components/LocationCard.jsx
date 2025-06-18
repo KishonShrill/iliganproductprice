@@ -28,9 +28,7 @@ LocationCard.displayName = "LocationCard";
 LocationCard.propTypes = {
   item: PropTypes.shape({
     _id: PropTypes.string.isRequired,
-    location: PropTypes.shape({
-        name: PropTypes.string.isRequired,
-    }),
+    location_name: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
     is_open_24hrs: PropTypes.bool,
   }).isRequired,
