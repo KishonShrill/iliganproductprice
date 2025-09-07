@@ -1,5 +1,9 @@
-@import 'utils/variables';
-@import 'utils/loading';
+@use 'utils/variables' as *;
+@use 'utils/loading';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
 // .inter-<uniquifier> {
 //   font-family: "Inter", sans-serif;
@@ -45,6 +49,7 @@
 
 html {
   background-color: $light-washed;
+  scroll-behavior: smooth;
 }
 
 main {
@@ -71,14 +76,20 @@ a {
   text-decoration: none;
 }
 
-// #navigation{
-//   margin-top: 5%;
-//   margin-bottom: 5%;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
 
-//   a {
-//     margin-right: 10%;
-//     :last-child{
-//       margin-right: 0;
-//     }
-//   }
-// }
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ee4d2d;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d63916;
+}

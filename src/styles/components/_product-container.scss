@@ -1,3 +1,4 @@
+@use '../utils/variables' as *;
 @use '../utils/mixins';
 
 .product {
@@ -11,7 +12,7 @@
     align-items: start;
     gap: 20px;
 
-    @include respond-max(sm) {
+    @include mixins.respond-max(sm) {
       grid-template-columns: 1fr 1fr;
     }
   }

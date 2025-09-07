@@ -1,6 +1,6 @@
-@import 'utils/loading';
-@import 'utils/variables';
-@import 'utils/mixins';
+@use 'utils/loading';
+@use 'utils/variables' as *;
+@use 'utils/mixins' as *;
 @import 'components/product-container';
 
 section.locations {

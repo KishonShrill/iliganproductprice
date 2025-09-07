@@ -1,6 +1,6 @@
+@use 'utils/variables' as *;
+@use 'utils/mixins' as *;
 @import 'utils/loading';
-@import 'utils/variables';
-@import 'utils/mixins';
 @import 'utils/pagination';
 @import 'components/searchbar';
 @import 'components/product-container';
