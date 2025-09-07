@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, Suspense } from "react";
 import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
-import useFetchProductsByLocation from '../hooks/useFetchProductsByLocation'
+import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import Searchbar from "../components/Searchbar";
@@ -15,13 +15,6 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   const [reciept, setReceipt] = useState("100%")
   const [active, setActive] = useState(false)
   const [search, setSearch] = useState('')
-  // const storedCart = localStorage.getItem('cart');
-  // const [cart, setCart] = useState(() => {
-  //   return storedCart ? JSON.parse(storedCart) : {};
-  // })
-
-  // cartItems = JSON.parse(storedCart)
-  // console.log(JSON.stringify(cartItems))
 
   const cartRef = useRef(null)
   const searchbarRef = useRef(null)
@@ -31,10 +24,9 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   const segments = path.split('/');  // ["", "locations", "link"]
   const location = segments[segments.length - 1];  // "link"
 
-  const { isLoading, data, isError, error, isFetching } = useFetchProductsByLocation(location)
+  const { isLoading, data, isError, error, isFetching } = useFetchListingsByLocation(location)
   // console.log({ isLoading, isFetching })
 
-  
   // Update Cart for localStorage to persist
   useEffect(() => {
     if (cartItems?.cart) {
@@ -43,8 +35,6 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
       localStorage.setItem('cart', JSON.stringify(cartItems));
     }
   }, [cartItems]);
-
-  
 
   // Remove Item from <Cart /> on Element Click
   useEffect(() => {
@@ -94,7 +84,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   const filteredData = data?.data.filter(item => {
     const matchesSearch = 
       searchTerm === '' ||
-      item.product_name?.toLowerCase().includes(searchTerm);
+      item.product.product_name?.toLowerCase().includes(searchTerm);
       
     return matchesSearch;
   }) || [];

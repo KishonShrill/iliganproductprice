@@ -4,22 +4,24 @@ import { Link } from "react-router-dom";
 
 import StoreLogo from './StoreLogo.jsx'
 
-const LocationCard = React.memo(({ item }) => (
-    <Link className="location-container" to={`/location/${item._id}`}
-        data-location-id={item._id}
-        data-location-name={item.location_name}
-        data-location-type={item.type}
-        data-location-24h={item.is_open_24hrs}
-    >
-        <div>
-            <StoreLogo storeName={item.location_name} />
-        </div>
-        <div>
-            <p className="location__details">{item.location_name}</p>
-            <p className="location__details">{item.type}</p>
-        </div>
-    </Link>
-));
+const LocationCard = React.memo(({ item }) => {
+    return (
+        <Link className="location-container" to={`/location/${item._id}`}
+            data-location-id={item._id}
+            data-location-name={item.location_name}
+            data-location-type={item.type}
+            data-location-24h={item.is_open_24hrs}
+        >
+            <div>
+                <StoreLogo storeName={item.location_name} />
+            </div>
+            <div>
+                <p className="location__details">{item.location_name.split(' - ')[1]}</p>
+                <p className="location__details-tag">{item.type}</p>
+            </div>
+        </Link>
+    );
+});
 
 // ✅ Display name for React DevTools
 LocationCard.displayName = "LocationCard";
@@ -34,4 +36,4 @@ LocationCard.propTypes = {
   }).isRequired,
 };
 
-export default React.memo(LocationCard);
+export default LocationCard;

@@ -1,15 +1,16 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const ProductCard = ({ item, onAdd }) => (
   <div className="product-card" 
     data-product-id={item._id}
-    data-product-name={item.product_name}
+    data-product-name={item.product.product_name}
     data-product-price={item.updated_price}
   >
-    {item.imageUrl ? (
+    {item.product.imageUrl ? (
       <div className="relative">
-        <img className="product-image" src={item.imageUrl} alt={`${item.product_id} Photo`} />
+        <LazyLoadImage className="product-image" src={item.product.imageUrl} alt={`${item.product.product_id} Photo`} />
         <div className="product-info-inline absolute">{`🌏 ${item.location.name}`}</div>
       </div>
     ) : (
@@ -19,7 +20,7 @@ const ProductCard = ({ item, onAdd }) => (
       </div>
     )}
     <div className="product-details">
-      <div className="product-name">{item.product_name}</div>
+      <div className="product-name">{item.product.product_name}</div>
       <div className="product-info">{`⏰ ${item.date_updated}`}</div>
       { item?.category?.catalog
         ? <div className="product-info">{`🌏 ${item?.category?.catalog}`}</div>
@@ -29,7 +30,7 @@ const ProductCard = ({ item, onAdd }) => (
       <button
         className="add-to-cart-btn"
         data-product-id={item._id}
-        data-product-name={item.product_name}
+        data-product-name={item.product.product_name}
         data-product-price={item.updated_price}
         data-product-location={item.location.name}
         onClick={onAdd}>
@@ -42,10 +43,12 @@ const ProductCard = ({ item, onAdd }) => (
 ProductCard.propTypes = {
   item: PropTypes.shape({
     _id: PropTypes.string,
-    product_id: PropTypes.string,
-    product_name: PropTypes.string,
+    product: PropTypes.shape({
+        product_id: PropTypes.string,
+        product_name: PropTypes.string,
+        imageUrl: PropTypes.string,
+    }),
     updated_price: PropTypes.number,
-    imageUrl: PropTypes.string,
     date_updated: PropTypes.string,
     location: PropTypes.shape({
       name: PropTypes.string,

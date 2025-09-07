@@ -22,6 +22,7 @@ section.locations {
         padding-bottom: 1rem;
         display: flex;
         flex-direction: column;
+        align-items: center;
         border-radius: 8px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         background-color: $light;
@@ -41,5 +42,13 @@ section.locations {
     }
     &__details {
         text-align: center;
+        &-tag {
+            padding: 2px 4px;
+            text-align: center;
+            font-size: 0.75rem;
+            border-radius: 8px;
+            color: #fff;
+            background-color: #f26f55;
+        }
     }
 }

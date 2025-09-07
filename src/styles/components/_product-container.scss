@@ -1,3 +1,5 @@
+@use '../utils/mixins';
+
 .product {
     &-container {
     width: 100%;
@@ -8,6 +10,10 @@
     justify-content: center;
     align-items: start;
     gap: 20px;
+
+    @include respond-max(sm) {
+      grid-template-columns: 1fr 1fr;
+    }
   }
 
   &-card {
