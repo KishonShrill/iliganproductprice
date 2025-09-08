@@ -11,6 +11,7 @@ import locationRoutes from './routes/locationRoutes.js';
 config();
 
 const PORT = process.env.PORT || 5000; // Choose your desired port
+const DEVELOPMENT = process.env.LOCALHOST || "localhost";
 
 // CORS Configuration
 const allowedOrigins = process.env.VITE_DEVELOPMENT
@@ -18,6 +19,7 @@ const allowedOrigins = process.env.VITE_DEVELOPMENT
         'http://localhost:5173',
         'http://localhost:4173',
         'http://192.168.1.10:5173',
+        `http://${DEVELOPMENT}:5173`,
         'https://productprice-iligan.vercel.app',
     ]
     : 'https://productprice-iligan.vercel.app';

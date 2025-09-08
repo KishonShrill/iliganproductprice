@@ -1,7 +1,14 @@
+@use 'sass:map';
+
 // Screen breakpoints for responsive design
 $breakpoints: (
   "phone": 700px,
-  "tablet": 950px
+  "tablet": 950px,
+  xs: 320px,
+  sm: 576px,
+  md: 768px,
+  lg: 1024px,
+  xl: 1440px
 );
 
 $directions: (
@@ -13,8 +20,8 @@ $directions: (
 );
 
 @mixin respond-max($breakpoint) {
-  @if map-has-key($breakpoints, $breakpoint) {
-    @media (max-width: map-get($breakpoints, $breakpoint)) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @media (max-width: map.get($breakpoints, $breakpoint)) {
       @content;
     }
   } @else {
@@ -23,8 +30,8 @@ $directions: (
 }
 
 @mixin respond-min($breakpoint) {
-  @if map-has-key($breakpoints, $breakpoint) {
-    @media (min-width: map-get($breakpoints, $breakpoint)) {
+  @if map.has-key($breakpoints, $breakpoint) {
+    @media (min-width: map.get($breakpoints, $breakpoint)) {
       @content;
     }
   } @else {

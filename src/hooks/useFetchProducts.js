@@ -6,7 +6,7 @@ const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 
 const useFetchProducts = () => {
   const DATBASE_URL = DEVELOPMENT
-    ? `http://${LOCALHOST}:5000/api/products`
+    ? `http://${LOCALHOST}:5000/api/listings`
     : "https://iliganproductprice-mauve.vercel.app/api/products";
 
   const fetchURL = () => {

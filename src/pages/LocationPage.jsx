@@ -8,8 +8,7 @@ import '../styles/locations.scss'
 export default function LocationPage() {
   document.title = "Locations - Budget Buddy"
 
-  const { isLoading, data, isError, error, isFetching } = useFetchLocations()
-  // console.log({ isLoading, isFetching })
+  const { isLoading, data, isError, error, isFetching } = useFetchLocations();
 
   // Display when fetched elements are empty or is loading...
   if (isLoading || isFetching) {return(
@@ -23,11 +22,11 @@ export default function LocationPage() {
     </main>
   )}
 
-  console.log("Data:" + JSON.stringify(data.data))
+  // console.log("Data:" + JSON.stringify(data.data))
 
   return (
     <section className="locations">
-      <main className='product-container' id="productContainer" style={{gridAutoRows: "auto"}}>
+      <main className='product-container' id="productContainer">
         <Suspense fallback={(
           <main className='errorDisplay'>
             <h2>Loading<span className="animated-dots"></span></h2>

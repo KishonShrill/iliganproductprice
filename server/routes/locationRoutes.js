@@ -2,7 +2,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 
-import { Product, Location } from '../models/models.js'; // adjust path
+import { Listing, Location } from '../models/models.js'; // adjust path
 
 const router = express.Router();
 
@@ -26,7 +26,7 @@ router.get('/api/location/:locationId', async (req, res) => {
     const locationObjectId = new mongoose.Types.ObjectId(locationId);
 
     try {
-        const products = await Product.aggregate([
+        const products = await Listing.aggregate([
             {
                 $match: {
                     "location.id": locationObjectId
@@ -35,11 +35,11 @@ router.get('/api/location/:locationId', async (req, res) => {
             { $sort: { "product_id": -1 } },
             {
                 $project: {
-                    "product_id": true,
-                    "product_name": true,
+                    "product.product_id": true,
+                    "product.product_name": true,
                     "updated_price": true,
                     "date_updated": true,
-                    "imageUrl": true,
+                    "product.imageUrl": true,
                     "location.name": true,
                     "category.list": true,
                     "category.name": true,

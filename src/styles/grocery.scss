@@ -1,6 +1,6 @@
+@use 'utils/variables' as *;
+@use 'utils/mixins' as *;
 @import 'utils/loading';
-@import 'utils/variables';
-@import 'utils/mixins';
 @import 'utils/pagination';
 @import 'components/searchbar';
 @import 'components/product-container';
@@ -10,7 +10,7 @@ section.grocery {
   max-width: 100%;
   height: calc(100vh - #{$height-header} - #{$height-searchbar});
   margin: 0;
-  padding: 20px;
+  padding: 0px 20px 20px;
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -139,23 +139,7 @@ section.grocery {
   }
 }
 
-@include respond-max("phone") {
-  section.grocery {
-    padding: 12px;
-  }
-  
-  .product {
-    &-container {
-      margin-bottom: 5.5rem;
-      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      gap: 12px;
-    }
-    &-name {
-      height: 32px;
-      font-size: 0.8rem;
-    }
-  } 
-  
+@include respond-max("phone") {  
   .cart {
     &-summary {
       position: fixed; /* Make it sticky */
@@ -182,6 +166,7 @@ section.grocery {
       0px 0px 23px rgba(0, 0, 0, 0.09),
       0px 0px 41px rgba(0, 0, 0, 0.12),
       0px 0px 64px rgba(0, 0, 0, 0.15);
+      background-color: #fff;
       cursor: pointer;
       z-index: 5;
 

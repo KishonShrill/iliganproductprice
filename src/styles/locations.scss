@@ -1,11 +1,10 @@
-@import 'utils/loading';
-@import 'utils/variables';
-@import 'utils/mixins';
+@use 'utils/loading';
+@use 'utils/variables' as *;
+@use 'utils/mixins' as *;
 @import 'components/product-container';
 
 section.locations {
   max-width: 100%;
-//   height: calc(100vh - 66px);
   margin: 0;
   padding: 20px;
   display: flex;
@@ -18,13 +17,21 @@ section.locations {
 
 .location {    
     &-container {
-        height: auto;
-        padding-bottom: 1rem;
-        display: flex;
-        flex-direction: column;
+        min-height: 1px;
+        height: 100%;
+        display: grid;
+        grid-template-rows: 3fr 1fr;
+        justify-content: start;
         border-radius: 8px;
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
         background-color: $light;
+
+        @include respond-max(sm) {
+          grid-template-columns: 1fr 1fr;
+          grid-template-rows: 180px;
+          grid-auto-rows: 180px;
+          align-items: center;
+        }
 
         &:hover .location__details {
             color: black;
@@ -35,11 +42,19 @@ section.locations {
     &__image {
         width: 100%;
         max-width: 250px;
-        padding: 1rem;
+        height: 100%;
         object-fit: contain;
         aspect-ratio: 1/1;
     }
     &__details {
         text-align: center;
+        &-tag {
+            padding: 2px 1rem;
+            text-align: center;
+            font-size: 0.75rem;
+            border-radius: 8px;
+            color: #fff;
+            background-color: #f26f55;
+        }
     }
 }

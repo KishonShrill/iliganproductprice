@@ -10,6 +10,7 @@ lerna-debug.log*
 dist
 dist-ssr
 coverage/
+stats.html
 # Common Environment/Local Settings
 node_modules
 *.local
