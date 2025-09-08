@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Package } from "lucide-react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 
 const ProductCard = ({ item, onAdd }) => (
@@ -9,13 +10,15 @@ const ProductCard = ({ item, onAdd }) => (
     data-product-price={item.updated_price}
   >
     {item.product.imageUrl ? (
-      <div className="relative">
+      <div className="relative h-full">
         <LazyLoadImage className="product-image" src={item.product.imageUrl} alt={`${item.product.product_id} Photo`} />
         <div className="product-info-inline absolute">{`🌏 ${item.location.name}`}</div>
       </div>
     ) : (
-      <div className="relative">
-        <div className="product-image-placeholder" style={{ backgroundColor: "#ffccaa" }}></div>
+      <div className="relative h-full">
+        <div className="product-image-placeholder" style={{ backgroundColor: "#ffccaa" }}>
+            <Package className="w-16 h-16 text-gray-400" />
+        </div>
         <div className="product-info-inline absolute">{`🌏 ${item.location.name}`}</div>
       </div>
     )}

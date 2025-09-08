@@ -1,7 +1,9 @@
-import { scan } from 'react-scan'
-
 // --- React Query Setup ---
-scan({ enabled: import.meta.env.VITE_SCAN === "true", });
+if (import.meta.env.VITE_SCAN === "true") {
+  import('react-scan').then(({ scan }) => {
+    scan({ enabled: true });
+  });
+}
 
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";

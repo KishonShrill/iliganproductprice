@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
-import Hero from '../components/homepage/Hero';
-import Features from '../components/homepage/Features';
-import About from '../components/homepage/About';
-import HowItWorks from '../components/homepage/HowItWorks';
-import Footer from '../components/homepage/Footer';
+import { lazy } from 'react';
+const Hero = lazy(() => import("../components/homepage/Hero"));
+const Features = lazy(() => import("../components/homepage/Features"));
+const About = lazy(() => import("../components/homepage/About"));
+const HowItWorks = lazy(() => import("../components/homepage/HowItWorks"));
+const Footer = lazy(() => import("../components/homepage/Footer"));
 import '../styles/homepage.scss'
 
 export default function HomePage() {

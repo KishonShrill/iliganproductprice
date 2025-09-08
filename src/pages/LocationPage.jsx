@@ -26,7 +26,7 @@ export default function LocationPage() {
 
   return (
     <section className="locations">
-      <main className='product-container' id="productContainer" style={{gridAutoRows: "auto"}}>
+      <main className='product-container' id="productContainer">
         <Suspense fallback={(
           <main className='errorDisplay'>
             <h2>Loading<span className="animated-dots"></span></h2>

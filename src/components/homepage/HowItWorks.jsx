@@ -40,7 +40,7 @@ const HowItWorks = () => {
         </div>
 
         {/* Steps */}
-        <div className="relative">
+        <div className="relative px-4">
           {/* Connection Lines */}
           <div className="hidden lg:block absolute top-24 left-1/2 transform -translate-x-1/2 w-full max-w-4xl">
             <div className="flex justify-between items-center">
@@ -153,7 +153,7 @@ const HowItWorks = () => {
             </div>
           </div>
 
-          <div className="text-center mt-8">
+          <div className="text-center mt-10 mb-4">
             <Link to="/locations" className="bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25">
               Try Budget Buddy Now
             </Link>

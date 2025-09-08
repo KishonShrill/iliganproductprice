@@ -12,10 +12,10 @@ const LocationCard = React.memo(({ item }) => {
             data-location-type={item.type}
             data-location-24h={item.is_open_24hrs}
         >
-            <div>
+            <div className="h-full w-full overflow-hidden">
                 <StoreLogo storeName={item.location_name} />
             </div>
-            <div>
+            <div className="px-6">
                 <p className="location__details">{item.location_name.split(' - ')[1]}</p>
                 <p className="location__details-tag">{item.type}</p>
             </div>

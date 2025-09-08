@@ -8,10 +8,7 @@ const Footer = () => {
       { name: 'How It Works', href: '#how-it-works' },
     ],
     company: [
-      { name: 'About Us', href: '#about' },
-      { name: 'Our Mission', href: '#' },
-      { name: 'Team', href: '#' },
-      { name: 'Careers', href: '#' }
+      { name: 'Developer', href: 'https://chriscent.is-a.dev/' },
     ],
     resources: [
       { name: 'Help Center', href: 'https://github.com/KishonShrill/iliganproductprice/discussions' },
@@ -21,8 +18,7 @@ const Footer = () => {
     ],
     legal: [
       { name: 'Privacy Policy', href: '#' },
-      { name: 'Terms of Service', href: '#' },
-      { name: 'Cookie Policy', href: '#' },
+      { name: 'Terms of Service', href: '#'},
       { name: 'Accessibility', href: '#' }
     ]
   };
@@ -41,9 +37,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <div className="flex items-center space-x-2 mb-6 group">
-              <div className="bg-gradient-to-br from-[#ee4d2d] to-[#ff6b47] p-2 rounded-xl group-hover:scale-110 transition-transform duration-300">
-                <DollarSign className="w-6 h-6 text-white" />
-              </div>
+              <img src="/budgetbuddy.svg" />
               <span className="text-xl font-bold">Budget Buddy</span>
             </div>
             
@@ -91,7 +85,7 @@ const Footer = () => {
             </div>
 
             <div>
-              <h3 className="font-semibold mb-4 text-white">Company</h3>
+              <h3 className="font-semibold mb-4 text-white">Author</h3>
               <ul className="space-y-3">
                 {footerLinks.company.map((link, index) => (
                   <li key={index}>
