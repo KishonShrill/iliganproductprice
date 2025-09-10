@@ -25,6 +25,10 @@ const ConsolePage = lazy(() => import("./pages/Console.jsx"))
 const CRUDPage = lazy(() => import('./components/CRUD.jsx'));
 const NoPage = lazy(() => import("./pages/NoPage.jsx"))
 
+const ConsoleProductsPage = lazy(() => import("./pages/ConsoleProductsPage.jsx"))
+const ConsoleListingsPage = lazy(() => import("./pages/ConsoleListingsPage.jsx"))
+const ConsoleLocationsPage = lazy(() => import("./pages/ConsoleLocationsPage.jsx"))
+
 const queryClient = new QueryClient();
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 const cookies = new Cookies();
@@ -52,12 +56,16 @@ function App() {
                 <Route path="location/*" element={<Suspense fallback={renderLoading}><GroceryPage /></Suspense>} />
                 <Route path="receipt" element={<Suspense fallback={renderLoading}><ReceiptPage /></Suspense>} />
 
-                <Route path="dev-mode" element={token ? <Suspense fallback={renderLoading}><ConsolePage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/" replace />} />
                 <Route path='groceries/edit-item' element={token ? <CRUDPage debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
                 <Route path='groceries/add-item' element={token ? <CRUDPage debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
 
                 <Route path="authenticate" element={!token ? <Suspense fallback={renderLoading}><LoginPage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/dev-mode" replace />} />
                 <Route path="*" element={<NoPage />} />
+              </Route>
+              <Route path="/dev-mode" element={token ? <Suspense fallback={renderLoading}><ConsolePage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/" replace />} >
+                <Route index path="products" element={<Suspense fallback={renderLoading}><ConsoleProductsPage debugMode={DEVELOPMENT} /></Suspense>} />
+                <Route path="locations" element={<Suspense fallback={renderLoading}><ConsoleLocationsPage debugMode={DEVELOPMENT} /></Suspense>} />
+                <Route path="listings" element={<Suspense fallback={renderLoading}><ConsoleListingsPage debugMode={DEVELOPMENT} /></Suspense>} />
               </Route>
             </Routes>
           </Provider>
