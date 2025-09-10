@@ -1,5 +1,13 @@
+@use 'utils/mixins';
 @import 'utils/loading';
 @import 'utils/pagination';
+
+.desktop {
+  display: inherit;
+  @include mixins.respond-max(sm) {
+    display: none !important;
+  }
+}
 
 .crud-container {
     max-width: 1400px;
@@ -94,53 +102,32 @@
 }
 
 
-table {
-    width: 100%;
-    /* Remove space between borders */
-    margin-top: 20px;
-    border-collapse: collapse;
-}
-
-th,
-td {
-    padding: 12px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-    /* Horizontal border */
-}
-
-th {
-    /* Light grey background for headers */
-    color: #555;
-    font-weight: bold;
-    background-color: #f2f2f2;
-}
-
-tr:hover {
-    background-color: #f9f9f9;
-    /* Highlight row on hover */
-}
-
-th:nth-child(1) {
-    width: 120px;
-}
-
-th:nth-child(2) {
-    width: 30%;
-}
-
-th:nth-child(3) {
-    width: 15%;
-}
-
-th:nth-child(6) {
-    width: 150px;
-}
-
-th:nth-child(7) {
-    width: 150px;
-}
-
+//table {
+//    width: 100%;
+//    /* Remove space between borders */
+////    margin-top: 20px;
+//    border-collapse: collapse;
+//}
+//
+//th,
+//td {
+//    padding: 12px;
+//    text-align: left;
+//    border-bottom: 1px solid #ddd;
+//    /* Horizontal border */
+//}
+//
+//th {
+//    /* Light grey background for headers */
+//    color: #555;
+//    font-weight: bold;
+//    background-color: #f2f2f2;
+//}
+//
+//tr:hover {
+//    background-color: #f9f9f9;
+//    /* Highlight row on hover */
+//}
 
 
 .actions {
@@ -218,21 +205,6 @@ th:nth-child(7) {
     .controls button {
         width: 100%;
         /* Make button full width */
-    }
-
-    th,
-    td {
-        padding: 10px;
-        font-size: 0.9em;
-    }
-
-    th:nth-child(1) {
-        width: 65px;
-    }
-
-    .actions button {
-        padding: 4px 8px;
-        font-size: 1em;
     }
 }
 
