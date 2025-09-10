@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from './ui/select';
 import { Search, Eye, Edit, Trash2, Filter } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { cn } from '../helpers/utils';
 
 export default function DataTable({
   fetched,
@@ -21,83 +21,103 @@ export default function DataTable({
   onDelete,
   onView,
 }) {
-  const [searchTerm, setSearchTerm] = useState('');
-//  const [statusFilter, setStatusFilter] = useState({
-  const [filtersState, setFiltersState] = useState({
-      status: 'all',
-  });
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+    const [searchTerm, setSearchTerm] = useState('');
+    const [filtersState, setFiltersState] = useState({
+        status: 'all',
+    });
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
-  // Filter data based on search term and status
-  const filteredData = data.filter((item) => {
-    const matchesSearch = Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // Filter data based on search term and status
+    const filteredData = data.filter((item) => {
+        const matchesSearch = Object.values(item).some((value) =>
+            String(value).toLowerCase().includes(searchTerm.toLowerCase())
+        );
 
-    // Go through each filter
-    const matchesFilters = Object.entries(filtersState).every(([key, val]) => {
-        if (val === "all") return true;
-        if (key === "status") {
-            return item.status === val;
-        }
+        // Go through each filter
+        const matchesFilters = Object.entries(filtersState).every(([key, val]) => {
+            if (val === "all") return true;
+            if (key === "status") {
+                return item.status === val;
+            }
 
-        // Example for Category (adjust key to match your data)
-        if (key === "Category") {
-            return item.category_name === val;
-        }
+            // Example for Category (adjust key to match your data)
+            if (key === "Category") {
+                return item.category_name === val;
+            }
+            if (key === "Type") {
+                return item.type === val;
+            }
 
-        return true; // fallback
-      });
-
-    return matchesSearch && matchesFilters;
-  });
-
-  // Pagination
-  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
-
-  const formatValue = (value, key) => {
-    if (key === 'price' || key === 'product_price' && typeof value === 'number') {
-      return `$${value.toFixed(2)}`;
-    }
-    if (key === 'status') {
-      const statusColors = {
-        active: 'bg-green-100 text-green-800',
-        inactive: 'bg-red-100 text-red-800',
-        draft: 'bg-yellow-100 text-yellow-800',
-        published: 'bg-green-100 text-green-800',
-        archived: 'bg-gray-100 text-gray-800',
-      };
-      return (
-        <Badge className={cn('capitalize', statusColors[value] || 'bg-gray-100 text-gray-800')}>
-          {value}
-        </Badge>
-      );
-    }
-    if (key === 'createdAt' || key === 'date_updated') {
-      return new Date(value).toLocaleDateString();
-    }
-    return value;
-  };
-
-    const filters = useMemo(() => {
-        if (fetched !== "products" || !data) return [];
-
-        const categorySet = new Set();
-
-        data.forEach(item => {
-            if (item.category_name) categorySet.add(item.category_name);
+            return true; // fallback
         });
 
-        return [
-            {
-                label: "Category",
-                values: Array.from(categorySet),
-            },
-        ];
+        return matchesSearch && matchesFilters;
+    });
+
+    // Pagination
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+
+    const formatValue = (value, key) => {
+        if (key === 'price' || key === 'product_price' && typeof value === 'number') {
+            return `$${value.toFixed(2)}`;
+        }
+        if (key === 'status') {
+            const statusColors = {
+                active: 'bg-green-100 text-green-800',
+                inactive: 'bg-red-100 text-red-800',
+                draft: 'bg-yellow-100 text-yellow-800',
+                published: 'bg-green-100 text-green-800',
+                archived: 'bg-gray-100 text-gray-800',
+            };
+            return (
+                <Badge className={cn('capitalize', statusColors[value] || 'bg-gray-100 text-gray-800')}>
+                {value}
+                </Badge>
+            );
+        }
+        if (key === 'createdAt' || key === 'date_updated') {
+            return new Date(value).toLocaleDateString();
+        }
+        return value;
+    };
+
+    const filters = useMemo(() => {
+        if (!data) return [];
+
+        if (fetched === "products") {
+            const categorySet = new Set();
+            data.forEach(item => {
+                if (item.category_name) categorySet.add(item.category_name);
+            });
+
+            return [
+                {
+                    label: "Category",
+                    values: Array.from(categorySet),
+                },
+            ];
+        }
+
+        if (fetched === "locations") {
+            const typeSet = new Set();
+            data.forEach(item => {
+                if (item.type) typeSet.add(item.type);
+            });
+
+            return [
+                {
+                    label: "Type",
+                    values: Array.from(typeSet),
+                },
+            ];
+        }
+
+        return [];
     }, [fetched, data]);
+
 
   return (
     <div className="space-y-6">
@@ -114,22 +134,22 @@ export default function DataTable({
             />
           </div>
           <Select 
-            value={filtersState.status} 
+            value={filtersState['status']} 
             onValueChange={(val) => 
-                setFiltersState(prev => ({ ...prev, [filtersState.status]: val}))
+                setFiltersState(prev => ({ ...prev, 'status': val}))
             }
           >
-            <SelectTrigger className="w-32 select-none desktop">
+            <SelectTrigger className="w-36 select-none desktop">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent className="bg-white select-none">
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="inactive">Inactive</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="published">Published</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
+            <SelectContent className="bg-white select-none cursor-pointer">
+              <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="all">All Status</SelectItem>
+              <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="active">Active</SelectItem>
+              <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="inactive">Inactive</SelectItem>
+              <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="draft">Draft</SelectItem>
+              <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="published">Published</SelectItem>
+              <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="archived">Archived</SelectItem>
             </SelectContent>
           </Select>
         {filters.map(filter => (
@@ -143,11 +163,16 @@ export default function DataTable({
             <SelectTrigger className="w-[200px] select-none desktop">
             <SelectValue placeholder={`Select ${filter.label}`} />
           </SelectTrigger>
-            <SelectContent className="bg-white">
-                <SelectItem value="all">All {filter.label}</SelectItem>
+            <SelectContent className="bg-white select-none cursor-pointer">
+                <SelectItem 
+                    className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" 
+                    value="all">All {filter.label}
+                </SelectItem>
                 {filter.values.map(value => (
-                <SelectItem key={value} value={value}>
-                    {value}
+                <SelectItem 
+                    className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold"
+                    key={value} 
+                    value={value}> {value}
                 </SelectItem>
                 ))}
             </SelectContent>
@@ -161,7 +186,7 @@ export default function DataTable({
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden md:block bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="hidden md:block bg-white rounded-lg border border-gray-200 overflow-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
