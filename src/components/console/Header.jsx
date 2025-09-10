@@ -11,10 +11,12 @@ export default function Header({ title, actionLabel, onAction }) {
           Manage your {title.toLowerCase()} and their settings
         </p>
       </div>
+      { onAction &&
       <Button onClick={onAction} className="bg-blue-600 hover:bg-blue-700 text-white">
         <Plus className="h-4 w-4 mr-2" />
         {actionLabel}
       </Button>
+      }
     </div>
   );
 }

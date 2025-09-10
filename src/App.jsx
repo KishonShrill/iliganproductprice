@@ -21,10 +21,10 @@ const LocationPage = lazy(() => import("./pages/LocationPage.jsx"))
 const GroceryPage = lazy(() => import("./containers/GroceryPageContainer.jsx"))
 const ReceiptPage = lazy(() => import("./pages/ReceiptPage.jsx"))
 const LoginPage = lazy(() => import("./pages/LoginPage.jsx"))
-const ConsolePage = lazy(() => import("./pages/Console.jsx"))
 const CRUDPage = lazy(() => import('./components/CRUD.jsx'));
 const NoPage = lazy(() => import("./pages/NoPage.jsx"))
 
+const ConsoleLayout = lazy(() => import("./components/console/ConsoleLayout.jsx"))
 const ConsoleProductsPage = lazy(() => import("./pages/ConsoleProductsPage.jsx"))
 const ConsoleListingsPage = lazy(() => import("./pages/ConsoleListingsPage.jsx"))
 const ConsoleLocationsPage = lazy(() => import("./pages/ConsoleLocationsPage.jsx"))
@@ -62,7 +62,7 @@ function App() {
                 <Route path="authenticate" element={!token ? <Suspense fallback={renderLoading}><LoginPage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/dev-mode" replace />} />
                 <Route path="*" element={<NoPage />} />
               </Route>
-              <Route path="/dev-mode" element={token ? <Suspense fallback={renderLoading}><ConsolePage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/" replace />} >
+              <Route path="/dev-mode" element={token ? <Suspense fallback={renderLoading}><ConsoleLayout debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/" replace />} >
                 <Route index path="products" element={<Suspense fallback={renderLoading}><ConsoleProductsPage debugMode={DEVELOPMENT} /></Suspense>} />
                 <Route path="locations" element={<Suspense fallback={renderLoading}><ConsoleLocationsPage debugMode={DEVELOPMENT} /></Suspense>} />
                 <Route path="listings" element={<Suspense fallback={renderLoading}><ConsoleListingsPage debugMode={DEVELOPMENT} /></Suspense>} />

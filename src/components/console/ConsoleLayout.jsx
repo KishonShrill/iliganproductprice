@@ -1,13 +1,10 @@
-import { useEffect, useState, useMemo, lazy } from "react";
+import { lazy } from "react";
 import PropTypes from "prop-types";
-import { Link, Outlet } from "react-router-dom";
-import axios from "axios";
+import { Outlet } from "react-router-dom";
 import Cookies from "universal-cookie";
-import useFetchProducts from "../hooks/useFetchProducts";
-import Pagination from "../components/Pagination";
-import '../styles/admin_console.scss'
+import '../../styles/admin_console.scss'
 
-const Sidebar = lazy(() => import("../components/console/Sidebar"));
+const Sidebar = lazy(() => import("./Sidebar"));
 
 const cookies = new Cookies();
 const token = cookies.get("TOKEN");

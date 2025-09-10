@@ -58,8 +58,12 @@ const locationSchema = new mongoose.Schema({
         open: String,   // Format: "HH:mm"
         close: String,  // Format: "HH:mm"
     },
-    is_open_24hrs: { type: Boolean, default: false },
-    type: String,
+    is_open_24hrs: { 
+        type: String,
+        enum: ["active", "inactive"],
+        default: "inactive" 
+    },
+    type: String
 });
 
 // Listing Schema
