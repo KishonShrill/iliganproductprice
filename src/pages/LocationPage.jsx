@@ -1,7 +1,6 @@
 import { Suspense } from "react";
 import useFetchLocations from '../hooks/useFetchLocations';
 import LocationCard from "../components/LocationCard";
-// import '../styles/grocery.scss'
 import '../styles/locations.scss'
 
 
@@ -22,8 +21,6 @@ export default function LocationPage() {
     </main>
   )}
 
-  // console.log("Data:" + JSON.stringify(data.data))
-
   return (
     <section className="locations">
       <main className='product-container' id="productContainer">
@@ -33,7 +30,7 @@ export default function LocationPage() {
           </main>
         )}>
           {data
-          ? data?.data.map((item) => (
+          ? data?.map((item) => (
             <LocationCard 
               key={item._id} 
               item={item} 

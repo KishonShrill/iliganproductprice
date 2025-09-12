@@ -399,5 +399,5 @@ DataTable.propTypes = {
     columns: PropTypes.array.isRequired,
     onEdit: PropTypes.func,
     onDelete: PropTypes.func,
-    onView: PropTypes.func,
+onView: PropTypes.func,
 }

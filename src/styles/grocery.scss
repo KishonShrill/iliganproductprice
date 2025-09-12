@@ -1,9 +1,9 @@
 @use 'utils/variables' as *;
 @use 'utils/mixins' as *;
-@import 'utils/loading';
-@import 'utils/pagination';
-@import 'components/searchbar';
-@import 'components/product-container';
+@use 'utils/loading';
+@use 'utils/pagination';
+@use 'components/searchbar';
+@use 'components/product-container';
 
 
 section.grocery {
