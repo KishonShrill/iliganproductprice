@@ -1,5 +1,5 @@
-@import '../utils/mixins';
-@import '../utils/variables';
+@use '../utils/mixins' as *;
+@use '../utils/variables' as *;
 
 $border-radius: 7px;
 

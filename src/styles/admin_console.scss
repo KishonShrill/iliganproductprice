@@ -1,6 +1,6 @@
 @use 'utils/mixins';
-@import 'utils/loading';
-@import 'utils/pagination';
+@use 'utils/loading';
+@use 'utils/pagination';
 
 .desktop {
   display: inherit;

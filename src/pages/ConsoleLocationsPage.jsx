@@ -12,7 +12,7 @@ const columns = [
 ];
 
 export default function Locations() {
-
+    document.title = "BB:Console - Locations"
     const { isLoading, data, isError, error } = useFetchLocations()
 
     const normalizedData = data?.map(item => ({

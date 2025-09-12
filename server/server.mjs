@@ -30,15 +30,25 @@ const corsOptions = {
         console.log("Non-browser: " + !origin);
 
         // Allow requests with no origin (like mobile apps or curl requests)
-        if (!origin) return callback(null, true);
-
-        // Check if the origin is in the allowed origins list
-        if (allowedOrigins.includes(origin)) {
-            // ✅ Origin is allowed
-            callback(null, true);
+        if (process.env.VITE_DEVELOPMENT) {
+            // ✅ Development: allow localhost, LAN IPs, curl, mobile apps
+            if (
+                !origin ||
+                allowedOrigins.includes(origin) ||
+                /^http:\/\/192\.168\.\d+\.\d+(:\d+)?$/.test(origin)
+            ) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS (Dev)"));
+            }
         } else {
-            // ❌ Origin not allowed
-            callback(new Error('Not allowed by CORS'));
+            // ✅ Production: strict allowedOrigins only
+            if (!origin) return callback(null, true);
+            if (allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error("Not allowed by CORS (Prod)"));
+            }
         }
     },
     methods: ["POST", "GET", "PUT", "DELETE"],

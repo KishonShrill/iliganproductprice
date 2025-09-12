@@ -25,7 +25,6 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   const location = segments[segments.length - 1];  // "link"
 
   const { isLoading, data, isError, error, isFetching } = useFetchListingsByLocation(location)
-  // console.log({ isLoading, isFetching })
 
   // Update Cart for localStorage to persist
   useEffect(() => {
@@ -40,15 +39,6 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   useEffect(() => {
     if (cartRef.current) {
       cartRef.current.onItemClick = (productId) => {
-        // setCart(prev => {
-        //   const updated = { ...prev };
-        //   if (updated[productId].quantity > 1) {
-        //     updated[productId].quantity -= 1;
-        //   } else {
-        //     delete updated[productId];
-        //   }
-        //   return updated;
-        // });
         removeCartItem(productId);
       };
     }
@@ -63,20 +53,6 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     const productLocation = el.dataset.productLocation;
 
     console.log(`${productId} | ${productName} | ${productPrice} | ${productLocation}`)
-    // setCart(prevCart => {
-    //   const updatedCart = {...prevCart}
-
-    //   if (updatedCart[productId]) {
-    //     updatedCart[productId].quantity += 1;
-    //   } else {
-    //     updatedCart[productId] = {
-    //       name: productName,
-    //       price: productPrice,
-    //       quantity: 1
-    //     };
-    //   }
-    //   return updatedCart;
-    // });
     addNewCartItem(productId, productName, productPrice, productLocation);
   }, []);
 

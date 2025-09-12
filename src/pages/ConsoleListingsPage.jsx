@@ -14,7 +14,7 @@ const columns = [
 ];
 
 export default function Listings() {
-
+  document.title = "BB:Console - Listings"
   return (
     <div className="flex-1 overflow-auto bg-gray-50">
       <Header

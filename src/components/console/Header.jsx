@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { Button } from '../ui/button';
-import { Plus } from 'lucide-react';
+import { Plus, LogOut } from 'lucide-react';
 
-export default function Header({ title, actionLabel, onAction }) {
+export default function Header({ title, actionLabel, onAction, onLogout }) {
   return (
     <div className="flex items-center justify-between border-b border-gray-200 bg-white px-8 py-6">
       <div>
@@ -12,10 +12,16 @@ export default function Header({ title, actionLabel, onAction }) {
         </p>
       </div>
       { onAction &&
-      <Button onClick={onAction} className="bg-blue-600 hover:bg-blue-700 text-white">
-        <Plus className="h-4 w-4 mr-2" />
-        {actionLabel}
-      </Button>
+        <Button onClick={onAction} className="bg-blue-600 hover:bg-blue-700 text-white">
+          <Plus className="h-4 w-4 md:mr-2" />
+          <span className='hidden md:inline'>{actionLabel}</span>
+        </Button>
+      }
+      { onLogout &&
+        <Button onClick={onLogout} className="bg-red-600 hover:bg-red-700 text-white">
+          <LogOut className='h-4 w-4 md:mr-2' />
+          <span className='hidden md:inline'>{actionLabel}</span>
+        </Button>
       }
     </div>
   );

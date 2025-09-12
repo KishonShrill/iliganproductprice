@@ -1,7 +1,7 @@
 @use 'utils/loading';
 @use 'utils/variables' as *;
 @use 'utils/mixins' as *;
-@import 'components/product-container';
+@use 'components/product-container';
 
 section.locations {
   max-width: 100%;

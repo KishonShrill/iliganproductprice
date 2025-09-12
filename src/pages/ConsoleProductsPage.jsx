@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/console/Header';
 import DataTable from '../components/DataTable';
 import useFetchProducts from '../hooks/useFetchProducts';
@@ -12,7 +13,8 @@ const columns = [
 ];
 
 export default function Products({ debugMode }) {
-
+    document.title = "BB:Console - Products"
+    const navigate = useNavigate();
     const { isLoading, data, isError, error } = useFetchProducts()
 
     const normalizedData = data?.map(item => ({
@@ -26,10 +28,7 @@ export default function Products({ debugMode }) {
     }))
     
     function add_product() {
-        let url = debugMode
-            ? 'http://localhost:5173/groceries/add-item'
-            : 'https://productprice-iligan.vercel.app/groceries/add-item';
-        window.location.href = url;
+        navigate('/dev-mode/products/new');
     }
 
     function edit_product(productId) {
@@ -46,7 +45,7 @@ export default function Products({ debugMode }) {
         actionLabel="Add Product"
         onAction={add_product}
       />
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         { isLoading 
             ? <h1>Loading...</h1> 
             : <DataTable
