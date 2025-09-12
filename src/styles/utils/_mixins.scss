@@ -1,4 +1,5 @@
 @use 'sass:map';
+@use 'sass:list';
 
 // Screen breakpoints for responsive design
 $breakpoints: (
@@ -42,16 +43,16 @@ $directions: (
 // Essential styles for designs
 @mixin border-stroke($val, $clr: black, $direction: '') {
   // Check for valid direction
-  @if not map-has-key($directions, $direction) {
+  @if not map.has-key($directions, $direction) {
     @error "Property `#{$direction}` must be top, right, bottom, left, or empty.";
   }
 
   // Check for valid border weight
-  @if not index(light medium heavy none, $val) {
+  @if not list.index(light medium heavy none, $val) {
     @error "Property `#{$val}` must be light, medium, heavy, or none.";
   }
 
-  $border-dir: map-get($directions, $direction);
+  $border-dir: map.get($directions, $direction);
 
   @if $val == light {
     border#{$border-dir}: 1px solid $clr;

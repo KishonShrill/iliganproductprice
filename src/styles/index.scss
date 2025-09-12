@@ -67,7 +67,7 @@ main {
 .phone-block {display: none;}
 
 @media screen and (max-width: 700px) {
-  .computer {display: none;}
+  .computer {display: none !important;}
   .phone {display: flex;}
   .phone-block {display: block;}
 }

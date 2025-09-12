@@ -30,7 +30,10 @@ form {
         margin-bottom: 0.25rem;
         font-size: 0.8rem;
     }
-    & div .form-control {padding: 0.4rem 0.8rem;}
+    & div .form-control {
+        padding: 0.4rem 0.8rem;
+        border: 1px solid black;
+    }
     & button[type='submit'] {
         width: 100%;
         margin-top: 1.5rem;

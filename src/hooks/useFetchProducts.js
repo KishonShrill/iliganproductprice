@@ -6,7 +6,7 @@ const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 
 const useFetchProducts = () => {
   const DATBASE_URL = DEVELOPMENT
-    ? `http://${LOCALHOST}:5000/api/listings`
+    ? `http://${LOCALHOST}:5000/api/products`
     : "https://iliganproductprice-mauve.vercel.app/api/products";
 
   const fetchURL = () => {
@@ -23,10 +23,7 @@ const useFetchProducts = () => {
       refetchOnWindowFocus: false,//boolean or 'always' - self explanatory
       // refetshInterval: int millisec
       enabled: true, // - will control for automatic fetch
-      // select: (data) => {
-      //   const student
-      //   return student
-      // }
+      select: (res) => res.data,
     }
   )
 }

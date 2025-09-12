@@ -21,9 +21,14 @@ const LocationPage = lazy(() => import("./pages/LocationPage.jsx"))
 const GroceryPage = lazy(() => import("./containers/GroceryPageContainer.jsx"))
 const ReceiptPage = lazy(() => import("./pages/ReceiptPage.jsx"))
 const LoginPage = lazy(() => import("./pages/LoginPage.jsx"))
-const ConsolePage = lazy(() => import("./pages/Console.jsx"))
-const CRUDPage = lazy(() => import('./components/CRUD.jsx'));
 const NoPage = lazy(() => import("./pages/NoPage.jsx"))
+
+const ConsoleLayout = lazy(() => import("./components/console/ConsoleLayout.jsx"))
+const ConsoleDashboardPage = lazy(() => import("./pages/ConsoleDashboard.jsx"))
+const ConsoleProductsPage = lazy(() => import("./pages/ConsoleProductsPage.jsx"))
+const ConsoleListingsPage = lazy(() => import("./pages/ConsoleListingsPage.jsx"))
+const ConsoleLocationsPage = lazy(() => import("./pages/ConsoleLocationsPage.jsx"))
+const CRUDPage = lazy(() => import('./pages/console/ConsoleProductForm.jsx'));
 
 const queryClient = new QueryClient();
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
@@ -47,17 +52,22 @@ function App() {
           <Provider store={store}>
             <Routes>
               <Route path="/" element={<Header token={token} />}>
-                <Route index element={<Homepage />} />
+                <Route index element={<Suspense fallback={renderLoading}><Homepage /></Suspense>} />
                 <Route path="locations" element={<Suspense fallback={renderLoading}><LocationPage /></Suspense>} />
                 <Route path="location/*" element={<Suspense fallback={renderLoading}><GroceryPage /></Suspense>} />
                 <Route path="receipt" element={<Suspense fallback={renderLoading}><ReceiptPage /></Suspense>} />
 
-                <Route path="dev-mode" element={token ? <Suspense fallback={renderLoading}><ConsolePage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/" replace />} />
-                <Route path='groceries/edit-item' element={token ? <CRUDPage debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
-                <Route path='groceries/add-item' element={token ? <CRUDPage debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />} />
 
                 <Route path="authenticate" element={!token ? <Suspense fallback={renderLoading}><LoginPage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/dev-mode" replace />} />
                 <Route path="*" element={<NoPage />} />
+              </Route>
+              <Route path="/dev-mode" element={token ? <Suspense fallback={renderLoading}><ConsoleLayout debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/" replace />} >
+                <Route index element={<Suspense fallback={renderLoading}><ConsoleDashboardPage debugMode={DEVELOPMENT} /></Suspense>} />
+                <Route path="products" element={<Suspense fallback={renderLoading}><ConsoleProductsPage debugMode={DEVELOPMENT} /></Suspense>} />
+                <Route path="locations" element={<Suspense fallback={renderLoading}><ConsoleLocationsPage debugMode={DEVELOPMENT} /></Suspense>} />
+                <Route path="listings" element={<Suspense fallback={renderLoading}><ConsoleListingsPage debugMode={DEVELOPMENT} /></Suspense>} />
+                <Route path='products/edit/*' element={<Suspense fallback={renderLoading}><CRUDPage debugMode={DEVELOPMENT} /></Suspense>} />
+                <Route path='products/new' element={<Suspense fallback={renderLoading}><CRUDPage debugMode={DEVELOPMENT} /></Suspense>} />
               </Route>
             </Routes>
           </Provider>

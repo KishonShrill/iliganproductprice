@@ -23,10 +23,7 @@ const useFetchLocations = () => {
       refetchOnWindowFocus: false,//boolean or 'always' - self explanatory
       // refetshInterval: int millisec
       enabled: true, // - will control for automatic fetch
-      // select: (data) => {
-      //   const student
-      //   return student
-      // }
+      select: (res) => res.data,
     }
   )
 }
