@@ -8,9 +8,8 @@
 
 section.grocery {
   max-width: 100%;
-  height: calc(100vh - #{$height-header} - #{$height-searchbar});
   margin: 0;
-  padding: 0px 20px 20px;
+  padding: 0px 20px;
   display: flex;
   justify-content: center;
   gap: 20px;
@@ -153,22 +152,23 @@ section.grocery {
     }
 
     &-btn {
-      --btn-size: 3rem;
+      --parent-padding: 20px;
+      --btn-size: 3.5rem;
       width: var(--btn-size);
       height: var(--btn-size);
-      padding: 0.5rem;
-      bottom: 2rem;
-      // border: none;
+      padding: 1rem;
+      left: calc(50% - var(--parent-padding));
+      bottom: 3rem;
+      border: 1px solid #c2c2c2;
       border-radius: 50%;
       /* http://smoothshadows.com/#djEsMSw1LDAuMTUsNjQsMCwwLCMwMDAwMDAsI2ZmZmZmZiwjZmZmZmZmLDI%3D */
       box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.03),
       0px 0px 10px rgba(0, 0, 0, 0.06),
-      0px 0px 23px rgba(0, 0, 0, 0.09),
-      0px 0px 41px rgba(0, 0, 0, 0.12),
-      0px 0px 64px rgba(0, 0, 0, 0.15);
+      0px 0px 23px rgba(0, 0, 0, 0.09);
+      transform: translateX(calc(50% - var(--parent-padding) * 2));
       background-color: #fff;
       cursor: pointer;
-      z-index: 5;
+      z-index: 999;
 
       &.active {
         background-color: $primary-color;

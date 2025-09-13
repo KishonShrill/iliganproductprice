@@ -42,7 +42,7 @@ const NotFound = () => {
             Looks like this page went over budget and disappeared!
           </p>
           <p className="text-gray-500">
-            The page you're looking for doesn't exist or has been moved.
+            The page you&apos;,re looking for doesn&apos;t exist or has been moved.
           </p>
         </div>
 
