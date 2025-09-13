@@ -14,14 +14,14 @@ import { Provider } from 'react-redux';
 import Cookies from "universal-cookie";
 import store from './redux/store/store.js';
 
-import Header from "./components/Header.jsx"
+import HomepageLayout from "./components/Header.jsx"
 import Homepage from "./pages/Homepage.jsx"
 
 const LocationPage = lazy(() => import("./pages/LocationPage.jsx"))
 const GroceryPage = lazy(() => import("./containers/GroceryPageContainer.jsx"))
 const ReceiptPage = lazy(() => import("./pages/ReceiptPage.jsx"))
 const LoginPage = lazy(() => import("./pages/LoginPage.jsx"))
-const NoPage = lazy(() => import("./pages/NoPage.jsx"))
+const NotFound = lazy(() => import("./pages/NotFound.jsx"))
 
 const ConsoleLayout = lazy(() => import("./components/console/ConsoleLayout.jsx"))
 const ConsoleDashboardPage = lazy(() => import("./pages/ConsoleDashboard.jsx"))
@@ -51,7 +51,7 @@ function App() {
         <BrowserRouter>
           <Provider store={store}>
             <Routes>
-              <Route path="/" element={<Header token={token} />}>
+              <Route path="/" element={<HomepageLayout token={token} />}>
                 <Route index element={<Suspense fallback={renderLoading}><Homepage /></Suspense>} />
                 <Route path="locations" element={<Suspense fallback={renderLoading}><LocationPage /></Suspense>} />
                 <Route path="location/*" element={<Suspense fallback={renderLoading}><GroceryPage /></Suspense>} />
@@ -59,7 +59,7 @@ function App() {
 
 
                 <Route path="authenticate" element={!token ? <Suspense fallback={renderLoading}><LoginPage debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/dev-mode" replace />} />
-                <Route path="*" element={<NoPage />} />
+                <Route path="*" element={<NotFound />} />
               </Route>
               <Route path="/dev-mode" element={token ? <Suspense fallback={renderLoading}><ConsoleLayout debugMode={DEVELOPMENT} /></Suspense> : <Navigate to="/" replace />} >
                 <Route index element={<Suspense fallback={renderLoading}><ConsoleDashboardPage debugMode={DEVELOPMENT} /></Suspense>} />
