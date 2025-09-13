@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { loadSettings, saveSettings, defaultSettings } from "../helpers/settings";
+import { requestNotificationPermission, showNotification } from "../helpers/notifications";
 
 function useSettings() {
     const [settings, setSettings] = useState(defaultSettings);
@@ -18,17 +19,34 @@ function useSettings() {
     }, []);
 
     const updateSetting = (key, value) => {
+        switch(key) {
+            case 'theme': 
+                if ('dark' === value) {
+                    document.documentElement.classList.add("dark");
+                } else {
+                    document.documentElement.classList.remove("dark");
+                }
+                break;
+            case 'notifications': {
+                const askPermission = async () => {
+                    const granted = await requestNotificationPermission()
+                    return granted;
+                }
+
+                if (askPermission) {
+                    showNotification("Hello 👋", {
+                        body: "This came from your frontend app!",
+                        icon: "https://cdn-icons-png.flaticon.com/512/1827/1827370.png",
+                    });
+                    break;
+                }
+                else return null;
+            }
+
+        }
         const updated = { ...settings, [key]: value };
         setSettings(updated);
         saveSettings(updated);
-
-        if ('theme' === key) {
-            if ('dark' === value) {
-                document.documentElement.classList.add("dark");
-            } else {
-                document.documentElement.classList.remove("dark");
-            }
-        }
     };
 
     const toggleSetting = (key) => {
