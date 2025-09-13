@@ -2,8 +2,11 @@ const SETTINGS_KEY = 'budgetbuddySettings';
 
 export const defaultSettings = {
     theme: 'light',
-    photos: true,
-    rightToLeft: false
+    hidePhotos: false,
+    rightToLeft: false,
+    soundEffects: false,
+    notications: false,
+    budgetAlerts: false,
 };
 
 // Load from localStorage or fallback to defaults
