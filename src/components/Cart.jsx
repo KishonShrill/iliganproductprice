@@ -15,51 +15,32 @@ const Cart = React.memo(forwardRef(({storage, onRemove, reciept}, ref) => {
   // console.log(cartItemEntries);
 
   return (
-    <div className="cart-summary" style={{left: reciept}}>
-      <h2>🛒 Shopping Cart</h2>
+    <div className="cart-summary dark:bg-gray-500" style={{left: reciept}}>
+      <h2 className="dark:border-b-gray-600 dark:text-gray-200">🛒 Shopping Cart</h2>
       <div className="cart-items" id="cartItems" ref={ref}>
         {cartItemQuantity === 0 
           ? (
-          <p className="cart-item">Cart is empty</p>
+          <p className="cart-item dark:text-gray-200">Cart is empty</p>
         ) : (
-        
-          // cartItemEntries.map(([productId, item]) => {
-          //   if (!item || typeof item.price !== 'number') {
-          //     console.warn("Invalid cart item:", item);
-          //     return null; // skip this item
-          //   }
-          //   console.log(productId)
-          //   return (
-          //     <p 
-          //       key={productId} 
-          //       className="cart-item" 
-          //       data-product-id={productId}
-          //       onClick={() => {onRemove(productId);}}
-          //     >
-          //       {item.name} x{item.quantity} <span className="item-price">₱{item.price.toFixed(2)}</span>
-          //     </p>
-          //   )  
-          // })
-
           cartItemEntries.map(([category, items]) => {
             return (
               <div key={category} className="cart-category-group">
-                <p className="cart-category">{category}</p>
+                <p className="cart-category dark:text-orange-500 font-bold">{category}</p>
                 <ul>
                   {items.map((item) => {
                     // console.log(item)
                     return (
                       <li 
                         key={item.id}
-                        className="cart-item" 
+                        className="cart-item dark:border-gray-600" 
                         data-product-id={item.id}
                         onClick={() => onRemove(item.id)}
                       >
-                        <p>
+                        <p className="dark:text-gray-200">
                           {item.name} &nbsp;
                           <span className="cart-item-quantity">x{item.quantity}</span>
                         </p>
-                        <span className="item-price">₱{item.price.toFixed(2)}</span>
+                        <span className="item-price dark:text-gray-200">₱{item.price.toFixed(2)}</span>
                       </li>
                     )
                   })}
@@ -67,10 +48,9 @@ const Cart = React.memo(forwardRef(({storage, onRemove, reciept}, ref) => {
               </div>
             )
           })
-
         )}
       </div>
-      <div className="cart-total">Total: ₱{total.toFixed(2)}</div>
+      <div className="cart-total dark:border-t-gray-600 dark:text-gray-200">Total: ₱{total.toFixed(2)}</div>
     </div>
   );
 }));

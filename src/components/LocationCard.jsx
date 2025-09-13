@@ -32,7 +32,7 @@ LocationCard.propTypes = {
     _id: PropTypes.string.isRequired,
     location_name: PropTypes.string.isRequired,
     type: PropTypes.string.isRequired,
-    is_open_24hrs: PropTypes.bool,
+    is_open_24hrs: PropTypes.string,
   }).isRequired,
 };
 

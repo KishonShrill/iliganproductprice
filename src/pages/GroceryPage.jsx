@@ -5,6 +5,7 @@ import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import Searchbar from "../components/Searchbar";
+import BottomNavigation from "../components/BottomNavigation";
 
 import '../styles/grocery.scss'
 
@@ -100,7 +101,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
         </Searchbar>
         
       </div>
-      <section className="grocery">
+      <section className="grocery bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
         <main className='product-container' id="productContainer">
           <Suspense fallback={(
             <main className='errorDisplay'>

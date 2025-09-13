@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import useFetchLocations from '../hooks/useFetchLocations';
 import LocationCard from "../components/LocationCard";
 import '../styles/locations.scss'
-
+import BottomNavigation from "../components/BottomNavigation";
 
 export default function LocationPage() {
   document.title = "Locations - Budget Buddy"
@@ -22,7 +22,7 @@ export default function LocationPage() {
   )}
 
   return (
-    <section className="locations">
+    <section className="locations bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <main className='product-container' id="productContainer">
         <Suspense fallback={(
           <main className='errorDisplay'>
