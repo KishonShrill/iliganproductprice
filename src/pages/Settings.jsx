@@ -195,7 +195,7 @@ const Settings = () => {
                   <h3 className="text-lg font-semibold text-red-900 dark:text-red-100 mb-2">
                     Reset Settings
                   </h3>
-                  <p className="text-red-700 dark:text-red-300">
+                  <p className="text-red-700 dark:text-red-300 pr-4 max-w-lg">
                     This will restore all settings to their default values. This action cannot be undone.
                   </p>
                 </div>
@@ -209,7 +209,7 @@ const Settings = () => {
                   
                   <Dialog.Portal>
                     <Dialog.Overlay className="bg-black/50 fixed inset-0 z-50" />
-                    <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-200 dark:border-gray-700 max-w-md w-full mx-4 z-50">
+                    <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-200 dark:border-gray-700 max-w-md w-[90%] z-50">
                       <Dialog.Title className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                         Reset All Settings?
                       </Dialog.Title>

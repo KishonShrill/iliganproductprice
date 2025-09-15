@@ -3,7 +3,7 @@ import PropTypes from "prop-types"
 
 const Login = ({ debugMode }) => {
   return (
-    <main>
+    <main className="px-8">
       <LoginForm debugMode={debugMode} />
     </main>
   )

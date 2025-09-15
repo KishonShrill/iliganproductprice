@@ -5,18 +5,21 @@ import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import Searchbar from "../components/Searchbar";
-import BottomNavigation from "../components/BottomNavigation";
+import useSettings from "../hooks/useSettings";
 
 import '../styles/grocery.scss'
 
 
 function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   document.title = "Grocery List - Budget Buddy"
-  
+  const { settings } = useSettings()
+
   const [reciept, setReceipt] = useState("100%")
   const [active, setActive] = useState(false)
   const [search, setSearch] = useState('')
+  const [animatingCards, setAnimatingCards] = useState([])
 
+  const cartButtonRef = useRef(null)
   const cartRef = useRef(null)
   const searchbarRef = useRef(null)
 
@@ -52,8 +55,36 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     const productName = el.dataset.productName;
     const productPrice = parseFloat(el.dataset.productPrice);
     const productLocation = el.dataset.productLocation;
+    const productImage = el.dataset.productImage;
+    const card = el.closest('.product-card');
+    const cartButton = cartButtonRef.current;
 
-    console.log(`${productId} | ${productName} | ${productPrice} | ${productLocation}`)
+    if (!card || !cartButton) return;
+
+    // Get positions
+    const cardRect = card.getBoundingClientRect();
+    const cartShape = cartButton.getBoundingClientRect();
+
+    // Create animating card
+    const animatingCard = {
+        productId,
+        productName,
+        productPrice,
+        productImage,
+        startX: cardRect.left,
+        startY: cardRect.top,
+        targetX: cartShape.left + cartShape.width / 2 - 80,
+        targetY: cartShape.top + cartShape.height / 2 - 50,
+    };
+
+    setAnimatingCards(prev => [...prev, animatingCard]);
+
+    // Remove animating card after animation completes
+    setTimeout(() => {
+        setAnimatingCards(prev => prev.filter(card => card.productId !== animatingCard.productId));
+    }, 800);
+
+    console.log(`${productId} | ${productName} | ${productPrice} | ${productLocation} | ${productImage}`)
     addNewCartItem(productId, productName, productPrice, productLocation);
   }, []);
 
@@ -88,6 +119,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   return (
     <>
       <div style={{
+        zIndex: 5,
         padding: "1rem",
         display: "flex", 
         alignItems: "center",
@@ -113,19 +145,81 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
               <ProductCard 
                 key={item._id} 
                 item={item} 
-                onAdd={(event) => handleClick(event.currentTarget)} 
+                onAdd={(event) => handleClick(event.currentTarget)}
+                settings={settings}
               />
             ))
             : <h2>No products found...</h2>
             }
           </Suspense>
         </main>
+
+        {/* Animating Cards */}
+        {animatingCards.map((animatingCard) => (
+            <div
+                key={animatingCard.productId}
+                className="fixed z-50 pointer-events-none"
+                style={{
+                    left: animatingCard.startX,
+                    top: animatingCard.startY,
+                    width: '160px',
+                    height: '200px',
+                    animation: `flyToCart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
+                    '--start-x': `${animatingCard.startX}px`,
+                    '--start-y': `${animatingCard.startY}px`,
+                    '--target-x': `${animatingCard.targetX}px`,
+                    '--target-y': `${animatingCard.targetY}px`,
+                }}   
+            >
+                <div className="bg-white rounded-lg shadow-lg overflow-hidden w-full h-full">
+                   <div className="aspect-square overflow-hidden">
+                     <img
+                       src={animatingCard.productImage}
+                       alt={animatingCard.productName}
+                       className="w-full h-full object-cover"
+                     />
+                   </div>
+                   <div className="p-2">
+                     <h3 className="font-medium text-gray-800 text-xs mb-1 line-clamp-1">
+                       {animatingCard.productName}
+                     </h3>
+                     <p className="text-sm font-bold text-gray-900">
+                       ${animatingCard.productPrice}
+                     </p>
+                   </div>
+                </div>
+            </div>
+        ))}
+
         <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept}/>
-        <button className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
+        <button ref={cartButtonRef} className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
           {active 
             ? <img src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="My cart button" /> 
             : <img src="/UI/shopping-cart-02-stroke-rounded.svg" alt="My cart button" />
           }
+          {cartItems && cartItems.cart && (
+              (() => {
+                const totalQty = Object.values(cartItems.cart).reduce(
+                    (sum, item) => sum + item.quantity,
+                    0
+                );
+
+                if (totalQty == 0) return null;
+
+                return (
+                    <span className="
+                    absolute -top-1 -right-1 
+                    bg-red-600 text-white text-xs font-bold 
+                    px-1.5 py-0.5 
+                    rounded-full 
+                    flex items-center justify-center 
+                    min-w-[1.25rem] h-[1.25rem]
+                    ">
+                    {totalQty}
+                    </span>
+                );
+              })()
+          )}
         </button>
       </section>
     </>

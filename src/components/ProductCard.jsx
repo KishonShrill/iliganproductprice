@@ -3,10 +3,8 @@ import PropTypes from "prop-types";
 import { Package } from "lucide-react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mongoDateToText } from "../helpers/date";
-import useSettings from "../hooks/useSettings";
 
-const ProductCard = ({ item, onAdd }) => {
-  const { settings } = useSettings()
+const ProductCard = ({ item, onAdd, settings }) => {
     return (
   <div className="product-card" 
     data-product-id={item._id}
@@ -41,6 +39,7 @@ const ProductCard = ({ item, onAdd }) => {
         data-product-name={item.product.product_name}
         data-product-price={item.updated_price}
         data-product-location={item.location.name}
+        data-product-image={item.product.imageUrl}
         onClick={onAdd}>
         Add to Cart
       </button>
