@@ -14,6 +14,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   document.title = "Grocery List - Budget Buddy"
   const { settings } = useSettings()
 
+  const [count, setCount] = useState(0)
   const [reciept, setReceipt] = useState("100%")
   const [active, setActive] = useState(false)
   const [search, setSearch] = useState('')
@@ -22,6 +23,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
   const cartButtonRef = useRef(null)
   const cartRef = useRef(null)
   const searchbarRef = useRef(null)
+  const audioRef = useRef(null);
 
   // Fetch Location and put into useHook
   const path = window.location.pathname;  // "/locations/link"
@@ -61,12 +63,19 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
 
     if (!card || !cartButton) return;
 
+    console.log(settings.soundEffects)
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0; // rewind so it can replay fast
+      audioRef.current.play();
+    }
+
     // Get positions
     const cardRect = card.getBoundingClientRect();
     const cartShape = cartButton.getBoundingClientRect();
 
     // Create animating card
     const animatingCard = {
+        count,
         productId,
         productName,
         productPrice,
@@ -77,16 +86,17 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
         targetY: cartShape.top + cartShape.height / 2 - 50,
     };
 
+    setCount(prev => prev + 1)
     setAnimatingCards(prev => [...prev, animatingCard]);
 
     // Remove animating card after animation completes
     setTimeout(() => {
-        setAnimatingCards(prev => prev.filter(card => card.productId !== animatingCard.productId));
+        setAnimatingCards(prev => prev.filter(card => card.count !== animatingCard.count));
     }, 800);
 
-    console.log(`${productId} | ${productName} | ${productPrice} | ${productLocation} | ${productImage}`)
+    // console.log(`${productId} | ${productName} | ${productPrice} | ${productLocation} | ${productImage}`)
     addNewCartItem(productId, productName, productPrice, productLocation);
-  }, []);
+  }, [count]);
 
   const searchTerm = (search || "").toLowerCase();
   const filteredData = data?.data.filter(item => {
@@ -126,6 +136,9 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
         justifyContent: "center",
         gap: "1rem",
       }}>
+        {/* 🔊 Hidden audio element */}
+        <audio ref={audioRef} src="/sounds/click-pop.mp3" preload="auto" muted={!settings.soundEffects} />
+        
         <Searchbar ref={searchbarRef} type={"text"} onChange={(e) => setSearch(e.target.value)}>
           <Link to={"/locations"}>
             <img className="go-back" src="/UI/arrow-left-02-stroke-rounded.svg" alt="Go Back!" />
@@ -157,7 +170,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
         {/* Animating Cards */}
         {animatingCards.map((animatingCard) => (
             <div
-                key={animatingCard.productId}
+                key={animatingCard.count}
                 className="fixed z-50 pointer-events-none"
                 style={{
                     left: animatingCard.startX,
@@ -190,7 +203,6 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                 </div>
             </div>
         ))}
-
         <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept}/>
         <button ref={cartButtonRef} className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
           {active 

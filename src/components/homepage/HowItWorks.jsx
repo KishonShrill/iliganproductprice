@@ -24,17 +24,17 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section id="how-it-works" className="py-20 bg-white">
+    <section id="how-it-works" className="py-20 bg-white dark:bg-gray-700">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             How Budget Buddy{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47]">
               Works
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-slate-200 max-w-3xl mx-auto">
             Get started in three simple steps and take control of your shopping budget today.
           </p>
         </div>
@@ -58,20 +58,20 @@ const HowItWorks = () => {
                 </div>
 
                 {/* Card */}
-                <div className="bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl border border-gray-100 hover:border-[#ee4d2d]/20 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 h-full">
+                <div className="bg-white dark:bg-slate-500 p-8 rounded-2xl border border-gray-100 hover:border-[#ee4d2d]/20 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 h-full">
                   {/* Icon */}
                   <div className={`w-16 h-16 bg-gradient-to-br from-[#ee4d2d] to-[#ff6b47] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
                     <step.icon className="w-8 h-8 text-white" />
                   </div>
 
                   {/* Content */}
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#ee4d2d] transition-colors duration-300">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-[#ee4d2d] transition-colors duration-300">
                     {step.title}
                   </h3>
-                  <p className="text-gray-600 mb-4 leading-relaxed">
+                  <p className="text-gray-600 dark:text-slate-300 mb-4 leading-relaxed">
                     {step.description}
                   </p>
-                  <p className="text-sm text-gray-500 leading-relaxed">
+                  <p className="text-sm text-gray-500 dark:text-slate-50 leading-relaxed">
                     {step.details}
                   </p>
 
@@ -88,7 +88,7 @@ const HowItWorks = () => {
         </div>
 
         {/* Demo Section */}
-        <div className="mt-20 bg-gradient-to-br from-[#ee4d2d]/5 to-orange-50 rounded-3xl p-8 md:p-12">
+        <div className="mt-20 bg-gradient-to-br from-[#ee4d2d]/5 to-orange-50 dark:from-slate-300 dark:to-slate-200 rounded-3xl p-8 md:p-12">
           <div className="text-center mb-8">
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
               See It In Action

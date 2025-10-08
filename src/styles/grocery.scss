@@ -13,7 +13,6 @@ section.grocery {
   display: flex;
   justify-content: center;
   gap: 20px;
-  overflow-y: auto;
   background-color: #f8f8f8;
 }
 
@@ -35,7 +34,7 @@ section.grocery {
 .cart {
   &-summary {
     position: sticky; /* Make it sticky */
-    top: 0; /* Stick below header, plus some gap */
+    top: 6rem; /* Stick below header, plus some gap */
     width: 330px;
     min-width: 200px; /* Prevent shrinking too much */
     height: fit-content; /* Adjust height based on content */
@@ -61,6 +60,7 @@ section.grocery {
   }
 
   &-items {
+
     height: 300px; /* Add max height for scrolling if many items */
     // margin-bottom: 15px;
     overflow-y: auto; /* Add scroll if items exceed max height */

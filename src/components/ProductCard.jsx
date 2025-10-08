@@ -65,6 +65,7 @@ ProductCard.propTypes = {
     }),
   }).isRequired,
   onAdd: PropTypes.func.isRequired,
+  settings: PropTypes.object,
 };
 
 
