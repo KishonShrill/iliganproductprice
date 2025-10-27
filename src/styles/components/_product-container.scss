@@ -4,7 +4,7 @@
 .product {
     &-container {
     width: 100%;
-    height: calc(100vh - #{$height-header} - #{$height-searchbar});
+//    height: calc(100vh - #{$height-header} - #{$height-searchbar});
     padding-bottom: 5.5rem;
     display: grid;
     grid-template-columns: repeat(auto-fill, 240px);

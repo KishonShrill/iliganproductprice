@@ -3,24 +3,24 @@ import { ShoppingCart, TrendingUp, Shield } from 'lucide-react';
 
 const Hero = () => {
   return (
-    <section className="pt-12 pb-16 bg-gradient-to-br from-gray-50 via-white to-orange-50 overflow-hidden">
+    <section className="pt-12 pb-16 bg-gradient-to-br from-gray-50 via-white to-orange-50 dark:from-gray-800 dark:to-gray-800 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
           <div className="text-center lg:text-left">
-            <div className="inline-flex items-center bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 px-4 py-2 rounded-full text-[#ee4d2d] font-medium text-sm mb-6 hover:scale-105 transition-transform duration-300">
+            <div className="inline-flex items-center bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 dark:from-white dark:to-orange-100 px-4 py-2 rounded-full text-[#ee4d2d] font-medium text-sm mb-6 hover:scale-105 transition-transform duration-300">
               <Shield className="w-4 h-4 mr-2" />
               100% Free • Non-Profit Initiative
             </div>
             
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-gray-50 mb-6 leading-tight">
               Shop Smarter,{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47]">
                 Spend Less
               </span>
             </h1>
             
-            <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto lg:mx-0">
+            <p className="text-xl text-gray-600 dark:text-slate-100 mb-8 max-w-2xl mx-auto lg:mx-0">
               Track your shopping cart total in real-time before checkout. Budget Buddy helps you make informed decisions and stick to your budget effortlessly.
             </p>
             

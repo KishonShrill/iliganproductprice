@@ -42,17 +42,17 @@ const Features = () => {
   ];
 
   return (
-    <section id="features" className="py-20 bg-white">
+    <section id="features" className="py-20 bg-white dark:bg-gray-700">
       <div className="max-w-7xl mx-auto px-8 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
             Powerful Features for{' '}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47]">
               Smart Shopping
             </span>
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-600 dark:text-white max-w-3xl mx-auto">
             Everything you need to take control of your shopping budget and make informed purchasing decisions.
           </p>
         </div>
@@ -62,7 +62,7 @@ const Features = () => {
           {features.map((feature, index) => (
             <div
               key={index}
-              className="group p-8 bg-white rounded-2xl border border-gray-100 hover:border-[#ee4d2d]/20 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer"
+              className="group p-8 bg-white dark:bg-slate-500 rounded-2xl border border-gray-100 hover:border-[#ee4d2d]/20 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer"
             >
               {/* Icon */}
               <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
@@ -70,10 +70,10 @@ const Features = () => {
               </div>
 
               {/* Content */}
-              <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[#ee4d2d] transition-colors duration-300">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-[#ee4d2d] transition-colors duration-300">
                 {feature.title}
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed dark:text-gray-200">
                 {feature.description}
               </p>
 
@@ -90,7 +90,7 @@ const Features = () => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-16">
-          <div className="inline-flex items-center bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 px-6 py-3 rounded-full">
+          <div className="inline-flex items-center bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 dark:from-white dark:to-orange-50 px-6 py-3 rounded-full">
             <span className="text-[#ee4d2d] font-medium">Ready to start saving money?</span>
             <Link to="/locations" className="ml-4 bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-6 py-2 rounded-full font-semibold hover:shadow-lg hover:scale-105 transition-all duration-300">
               Try Budget Buddy

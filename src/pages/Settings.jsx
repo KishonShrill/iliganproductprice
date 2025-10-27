@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Dialog, Separator, Select, Switch } from 'radix-ui';
 import { 
   Settings as SettingsIcon, 
@@ -13,19 +14,24 @@ import {
   RotateCcw,
   X,
   ChevronDown,
-  Check
+  Check,
+  ArrowLeft
 } from 'lucide-react';
 import useSettings from '../hooks/useSettings';
 
-
 const Settings = () => {
-  const { settings, updateSetting, toggleSettings, resetSettings } = useSettings();
+  const navigate = useNavigate()
+  const { settings, updateSetting, resetSettings } = useSettings();
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
-
+  
   const languageOptions = [
     { value: 'en', label: 'English' },
     { value: 'fil', label: 'Filipino' },
   ];
+
+  const goBack = () => {
+    navigate(-1);
+  }
 
   const handleReset = () => {
     resetSettings();
@@ -36,7 +42,7 @@ const Settings = () => {
     <div className="hide-mobile-scrollbar min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-8 pb-[6.5rem]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="mb-8">
+        <div className="flex justify-between items-end mb-8">
           <div className="flex items-center space-x-3 mb-4">
             <div className="w-12 h-12 bg-gradient-to-br from-[#ee4d2d] to-[#ff6b47] rounded-xl flex items-center justify-center">
               <SettingsIcon className="w-6 h-6 text-white" />
@@ -46,6 +52,9 @@ const Settings = () => {
               <p className="text-gray-600 dark:text-gray-400">Customize your Budget Buddy experience</p>
             </div>
           </div>
+          <button className='w-12 h-12 mb-4 rounded-xl grid place-items-center bg-orange-600 dark:bg-white' onClick={goBack}>
+              <ArrowLeft className='w-6 h-6 dark:text-orange-600 text-white' />
+          </button>
         </div>
 
         <div className="space-y-8">
@@ -195,7 +204,7 @@ const Settings = () => {
                   <h3 className="text-lg font-semibold text-red-900 dark:text-red-100 mb-2">
                     Reset Settings
                   </h3>
-                  <p className="text-red-700 dark:text-red-300">
+                  <p className="text-red-700 dark:text-red-300 pr-4 max-w-lg">
                     This will restore all settings to their default values. This action cannot be undone.
                   </p>
                 </div>
@@ -209,7 +218,7 @@ const Settings = () => {
                   
                   <Dialog.Portal>
                     <Dialog.Overlay className="bg-black/50 fixed inset-0 z-50" />
-                    <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-200 dark:border-gray-700 max-w-md w-full mx-4 z-50">
+                    <Dialog.Content className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white dark:bg-gray-800 rounded-xl p-6 shadow-xl border border-gray-200 dark:border-gray-700 max-w-md w-[90%] z-50">
                       <Dialog.Title className="text-lg font-bold text-gray-900 dark:text-white mb-2">
                         Reset All Settings?
                       </Dialog.Title>
