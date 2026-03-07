@@ -1,4 +1,3 @@
-import React from 'react';
 import { DollarSign, Heart, Mail, Github, Twitter, Linkedin, Facebook } from 'lucide-react';
 
 const Footer = () => {

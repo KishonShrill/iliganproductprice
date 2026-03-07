@@ -11,215 +11,219 @@ import '../styles/grocery.scss'
 
 
 function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
-  document.title = "Grocery List - Budget Buddy"
-  const { settings } = useSettings()
+    document.title = "Grocery List - Budget Buddy"
+    const { settings } = useSettings()
 
-  const [count, setCount] = useState(0)
-  const [reciept, setReceipt] = useState("100%")
-  const [active, setActive] = useState(false)
-  const [search, setSearch] = useState('')
-  const [animatingCards, setAnimatingCards] = useState([])
+    const [count, setCount] = useState(0)
+    const [reciept, setReceipt] = useState("100%")
+    const [active, setActive] = useState(false)
+    const [search, setSearch] = useState('')
+    const [animatingCards, setAnimatingCards] = useState([])
 
-  const cartButtonRef = useRef(null)
-  const cartRef = useRef(null)
-  const searchbarRef = useRef(null)
-  const audioRef = useRef(null);
+    const cartButtonRef = useRef(null)
+    const cartRef = useRef(null)
+    const searchbarRef = useRef(null)
+    const audioRef = useRef(null);
 
-  // Fetch Location and put into useHook
-  const path = window.location.pathname;  // "/locations/link"
-  const segments = path.split('/');  // ["", "locations", "link"]
-  const location = segments[segments.length - 1];  // "link"
+    // Fetch Location and put into useHook
+    const path = window.location.pathname;  // "/locations/link"
+    const segments = path.split('/');  // ["", "locations", "link"]
+    const location = segments[segments.length - 1];  // "link"
 
-  const { isLoading, data, isError, error, isFetching } = useFetchListingsByLocation(location)
+    const { isLoading, data, isError, error, isFetching } = useFetchListingsByLocation(location)
 
-  // Update Cart for localStorage to persist
-  useEffect(() => {
-    if (cartItems?.cart) {
-      localStorage.setItem('cart', JSON.stringify(cartItems.cart));
-    } else {
-      localStorage.setItem('cart', JSON.stringify(cartItems));
+    // Update Cart for localStorage to persist
+    useEffect(() => {
+        if (cartItems?.cart) {
+            localStorage.setItem('cart', JSON.stringify(cartItems.cart));
+        } else {
+            localStorage.setItem('cart', JSON.stringify(cartItems));
+        }
+    }, [cartItems]);
+
+    // Remove Item from <Cart /> on Element Click
+    useEffect(() => {
+        if (cartRef.current) {
+            cartRef.current.onItemClick = (productId) => {
+                removeCartItem(productId);
+            };
+        }
+    }, [cartRef.current])
+
+
+    // Add item on <Cart /> on Button Click on <ProductCard />
+    const handleClick = useCallback((el) => {
+        const productId = el.dataset.productId;
+        const productName = el.dataset.productName;
+        const productPrice = parseFloat(el.dataset.productPrice);
+        const productLocation = el.dataset.productLocation;
+        const productImage = el.dataset.productImage;
+        const card = el.closest('.product-card');
+        const cartButton = cartButtonRef.current;
+
+        if (!card || !cartButton) return;
+
+        console.log(settings.soundEffects)
+        if (audioRef.current) {
+            audioRef.current.currentTime = 0; // rewind so it can replay fast
+            audioRef.current.play();
+        }
+
+        // Get positions
+        const cardRect = card.getBoundingClientRect();
+        const cartShape = cartButton.getBoundingClientRect();
+
+        // Create animating card
+        const animatingCard = {
+            count,
+            productId,
+            productName,
+            productPrice,
+            productImage,
+            startX: cardRect.left,
+            startY: cardRect.top,
+            targetX: cartShape.left + cartShape.width / 2 - 80,
+            targetY: cartShape.top + cartShape.height / 2 - 50,
+        };
+
+        setCount(prev => prev + 1)
+        setAnimatingCards(prev => [...prev, animatingCard]);
+
+        // Remove animating card after animation completes
+        setTimeout(() => {
+            setAnimatingCards(prev => prev.filter(card => card.count !== animatingCard.count));
+        }, 800);
+
+        // console.log(`${productId} | ${productName} | ${productPrice} | ${productLocation} | ${productImage}`)
+        addNewCartItem(productId, productName, productPrice, productLocation);
+    }, [count]);
+
+    const searchTerm = (search || "").toLowerCase();
+    const filteredData = data?.data.filter(item => {
+        const matchesSearch =
+            searchTerm === '' ||
+            item.product.product_name?.toLowerCase().includes(searchTerm);
+
+        return matchesSearch;
+    }) || [];
+
+    function openReciept() {
+        setActive((prev) => !prev)
+        if (reciept === "100%") setReceipt("0%")
+        if (reciept === "0%") setReceipt("100%")
     }
-  }, [cartItems]);
-
-  // Remove Item from <Cart /> on Element Click
-  useEffect(() => {
-    if (cartRef.current) {
-      cartRef.current.onItemClick = (productId) => {
-        removeCartItem(productId);
-      };
-    }
-  }, [cartRef.current])
 
 
-  // Add item on <Cart /> on Button Click on <ProductCard />
-  const handleClick = useCallback((el) => {
-    const productId = el.dataset.productId;
-    const productName = el.dataset.productName;
-    const productPrice = parseFloat(el.dataset.productPrice);
-    const productLocation = el.dataset.productLocation;
-    const productImage = el.dataset.productImage;
-    const card = el.closest('.product-card');
-    const cartButton = cartButtonRef.current;
-
-    if (!card || !cartButton) return;
-
-    console.log(settings.soundEffects)
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0; // rewind so it can replay fast
-      audioRef.current.play();
-    }
-
-    // Get positions
-    const cardRect = card.getBoundingClientRect();
-    const cartShape = cartButton.getBoundingClientRect();
-
-    // Create animating card
-    const animatingCard = {
-        count,
-        productId,
-        productName,
-        productPrice,
-        productImage,
-        startX: cardRect.left,
-        startY: cardRect.top,
-        targetX: cartShape.left + cartShape.width / 2 - 80,
-        targetY: cartShape.top + cartShape.height / 2 - 50,
-    };
-
-    setCount(prev => prev + 1)
-    setAnimatingCards(prev => [...prev, animatingCard]);
-
-    // Remove animating card after animation completes
-    setTimeout(() => {
-        setAnimatingCards(prev => prev.filter(card => card.count !== animatingCard.count));
-    }, 800);
-
-    // console.log(`${productId} | ${productName} | ${productPrice} | ${productLocation} | ${productImage}`)
-    addNewCartItem(productId, productName, productPrice, productLocation);
-  }, [count]);
-
-  const searchTerm = (search || "").toLowerCase();
-  const filteredData = data?.data.filter(item => {
-    const matchesSearch = 
-      searchTerm === '' ||
-      item.product.product_name?.toLowerCase().includes(searchTerm);
-      
-    return matchesSearch;
-  }) || [];
-
-  function openReciept() {
-    setActive((prev) => !prev)
-    if (reciept === "100%") setReceipt("0%")
-    if (reciept === "0%") setReceipt("100%")
-  }
-
-
-  // Display when fetched elements are empty or is loading...
-  if (isLoading || isFetching) {return(
-    <main className='errorDisplay'>
-      <h2>Loading<span className="animated-dots"></span></h2>
-    </main>
-  )}
-  if (isError) {return(
-    <main className='errorDisplay'>
-      <h2>Error: {error.message}</h2>
-    </main>
-  )}
-
-  return (
-    <>
-      <div style={{
-        zIndex: 5,
-        padding: "1rem",
-        display: "flex", 
-        alignItems: "center",
-        justifyContent: "center",
-        gap: "1rem",
-      }}>
-        {/* 🔊 Hidden audio element */}
-        <audio ref={audioRef} src="/sounds/click-pop.mp3" preload="auto" muted={!settings.soundEffects} />
-        
-        <Searchbar ref={searchbarRef} type={"text"} onChange={(e) => setSearch(e.target.value)}>
-          <Link to={"/locations"}>
-            <img className="go-back" src="/UI/arrow-left-02-stroke-rounded.svg" alt="Go Back!" />
-          </Link>
-        </Searchbar>
-        
-      </div>
-      <section className="grocery bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-        <main className='product-container' id="productContainer">
-          <Suspense fallback={(
+    // Display when fetched elements are empty or is loading...
+    if (isLoading || isFetching) {
+        return (
             <main className='errorDisplay'>
-              <h2>Loading<span className="animated-dots"></span></h2>
+                <h2>Loading<span className="animated-dots"></span></h2>
             </main>
-          )}>
-            {data
-            ? filteredData.map((item) => (
-              <ProductCard 
-                key={item._id} 
-                item={item} 
-                onAdd={(event) => handleClick(event.currentTarget)}
-                settings={settings}
-              />
-            ))
-            : <h2>No products found...</h2>
-            }
-          </Suspense>
-        </main>
+        )
+    }
+    if (isError) {
+        return (
+            <main className='errorDisplay'>
+                <h2>Error: {error.message}</h2>
+            </main>
+        )
+    }
 
-        {/* Animating Cards */}
-        {animatingCards.map((animatingCard) => (
-            <div
-                key={animatingCard.count}
-                className="fixed z-50 pointer-events-none"
-                style={{
-                    left: animatingCard.startX,
-                    top: animatingCard.startY,
-                    width: '160px',
-                    height: '200px',
-                    animation: `flyToCart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
-                    '--start-x': `${animatingCard.startX}px`,
-                    '--start-y': `${animatingCard.startY}px`,
-                    '--target-x': `${animatingCard.targetX}px`,
-                    '--target-y': `${animatingCard.targetY}px`,
-                }}   
-            >
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden w-full h-full">
-                   <div className="aspect-square overflow-hidden">
-                     <img
-                       src={animatingCard.productImage}
-                       alt={animatingCard.productName}
-                       className="w-full h-full object-cover"
-                     />
-                   </div>
-                   <div className="p-2">
-                     <h3 className="font-medium text-gray-800 text-xs mb-1 line-clamp-1">
-                       {animatingCard.productName}
-                     </h3>
-                     <p className="text-sm font-bold text-gray-900">
-                       ${animatingCard.productPrice}
-                     </p>
-                   </div>
-                </div>
+    return (
+        <>
+            <div style={{
+                zIndex: 5,
+                padding: "1rem",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "1rem",
+            }}>
+                {/* 🔊 Hidden audio element */}
+                <audio ref={audioRef} src="/sounds/click-pop.mp3" preload="auto" muted={!settings.soundEffects} />
+
+                <Searchbar ref={searchbarRef} type={"text"} onChange={(e) => setSearch(e.target.value)}>
+                    <Link to={"/locations"}>
+                        <img className="go-back" src="/UI/arrow-left-02-stroke-rounded.svg" alt="Go Back!" />
+                    </Link>
+                </Searchbar>
+
             </div>
-        ))}
-        <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept}/>
-        <button ref={cartButtonRef} className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
-          {active 
-            ? <img src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="My cart button" /> 
-            : <img src="/UI/shopping-cart-02-stroke-rounded.svg" alt="My cart button" />
-          }
-          {cartItems && cartItems.cart && (
-              (() => {
-                const totalQty = Object.values(cartItems.cart).reduce(
-                    (sum, item) => sum + item.quantity,
-                    0
-                );
+            <section className="grocery bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+                <main className='product-container' id="productContainer">
+                    <Suspense fallback={(
+                        <main className='errorDisplay'>
+                            <h2>Loading<span className="animated-dots"></span></h2>
+                        </main>
+                    )}>
+                        {data
+                            ? filteredData.map((item) => (
+                                <ProductCard
+                                    key={item._id}
+                                    item={item}
+                                    onAdd={(event) => handleClick(event.currentTarget)}
+                                    settings={settings}
+                                />
+                            ))
+                            : <h2>No products found...</h2>
+                        }
+                    </Suspense>
+                </main>
 
-                if (totalQty == 0) return null;
+                {/* Animating Cards */}
+                {animatingCards.map((animatingCard) => (
+                    <div
+                        key={animatingCard.count}
+                        className="fixed z-50 pointer-events-none"
+                        style={{
+                            left: animatingCard.startX,
+                            top: animatingCard.startY,
+                            width: '160px',
+                            height: '200px',
+                            animation: `flyToCart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
+                            '--start-x': `${animatingCard.startX}px`,
+                            '--start-y': `${animatingCard.startY}px`,
+                            '--target-x': `${animatingCard.targetX}px`,
+                            '--target-y': `${animatingCard.targetY}px`,
+                        }}
+                    >
+                        <div className="bg-white rounded-lg shadow-lg overflow-hidden w-full h-full">
+                            <div className="aspect-square overflow-hidden">
+                                <img
+                                    src={animatingCard.productImage}
+                                    alt={animatingCard.productName}
+                                    className="w-full h-full object-cover"
+                                />
+                            </div>
+                            <div className="p-2">
+                                <h3 className="font-medium text-gray-800 text-xs mb-1 line-clamp-1">
+                                    {animatingCard.productName}
+                                </h3>
+                                <p className="text-sm font-bold text-gray-900">
+                                    ${animatingCard.productPrice}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+                <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept} />
+                <button ref={cartButtonRef} className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
+                    {active
+                        ? <img src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="My cart button" />
+                        : <img src="/UI/shopping-cart-02-stroke-rounded.svg" alt="My cart button" />
+                    }
+                    {cartItems && cartItems.cart && (
+                        (() => {
+                            const totalQty = Object.values(cartItems.cart).reduce(
+                                (sum, item) => sum + item.quantity,
+                                0
+                            );
 
-                return (
-                    <span className="
+                            if (totalQty == 0) return null;
+
+                            return (
+                                <span className="
                     absolute -top-1 -right-1 
                     bg-red-600 text-white text-xs font-bold 
                     px-1.5 py-0.5 
@@ -227,15 +231,15 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                     flex items-center justify-center 
                     min-w-[1.25rem] h-[1.25rem]
                     ">
-                    {totalQty}
-                    </span>
-                );
-              })()
-          )}
-        </button>
-      </section>
-    </>
-  );
+                                    {totalQty}
+                                </span>
+                            );
+                        })()
+                    )}
+                </button>
+            </section>
+        </>
+    );
 }
 
 // 👇 Give the component a name for debugging purposes
@@ -243,18 +247,18 @@ GroceryPage.displayName = "Grocery Page"
 
 // 👇 Define PropTypes
 GroceryPage.propTypes = {
-  cartItems: PropTypes.shape({
-    cart: PropTypes.objectOf(
-      PropTypes.shape({
-        name: PropTypes.string.isRequired,
-        price: PropTypes.number.isRequired,
-        quantity: PropTypes.number.isRequired,
-        location: PropTypes.string.isRequired,
-      })
-    )
-  }).isRequired,
-  addNewCartItem: PropTypes.func.isRequired,
-  removeCartItem: PropTypes.func.isRequired,
+    cartItems: PropTypes.shape({
+        cart: PropTypes.objectOf(
+            PropTypes.shape({
+                name: PropTypes.string.isRequired,
+                price: PropTypes.number.isRequired,
+                quantity: PropTypes.number.isRequired,
+                location: PropTypes.string.isRequired,
+            })
+        )
+    }).isRequired,
+    addNewCartItem: PropTypes.func.isRequired,
+    removeCartItem: PropTypes.func.isRequired,
 };
 
 export default GroceryPage
