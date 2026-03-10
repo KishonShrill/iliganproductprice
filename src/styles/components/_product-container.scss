@@ -2,9 +2,9 @@
 @use '../utils/mixins';
 
 .product {
-    &-container {
+  &-container {
     width: 100%;
-//    height: calc(100vh - #{$height-header} - #{$height-searchbar});
+    //    height: calc(100vh - #{$height-header} - #{$height-searchbar});
     padding-bottom: 5.5rem;
     display: grid;
     grid-template-columns: repeat(auto-fill, 240px);
@@ -22,17 +22,18 @@
       overflow-y: auto;
       /* Hide scrollbar for Firefox */
       scrollbar-width: none;
+
       /* Hide scrollbar for Chrome, Safari, Edge, Opera */
       &::-webkit-scrollbar {
         display: none;
       }
+
       /* Hide scrollbar for Internet Explorer and Edge (older versions) */
       -ms-overflow-style: none;
     }
   }
 
   &-card {
-    height: 356px;
     display: flex;
     flex-direction: column;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
@@ -45,6 +46,7 @@
       display: grid;
       grid-template-columns: 1fr 1fr;
       flex-direction: row;
+      gap: 0.75rem
     }
   }
 
@@ -66,10 +68,11 @@
   &-image-placeholder {
     position: relative;
     width: 100%;
-    height: 11rem;
+    height: 100%;
     display: grid;
     place-content: center;
-    background-color: #e0e0e0; /* Placeholder color */
+    background-color: #e0e0e0;
+    /* Placeholder color */
     overflow: hidden;
 
     @include mixins.respond-max(sm) {
@@ -93,7 +96,7 @@
     color: #333;
     line-height: 1.25rem;
 
-    -webkit-line-clamp: 2; 
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 
     overflow: hidden;
@@ -128,6 +131,7 @@
   &-price {
     margin-block: auto 5px;
     font-size: 1.2em;
-    color: $primary-color; /* Shopee-like orange */
+    color: $primary-color;
+    /* Shopee-like orange */
   }
 }

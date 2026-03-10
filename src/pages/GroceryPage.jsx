@@ -83,7 +83,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
             startX: cardRect.left,
             startY: cardRect.top,
             targetX: cartShape.left + cartShape.width / 2 - 80,
-            targetY: cartShape.top + cartShape.height / 2 - 50,
+            targetY: cartShape.top + cartShape.height / 2 - 100,
         };
 
         setCount(prev => prev + 1)
@@ -224,13 +224,13 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
 
                             return (
                                 <span className="
-                    absolute -top-1 -right-1 
-                    bg-red-600 text-white text-xs font-bold 
-                    px-1.5 py-0.5 
-                    rounded-full 
-                    flex items-center justify-center 
-                    min-w-[1.25rem] h-[1.25rem]
-                    ">
+                                    absolute -top-1 -right-1 
+                                    bg-red-600 text-white text-xs font-bold 
+                                    px-1.5 py-0.5 
+                                    rounded-full 
+                                    flex items-center justify-center 
+                                    min-w-[1.25rem] h-[1.25rem]
+                                ">
                                     {totalQty}
                                 </span>
                             );

@@ -17,7 +17,7 @@ const ProductCard = ({ item, onAdd, settings }) => {
             data-product-name={item.product.product_name}
             data-product-price={item.updated_price}
         >
-            <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-gray-50">
+            <div className="relative h-full aspect-square w-full overflow-hidden rounded-xl bg-gray-50">
                 {!settings.hidePhotos &&
                     (item.product.imageUrl ? (
                         <LazyLoadImage
@@ -69,7 +69,7 @@ const ProductCard = ({ item, onAdd, settings }) => {
                         data-product-price={item.updated_price}
                         data-product-location={item.location.name}
                         data-product-image={item.product.imageUrl}
-                        onClick={(e) => onAdd(e.currentTarget)}
+                        onClick={onAdd}
                         className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-white shadow-md transition-transform hover:scale-110 hover:bg-orange-600 active:scale-95"
                         aria-label="Add to cart"
                     >
