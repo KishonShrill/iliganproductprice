@@ -49,7 +49,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                 removeCartItem(productId);
             };
         }
-    }, [cartRef.current])
+    }, [removeCartItem])
 
 
     // Add item on <Cart /> on Button Click on <ProductCard />

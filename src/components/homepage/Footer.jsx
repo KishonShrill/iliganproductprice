@@ -1,139 +1,139 @@
-import { DollarSign, Heart, Mail, Github, Twitter, Linkedin, Facebook } from 'lucide-react';
+import { Heart, Github, Linkedin, Facebook } from 'lucide-react';
 
 const Footer = () => {
-  const footerLinks = {
-    product: [
-      { name: 'Features', href: '#features' },
-      { name: 'How It Works', href: '#how-it-works' },
-    ],
-    company: [
-      { name: 'Developer', href: 'https://chriscent.is-a.dev/' },
-    ],
-    resources: [
-      { name: 'Help Center', href: 'https://github.com/KishonShrill/iliganproductprice/discussions' },
-      { name: 'Budgeting Tips', href: '#' },
-      { name: 'Community', href: '#' },
-      { name: 'Blog', href: '#' }
-    ],
-    legal: [
-      { name: 'Privacy Policy', href: '#' },
-      { name: 'Terms of Service', href: '#'},
-      { name: 'Accessibility', href: '#' }
-    ]
-  };
+    const footerLinks = {
+        product: [
+            { name: 'Features', href: '#features' },
+            { name: 'How It Works', href: '#how-it-works' },
+        ],
+        company: [
+            { name: 'Developer', href: 'https://chriscent.is-a.dev/' },
+        ],
+        resources: [
+            { name: 'Help Center', href: 'https://github.com/KishonShrill/iliganproductprice/discussions' },
+            { name: 'Budgeting Tips', href: '#' },
+            { name: 'Community', href: '#' },
+            { name: 'Blog', href: '#' }
+        ],
+        legal: [
+            { name: 'Privacy Policy', href: '#' },
+            { name: 'Terms of Service', href: '#' },
+            { name: 'Accessibility', href: '#' }
+        ]
+    };
 
-  const socialLinks = [
-    { icon: Facebook, href: 'https://www.facebook.com/Perseque/', label: 'Facebook' },
-    { icon: Github, href: 'https://github.com/KishonShrill', label: 'GitHub' },
-    { icon: Linkedin, href: 'https://ph.linkedin.com/in/chriscent-louis-june-pingol', label: 'LinkedIn' }
-  ];
+    const socialLinks = [
+        { icon: Facebook, href: 'https://www.facebook.com/Perseque/', label: 'Facebook' },
+        { icon: Github, href: 'https://github.com/KishonShrill', label: 'GitHub' },
+        { icon: Linkedin, href: 'https://ph.linkedin.com/in/chriscent-louis-june-pingol', label: 'LinkedIn' }
+    ];
 
-  return (
-    <footer className="bg-gray-900 text-white">
-      {/* Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="grid lg:grid-cols-6 gap-8">
-          {/* Brand Section */}
-          <div className="lg:col-span-2">
-            <div className="flex items-center space-x-2 mb-6 group">
-              <img src="/budgetbuddy.svg" />
-              <span className="text-xl font-bold">Budget Buddy</span>
-            </div>
-            
-            <p className="text-gray-400 mb-6 leading-relaxed">
-              Empowering smart financial decisions through free, accessible budgeting tools. Join thousands of users who have taken control of their shopping habits.
-            </p>
+    return (
+        <footer className="bg-gray-900 text-white">
+            {/* Main Footer */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+                <div className="grid lg:grid-cols-6 gap-8">
+                    {/* Brand Section */}
+                    <div className="lg:col-span-2">
+                        <div className="flex items-center space-x-2 mb-6 group">
+                            <img src="/budgetbuddy.svg" />
+                            <span className="text-xl font-bold">Budget Buddy</span>
+                        </div>
 
-            <div className="flex items-center space-x-2 text-sm text-gray-400 mb-6">
-              <Heart className="w-4 h-4 text-[#ee4d2d]" />
-              <span>Made with love as a non-profit initiative</span>
-            </div>
+                        <p className="text-gray-400 mb-6 leading-relaxed">
+                            Empowering smart financial decisions through free, accessible budgeting tools. Join thousands of users who have taken control of their shopping habits.
+                        </p>
 
-            {/* Social Links */}
-            <div className="flex space-x-4">
-              {socialLinks.map((social, index) => (
-                <a
-                  key={index}
-                  href={social.href}
-                  target='_blank'
-                  className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-[#ee4d2d] transition-colors duration-300 group"
-                  aria-label={social.label}
-                >
-                  <social.icon className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                </a>
-              ))}
-            </div>
-          </div>
+                        <div className="flex items-center space-x-2 text-sm text-gray-400 mb-6">
+                            <Heart className="w-4 h-4 text-[#ee4d2d]" />
+                            <span>Made with love as a non-profit initiative</span>
+                        </div>
 
-          {/* Links Sections */}
-          <div className="lg:col-span-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div>
-              <h3 className="font-semibold mb-4 text-white">Product</h3>
-              <ul className="space-y-3">
-                {footerLinks.product.map((link, index) => (
-                  <li key={index}>
-                    <a
-                      href={link.href}
-                      className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                        {/* Social Links */}
+                        <div className="flex space-x-4">
+                            {socialLinks.map((social, index) => (
+                                <a
+                                    key={index}
+                                    href={social.href}
+                                    target='_blank'
+                                    className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-[#ee4d2d] transition-colors duration-300 group"
+                                    aria-label={social.label}
+                                >
+                                    <social.icon className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
+                                </a>
+                            ))}
+                        </div>
+                    </div>
 
-            <div>
-              <h3 className="font-semibold mb-4 text-white">Author</h3>
-              <ul className="space-y-3">
-                {footerLinks.company.map((link, index) => (
-                  <li key={index}>
-                    <a
-                      href={link.href}
-                      className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                    {/* Links Sections */}
+                    <div className="lg:col-span-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                        <div>
+                            <h3 className="font-semibold mb-4 text-white">Product</h3>
+                            <ul className="space-y-3">
+                                {footerLinks.product.map((link, index) => (
+                                    <li key={index}>
+                                        <a
+                                            href={link.href}
+                                            className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
+                                        >
+                                            {link.name}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
 
-            <div>
-              <h3 className="font-semibold mb-4 text-white">Resources</h3>
-              <ul className="space-y-3">
-                {footerLinks.resources.map((link, index) => (
-                  <li key={index}>
-                    <a
-                      href={link.href}
-                      className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+                        <div>
+                            <h3 className="font-semibold mb-4 text-white">Author</h3>
+                            <ul className="space-y-3">
+                                {footerLinks.company.map((link, index) => (
+                                    <li key={index}>
+                                        <a
+                                            href={link.href}
+                                            className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
+                                        >
+                                            {link.name}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
 
-            <div>
-              <h3 className="font-semibold mb-4 text-white">Legal</h3>
-              <ul className="space-y-3">
-                {footerLinks.legal.map((link, index) => (
-                  <li key={index}>
-                    <a
-                      href={link.href}
-                      className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
+                        <div>
+                            <h3 className="font-semibold mb-4 text-white">Resources</h3>
+                            <ul className="space-y-3">
+                                {footerLinks.resources.map((link, index) => (
+                                    <li key={index}>
+                                        <a
+                                            href={link.href}
+                                            className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
+                                        >
+                                            {link.name}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
 
-        {/* Newsletter Section
+                        <div>
+                            <h3 className="font-semibold mb-4 text-white">Legal</h3>
+                            <ul className="space-y-3">
+                                {footerLinks.legal.map((link, index) => (
+                                    <li key={index}>
+                                        <a
+                                            href={link.href}
+                                            className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
+                                        >
+                                            {link.name}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Newsletter Section
         <div className="mt-12 pt-8 border-t border-gray-800">
           <div className="grid md:grid-cols-2 gap-8 items-center">
             <div>
@@ -157,27 +157,27 @@ const Footer = () => {
             </div>
           </div>
         </div> */}
-      </div>
+            </div>
 
-      {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-gray-400 text-sm">
-              © 2024 Budget Buddy. All rights reserved. Built with ❤️ for the community.
+            {/* Bottom Bar */}
+            <div className="border-t border-gray-800">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                    <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+                        <div className="text-gray-400 text-sm">
+                            © 2024 Budget Buddy. All rights reserved. Built with ❤️ for the community.
+                        </div>
+                        <div className="flex items-center space-x-6 text-sm text-gray-400">
+                            <span className="flex items-center">
+                                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                All systems operational
+                            </span>
+                            <span>Version 2.0.0</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="flex items-center space-x-6 text-sm text-gray-400">
-              <span className="flex items-center">
-                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                All systems operational
-              </span>
-              <span>Version 2.0.0</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
-  );
+        </footer>
+    );
 };
 
 export default Footer;

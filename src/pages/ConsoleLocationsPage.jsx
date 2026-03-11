@@ -12,7 +12,6 @@ const columns = [
 ];
 
 export default function Locations() {
-    document.title = "BB:Console - Locations"
     const { isLoading, data } = useFetchLocations()
 
     const normalizedData = data?.map(item => ({
@@ -30,22 +29,25 @@ export default function Locations() {
     };
 
     return (
-        <div className="flex-1 overflow-auto bg-gray-50">
-            <Header
-                title="Locations"
-                actionLabel="Add Location"
-            />
-            <div className="p-8">
-                {isLoading
-                    ? <h1>Loading...</h1>
-                    : <DataTable
-                        fetched={"locations"}
-                        data={normalizedData}
-                        columns={columns}
-                        onView={handleView}
-                    />
-                }
+        <>
+            <title>BB:Console - Locations</title>
+            <div className="flex-1 overflow-auto bg-gray-50">
+                <Header
+                    title="Locations"
+                    actionLabel="Add Location"
+                />
+                <div className="p-8">
+                    {isLoading
+                        ? <h1>Loading...</h1>
+                        : <DataTable
+                            fetched={"locations"}
+                            data={normalizedData}
+                            columns={columns}
+                            onView={handleView}
+                        />
+                    }
+                </div>
             </div>
-        </div>
+        </>
     );
 }

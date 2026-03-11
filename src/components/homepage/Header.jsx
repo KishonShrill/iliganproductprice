@@ -6,11 +6,10 @@ import PropTypes from "prop-types";
 
 const cookies = new Cookies();
 
-const Header = ({ token, cartItems }) => {
+const Header = ({ token }) => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const [active, setActive] = useState(false);
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -97,16 +96,6 @@ Header.displayName = "Header"
 // 👇 Define PropTypes
 Header.propTypes = {
     token: PropTypes.string,
-    cartItems: PropTypes.shape({
-        cart: PropTypes.objectOf(
-            PropTypes.shape({
-                name: PropTypes.string.isRequired,
-                price: PropTypes.number.isRequired,
-                quantity: PropTypes.number.isRequired,
-                location: PropTypes.string.isRequired,
-            })
-        )
-    }).isRequired,
 }
 
 export default React.memo(Header)

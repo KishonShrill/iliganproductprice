@@ -2,21 +2,18 @@ import PropTypes from "prop-types";
 import { Outlet } from "react-router-dom";
 import Header from "./homepage/Header";
 import BottomNavigation from "./BottomNavigation";
-import useSettings from "../hooks/useSettings";
 
 import '../styles/main-header.scss'
 
-function HomepageLayout({ token }) { 
-    
-  const { settings } = useSettings();
+function HomepageLayout({ token }) {
 
-  return (
-    <>
-      <Header token={token} />
-      <Outlet />
-      <BottomNavigation />
-    </>
-  );
+    return (
+        <>
+            <Header token={token} />
+            <Outlet />
+            <BottomNavigation />
+        </>
+    );
 }
 
 HomepageLayout.displayName = "Homepage Layout"

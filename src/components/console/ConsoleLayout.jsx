@@ -1,103 +1,99 @@
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import PropTypes from "prop-types";
 import { Outlet } from "react-router-dom";
-import Cookies from "universal-cookie";
 import '../../styles/admin_console.scss'
 
 const Sidebar = lazy(() => import("./Sidebar"));
 
-const cookies = new Cookies();
-const token = cookies.get("TOKEN");
+export default function CRUDInterface() {
+    document.title = 'Admin - Manage Products'
 
-export default function CRUDInterface({ debugMode }) {
-  document.title = 'Admin - Manage Products'
-  
-//  const [search, setSearch] = useState("")
-//  const [message, setMessage] = useState("");
-//  const [currentPage, setCurrentPage] = useState(1);
-//  const [selectedCategory, setSelectedCategory] = useState("");
-//  const [selectedLocation, setSelectedLocation] = useState("");
-//  const [filters, setFilters] = useState({
-//    category: "",
-//    location: "",
-//  });
-//  
-//  // Populate data for the category and location select inputs  
-//  // Normalize search terms
-//  const searchTerm = (search || "").toLowerCase();
-//  
-//  // Apply filters BEFORE pagination
-//  const filteredData = data?.data.filter(item => {
-//    const matchesCategory = filters.category === '' || item.category?.name === filters.category;
-//    const matchesLocation = filters.location === '' || item.location?.name === filters.location;
-//    const matchesSearch = 
-//      filters.search === '' ||
-//      item.product_name?.toLowerCase().includes(searchTerm) ||
-//      item.product_id?.toString().toLowerCase().includes(searchTerm);
-//      
-//    return matchesCategory && matchesLocation && matchesSearch;
-//  }) || [];
-//  
-//  const itemsPerPage = 10;
-//  const itemQuantity = filteredData.length;
-//  const paginatedData = filteredData.slice(
-//    (currentPage - 1) * itemsPerPage,
-//    currentPage * itemsPerPage
-//  );
-//  
-//  // console.log("Data:" + paginatedData)
-//  const totalPages = Math.ceil((itemQuantity || 0) / itemsPerPage);
-//
-//  function edit_product(productId) {
-//    let location = debugMode
-//      ? `http://localhost:5173/groceries/edit-item?productId=${productId}&type=edit`
-//      : `https://productprice-iligan.vercel.app/groceries/edit-item?productId=${productId}&type=edit`;
-//    window.location.href = location;
-//  }
-//
-//  // useEffect automatically executes once the page is fully loaded
-//  useEffect(() => {
-//    // set configurations for the API call here
-//    let url = debugMode
-//      ? "http://localhost:5000/auth-endpoint"
-//      : "https://iliganproductprice-mauve.vercel.app/auth-endpoint";
-//    
-//    const configuration = {
-//      method: "get",
-//      url,
-//      headers: {
-//        Authorization: `Bearer ${token}`,
-//      },
-//    };
-//
-//    // make the API call
-//    axios(configuration)
-//      .then((result) => {
-//        // assign the message in our result to the message we initialized above
-//        setMessage(result.data.message);
-//      })
-//      .catch((error) => {
-//        new Error(error);
-//      });
-//  }, [])
-//
-//
-//  // Display when fetched elements are empty or is loading...
-//  if (isLoading || isFetching) {return(
-//    <main className='errorDisplay'>
-//      <h2>Loading<span className="animated-dots"></span></h2>
-//    </main>
-//  )}
-//  if (isError) {return(
-//    <main className='errorDisplay'>
-//      <h2>Error: {error.message}</h2>
-//    </main>
-//  )}
+    //  const [search, setSearch] = useState("")
+    //  const [message, setMessage] = useState("");
+    //  const [currentPage, setCurrentPage] = useState(1);
+    //  const [selectedCategory, setSelectedCategory] = useState("");
+    //  const [selectedLocation, setSelectedLocation] = useState("");
+    //  const [filters, setFilters] = useState({
+    //    category: "",
+    //    location: "",
+    //  });
+    //  
+    //  // Populate data for the category and location select inputs  
+    //  // Normalize search terms
+    //  const searchTerm = (search || "").toLowerCase();
+    //  
+    //  // Apply filters BEFORE pagination
+    //  const filteredData = data?.data.filter(item => {
+    //    const matchesCategory = filters.category === '' || item.category?.name === filters.category;
+    //    const matchesLocation = filters.location === '' || item.location?.name === filters.location;
+    //    const matchesSearch = 
+    //      filters.search === '' ||
+    //      item.product_name?.toLowerCase().includes(searchTerm) ||
+    //      item.product_id?.toString().toLowerCase().includes(searchTerm);
+    //      
+    //    return matchesCategory && matchesLocation && matchesSearch;
+    //  }) || [];
+    //  
+    //  const itemsPerPage = 10;
+    //  const itemQuantity = filteredData.length;
+    //  const paginatedData = filteredData.slice(
+    //    (currentPage - 1) * itemsPerPage,
+    //    currentPage * itemsPerPage
+    //  );
+    //  
+    //  // console.log("Data:" + paginatedData)
+    //  const totalPages = Math.ceil((itemQuantity || 0) / itemsPerPage);
+    //
+    //  function edit_product(productId) {
+    //    let location = debugMode
+    //      ? `http://localhost:5173/groceries/edit-item?productId=${productId}&type=edit`
+    //      : `https://productprice-iligan.vercel.app/groceries/edit-item?productId=${productId}&type=edit`;
+    //    window.location.href = location;
+    //  }
+    //
+    //  // useEffect automatically executes once the page is fully loaded
+    //  useEffect(() => {
+    //    // set configurations for the API call here
+    //    let url = debugMode
+    //      ? "http://localhost:5000/auth-endpoint"
+    //      : "https://iliganproductprice-mauve.vercel.app/auth-endpoint";
+    //    
+    //    const configuration = {
+    //      method: "get",
+    //      url,
+    //      headers: {
+    //        Authorization: `Bearer ${token}`,
+    //      },
+    //    };
+    //
+    //    // make the API call
+    //    axios(configuration)
+    //      .then((result) => {
+    //        // assign the message in our result to the message we initialized above
+    //        setMessage(result.data.message);
+    //      })
+    //      .catch((error) => {
+    //        new Error(error);
+    //      });
+    //  }, [])
+    //
+    //
+    //  // Display when fetched elements are empty or is loading...
+    //  if (isLoading || isFetching) {return(
+    //    <main className='errorDisplay'>
+    //      <h2>Loading<span className="animated-dots"></span></h2>
+    //    </main>
+    //  )}
+    //  if (isError) {return(
+    //    <main className='errorDisplay'>
+    //      <h2>Error: {error.message}</h2>
+    //    </main>
+    //  )}
 
-  return (
-    <div className="flex h-screen bg-gray-100 overflow-auto"> 
-      <Sidebar />
-      {/*  <h1>Manage Products</h1>
+    return (
+        <div className="flex h-screen bg-gray-100 overflow-auto">
+            <Sidebar />
+            {/*  <h1>Manage Products</h1>
 
       <Link to="https://productprice-iligan.vercel.app/groceries/add-item" className="add-product-button">Add New Product</Link>
       <div className="controls">
@@ -175,13 +171,15 @@ export default function CRUDInterface({ debugMode }) {
 
       <Pagination setCurrentPage={setCurrentPage} currentPage={currentPage} totalPages={totalPages} />
       <h3 id="messageArea" className="message-area text-center text-danger">{message}</h3> */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <main className="flex-1 overflow-auto">
-          <Outlet />
-        </main>
-      </div>
-    </div>
-  );
+            <div className="flex-1 flex flex-col overflow-hidden">
+                <main className="flex-1 overflow-auto">
+                    <Suspense fallback={<div className="p-8">Loading page content...</div>}>
+                        <Outlet />
+                    </Suspense>
+                </main>
+            </div>
+        </div>
+    );
 }
 
 // 👇 Give the component a name for debugging purposes
@@ -189,5 +187,5 @@ CRUDInterface.displayName = "Console";
 
 // 👇 Define PropTypes
 CRUDInterface.propTypes = {
-  debugMode: PropTypes.bool.isRequired,
+    debugMode: PropTypes.bool,
 }

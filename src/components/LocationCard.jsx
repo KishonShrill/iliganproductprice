@@ -3,14 +3,13 @@ import PropTypes from "prop-types";
 import { Store } from "lucide-react";
 import { Link } from "react-router-dom";
 
-import StoreLogo from './StoreLogo.jsx'
-
 const storeImages = {
     'gaisano': '/images/logos/gaisano-logo.jpg',
     '7-eleven': '/images/logos/7-eleven_logo.svg',
     'shoppe 24': '/images/logos/shoppe24-logo.webp',
     // Add more mappings as needed
 }
+
 
 const LocationCard = React.memo(({ item }) => {
     const shortName = item.location_name.split(' - ')[1] || item.location_name;
