@@ -1,139 +1,112 @@
 import React, { useState, useMemo } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Settings, LogIn } from "lucide-react";
-import PropTypes from "prop-types";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Settings, LogIn, LogOut, Menu, X, LayoutDashboard, Package, Utensils, Info, ShoppingCart, User } from "lucide-react";
 import Cookies from "universal-cookie";
+import PropTypes from "prop-types";
 
-const cookies = new Cookies()
+const cookies = new Cookies();
 
-const Header = ({ token }) => {
+const Header = ({ token, cartItems }) => {
+    const { pathname } = useLocation();
+    const navigate = useNavigate();
+    const [isOpen, setIsOpen] = useState(false);
+    const [active, setActive] = useState(false);
 
-    const { pathname } = useLocation(); // ✅ also needs to be here, not in render logic
-    const [nav, setNav] = useState("-300px")
+    const toggleMenu = () => setIsOpen(!isOpen);
 
-    // Menu Navigation
-    function openMenu() {
-        if (nav === "-300px") setNav("0")
-        if (nav === "0") setNav("-300px")
-    }
+    const logout = () => {
+        cookies.remove("TOKEN", { path: "/" });
+        setIsOpen(false);
+        navigate("/");
+        window.location.reload(); // Ensures state clears
+    };
 
-    const shouldShowAuthLinks = useMemo(() => {
-        return pathname !== "/authenticate" && pathname !== "/dev-mode";
-    }, [pathname]);
+    const showAuthLinks = useMemo(() =>
+        !["/authenticate", "/dev-mode"].includes(pathname),
+        [pathname]);
+
+    const navLinks = [
+        { to: "/", label: "Home", icon: <LayoutDashboard size={20} /> },
+        { to: "/locations", label: "Groceries", icon: <Package size={20} /> },
+        { to: "#", label: "Cuisines", icon: <Utensils size={20} /> },
+        { to: "#", label: "About", icon: <Info size={20} /> },
+        { to: "/receipt", label: "Cart", icon: <ShoppingCart size={20} /> },
+    ];
 
     return (
-      <header className="header dark:bg-gray-700 dark:border-b-gray-600">
-        <button className="header__menu" onClick={openMenu}>
-          <img src="/UI/menu-02-stroke-rounded.svg" alt="Menu Button" />
-        </button>
-        <Link to="/" className="header__name" style={{ fontWeight: 700 }}>Budget Buddy</Link>
-        
-        {shouldShowAuthLinks && (
-          !token ? (
-            <Link to="/authenticate" className="phone" style={{justifyContent: "center"}}>
-              <img src="/UI/user-03-stroke-rounded.svg" alt="Login Button" />
-            </Link>
-          ) : (
-            <Link className='phone' to="/dev-mode" style={{justifyContent: "center"}}>
-              <img src="/UI/user-03-stroke-rounded.svg" alt="Developer Mode" />
-            </Link>
-          )
-        )}
-
-        <nav className="header__nav" style={{left: nav}}>
-          <ul className='header__nav-links'>
-            <button className="header__menu absolute" onClick={openMenu}>
-              <img src="/UI/cancel-circle-stroke-rounded-white.svg" alt="Menu Button" />
+        <header className="header flex items-center justify-between p-4 dark:bg-gray-700 dark:border-b-gray-600">
+            {/* Mobile Menu Toggle */}
+            <button className="md:hidden" onClick={toggleMenu}>
+                <Menu className="dark:text-white" />
             </button>
-            <h1 className="header__name phone">Budget Buddy</h1>
-            <li>
-              <Link className="nav-link text-white md:dark:text-gray-400 dark:hover:text-orange-500" to="/" onClick={openMenu}>
-                <img className="phone" src="/UI/dashboard-square-01-stroke-rounded-white.svg" alt="Home Icon" />
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link className="nav-link text-white md:dark:text-gray-400 dark:hover:text-orange-500" to="/locations" onClick={openMenu}>
-                <img className="phone" src="/UI/package-stroke-rounded-white.svg" alt="" />
-                Groceries
-              </Link>
-            </li>
-            <li>
-              <Link className="nav-link text-white md:dark:text-gray-400 dark:hover:text-orange-500" to="#" onClick={openMenu}>
-                <img className="phone" src="/UI/noodles-stroke-rounded-white.svg" alt="" />
-                Cuisines
-              </Link>
-            </li>
-            <li>
-              <Link className="nav-link text-white md:dark:text-gray-400 dark:hover:text-orange-500" to="#" onClick={openMenu}>
-                <img className="phone" src="/UI/information-circle-stroke-rounded-white.svg" alt="About me Icon" />
-                About
-              </Link>
-            </li>
-            <li>   
-              <Link className="nav-link text-white md:dark:text-gray-400 dark:hover:text-orange-500" to="/receipt" onClick={openMenu}>
-                <img className="phone" src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="" />
-                Cart
-              </Link>
-            </li>
-          </ul>
-          <div className="header__nav-login dark:border-l-2 dark:border-gray-600">
-            <DevMode token={token} openMenu={openMenu} />
-          </div>
-        </nav>
-      </header>
-    )
-}
 
-function DevModeComponent({token, openMenu}) {
-  
-  // logout
-  const logout = () => {
-    cookies.remove("TOKEN", { path: "/" });
-    window.location.href = "/";
-  }
+            <Link to="/" className="header__name" style={{ fontWeight: 700 }}>Budget Buddy</Link>
 
-  return (
-    (!token) ? (
-      <>
-        <Link className="nav-link text-white md:text-gray-500 hover:text-orange-500" to="/settings" onClick={openMenu}>
-            <Settings />
-            <p className="phone">Settings</p>
-        </Link>
-        <Link className='nav-link text-white md:text-gray-500 hover:text-orange-500' to="/authenticate" onClick={openMenu}>
-            <LogIn />
-            <p className="phone">Login</p>
-        </Link>
-      </>
-    ) : (
-      <>
-        <Link className='nav-link login__devmode' to="/dev-mode" onClick={openMenu}>Dev Mode</Link>
-        <button className="nav-link logout__devmode" type="submit" variant="danger" onClick={logout}>
-          <svg className="computer" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" color="#000000" fill="none">
-            <path className="svg-path" d="M6 6.50006C4.15875 8.14802 3 10.3345 3 13C3 17.9706 7.02944 22 12 22C16.9706 22 21 17.9706 21 13C21 10.3345 19.8412 8.14802 18 6.50006" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-            <path className="svg-path" d="M12 2V11M12 2C11.2998 2 9.99153 3.9943 9.5 4.5M12 2C12.7002 2 14.0085 3.9943 14.5 4.5" stroke="#000000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-          </svg>
-          <p className="phone">Logout</p>
-        </button>
-      </>
-    )
-  );
-}
+            {/* Quick Mobile Auth Icon */}
+            {showAuthLinks && (
+                <Link to={token ? "/dev-mode" : "/authenticate"} className="md:hidden">
+                    <User className="dark:text-white" />
+                </Link>
+            )}
+
+            {/* Navigation Overlay */}
+            <nav className={`fixed md:static top-0 left-0 h-full md:h-auto w-[300px] md:w-auto bg-slate-800 md:bg-transparent transition-transform duration-300 z-50 
+        ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
+
+                <ul className="flex flex-col md:flex-row p-6 md:p-0 h-full md:items-center md:h-auto md:gap-6">
+                    <button className="md:hidden self-end mb-4" onClick={toggleMenu}><X color="white" /></button>
+
+                    {navLinks.map((link) => (
+                        <li key={link.label}>
+                            <Link className="nav-link text-white md:text-black hover:text-orange-500" to={link.to} onClick={toggleMenu}>
+                                <span className="md:hidden">{link.icon}</span>
+                                {link.label}
+                            </Link>
+                        </li>
+                    ))}
+
+                    {/* Integrated Auth Section */}
+                    <div className="flex flex-col mt-auto md:flex-row md:border-t-0 md:border-l border-gray-600 pt-4 md:pt-0 md:pl-4 md:mt-0 md:items-center md:gap-4">
+                        {!token ? (
+                            <>
+                                <Link className="nav-link text-white md:text-black hover:text-orange-500" to="/settings" onClick={toggleMenu}>
+                                    <Settings size={20} /> <span className="md:hidden">Settings</span>
+                                </Link>
+                                <Link className="nav-link text-white md:text-black hover:text-orange-500" to="/authenticate" onClick={toggleMenu}>
+                                    <LogIn size={20} /> <span className="md:hidden">Login</span>
+                                </Link>
+                            </>
+                        ) : (
+                            <>
+                                <Link className="nav-link text-orange-500 font-medium" to="/dev-mode" onClick={toggleMenu}>Dev Mode</Link>
+                                <button className="flex items-center gap-2 text-white md:text-gray-400 hover:text-red-400" onClick={logout}>
+                                    <LogOut size={20} /> <span className="md:hidden">Logout</span>
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </ul>
+            </nav>
+        </header>
+    );
+};
 
 // 👇 Give the component a name for debugging purposes
 Header.displayName = "Header"
 
 // 👇 Define PropTypes
 Header.propTypes = {
-  token: PropTypes.string,
+    token: PropTypes.string,
+    cartItems: PropTypes.shape({
+        cart: PropTypes.objectOf(
+            PropTypes.shape({
+                name: PropTypes.string.isRequired,
+                price: PropTypes.number.isRequired,
+                quantity: PropTypes.number.isRequired,
+                location: PropTypes.string.isRequired,
+            })
+        )
+    }).isRequired,
 }
-DevModeComponent.propTypes = {
-  token: PropTypes.string,
-  openMenu: PropTypes.func,
-}
-
-
-const DevMode = React.memo(DevModeComponent)
-// I swear, I feel like I am over engineering my web portfolio just to make it run faster -w-
 
 export default React.memo(Header)

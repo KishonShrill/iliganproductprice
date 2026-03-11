@@ -25,7 +25,7 @@ section.grocery {
   border-radius: 5px;
   background-color: $primary-color;
   transition: background-color 0.3s ease;
-    
+
   &:hover {
     background-color: #d7391f;
   }
@@ -33,11 +33,11 @@ section.grocery {
 
 .cart {
   &-summary {
-    position: sticky; /* Make it sticky */
-    top: 6rem; /* Stick below header, plus some gap */
+    position: sticky;
+    top: 6rem;
     width: 330px;
-    min-width: 200px; /* Prevent shrinking too much */
-    height: fit-content; /* Adjust height based on content */
+    min-width: 300px;
+    height: fit-content;
     padding: 15px;
     display: flex;
     flex-direction: column;
@@ -47,7 +47,7 @@ section.grocery {
     overflow-y: hidden;
     background-color: #fff;
     transition: left 0.3s ease-in-out;
-    
+
     & h2 {
       margin-block: 0 10px;
       padding-bottom: 10px;
@@ -61,9 +61,11 @@ section.grocery {
 
   &-items {
 
-    height: 300px; /* Add max height for scrolling if many items */
+    height: 300px;
+    /* Add max height for scrolling if many items */
     // margin-bottom: 15px;
-    overflow-y: auto; /* Add scroll if items exceed max height */
+    overflow-y: auto;
+    /* Add scroll if items exceed max height */
   }
 
   &-item {
@@ -75,7 +77,8 @@ section.grocery {
     font-size: 0.9em;
     border-bottom: 1px dotted #717171;
     user-select: none;
-    cursor: pointer; /* Indicate it's clickable */
+    cursor: pointer;
+    /* Indicate it's clickable */
     transition: color 0.2s ease;
 
     &:hover {
@@ -83,7 +86,8 @@ section.grocery {
     }
 
     &:last-child {
-      border-bottom: none; /* No border for the last item */
+      border-bottom: none;
+      /* No border for the last item */
       margin-bottom: 0;
       padding-bottom: 0;
     }
@@ -93,9 +97,11 @@ section.grocery {
       color: $secondary-color;
     }
 
-    & > span {
-      margin-left: 10px; /* Add space between name and price */
-      float: right; /* Float the price to the right */
+    &>span {
+      margin-left: 10px;
+      /* Add space between name and price */
+      float: right;
+      /* Float the price to the right */
       color: #333;
       font-weight: bold;
     }
@@ -116,7 +122,7 @@ section.grocery {
     font-size: 1em;
     // border-bottom: 2px solid #eee;
 
-    &-group:nth-child(1) > & {
+    &-group:nth-child(1)>& {
       margin-block: 0;
       user-select: none;
     }
@@ -138,15 +144,18 @@ section.grocery {
   }
 }
 
-@include respond-max("phone") {  
+@include respond-max("phone") {
   .cart {
     &-summary {
-      position: fixed; /* Make it sticky */
-      top: calc(20px + 60px); /* Stick below header, plus some gap */
+      position: fixed;
+      /* Make it sticky */
+      top: calc(20px + 60px);
+      /* Stick below header, plus some gap */
       bottom: 0;
       left: 0%;
       width: 100%;
-      height: calc(100dvh - 66px); /* Adjust height based on content */
+      height: calc(100dvh - 66px);
+      /* Adjust height based on content */
       padding-bottom: 7rem;
       border-radius: 0;
     }
@@ -163,8 +172,8 @@ section.grocery {
       border-radius: 50%;
       /* http://smoothshadows.com/#djEsMSw1LDAuMTUsNjQsMCwwLCMwMDAwMDAsI2ZmZmZmZiwjZmZmZmZmLDI%3D */
       box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.03),
-      0px 0px 10px rgba(0, 0, 0, 0.06),
-      0px 0px 23px rgba(0, 0, 0, 0.09);
+        0px 0px 10px rgba(0, 0, 0, 0.06),
+        0px 0px 23px rgba(0, 0, 0, 0.09);
       transform: translateX(calc(50% - var(--parent-padding) * 2));
       background-color: #fff;
       cursor: pointer;
@@ -187,18 +196,16 @@ section.grocery {
     transform: translate(0, 0) scale(1);
     opacity: 1;
   }
+
   50% {
-    transform: translate(
-      calc((var(--target-x) - var(--start-x)) * 0.5),
-      calc((var(--target-y) - var(--start-y)) * 0.3)
-    ) scale(0.8);
+    transform: translate(calc((var(--target-x) - var(--start-x)) * 0.5),
+        calc((var(--target-y) - var(--start-y)) * 0.3)) scale(0.8);
     opacity: 0.8;
   }
+
   100% {
-    transform: translate(
-      calc(var(--target-x) - var(--start-x)),
-      calc(var(--target-y) - var(--start-y))
-    ) scale(0.2);
+    transform: translate(calc(var(--target-x) - var(--start-x)),
+        calc(var(--target-y) - var(--start-y))) scale(0.2);
     opacity: 0;
   }
 }

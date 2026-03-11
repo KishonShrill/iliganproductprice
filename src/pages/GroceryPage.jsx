@@ -19,6 +19,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     const [active, setActive] = useState(false)
     const [search, setSearch] = useState('')
     const [animatingCards, setAnimatingCards] = useState([])
+    const [windowWidth] = useState(window.innerWidth);
 
     const cartButtonRef = useRef(null)
     const cartRef = useRef(null)
@@ -59,7 +60,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
         const productLocation = el.dataset.productLocation;
         const productImage = el.dataset.productImage;
         const card = el.closest('.product-card');
-        const cartButton = cartButtonRef.current;
+        const cartButton = (windowWidth < 700) ? cartButtonRef.current : cartRef.current; //TODO: this is a one time fetch thing, static fetch
 
         if (!card || !cartButton) return;
 
@@ -99,7 +100,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     }, [count]);
 
     const searchTerm = (search || "").toLowerCase();
-    const filteredData = data?.data.filter(item => {
+    const filteredProducts = data?.data.filter(item => {
         const matchesSearch =
             searchTerm === '' ||
             item.product.product_name?.toLowerCase().includes(searchTerm);
@@ -151,23 +152,27 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
 
             </div>
             <section className="grocery bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                <main className='product-container' id="productContainer">
+                <main className='mb-16 grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6 xl:grid-cols-4' id="productContainer">
                     <Suspense fallback={(
                         <main className='errorDisplay'>
                             <h2>Loading<span className="animated-dots"></span></h2>
                         </main>
                     )}>
-                        {data
-                            ? filteredData.map((item) => (
+                        {filteredProducts
+                            .sort((a, b) => a.product.product_name.localeCompare(b.product.product_name))
+                            .map((item) => (
                                 <ProductCard
                                     key={item._id}
                                     item={item}
                                     onAdd={(event) => handleClick(event.currentTarget)}
                                     settings={settings}
                                 />
-                            ))
-                            : <h2>No products found...</h2>
-                        }
+                            ))}
+                        {filteredProducts.length === 0 && (
+                            <div className="col-span-full py-20 text-center text-gray-500">
+                                No products found for {search}
+                            </div>
+                        )}
                     </Suspense>
                 </main>
 
@@ -188,21 +193,13 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                             '--target-y': `${animatingCard.targetY}px`,
                         }}
                     >
-                        <div className="bg-white rounded-lg shadow-lg overflow-hidden w-full h-full">
-                            <div className="aspect-square overflow-hidden">
-                                <img
-                                    src={animatingCard.productImage}
-                                    alt={animatingCard.productName}
-                                    className="w-full h-full object-cover"
-                                />
+                        <div className="flex h-full w-full flex-col overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5">
+                            <div className="relative aspect-square w-full bg-gray-50">
+                                <img src={animatingCard.productImage} alt={animatingCard.productName} className="h-full w-full object-cover" />
                             </div>
                             <div className="p-2">
-                                <h3 className="font-medium text-gray-800 text-xs mb-1 line-clamp-1">
-                                    {animatingCard.productName}
-                                </h3>
-                                <p className="text-sm font-bold text-gray-900">
-                                    ${animatingCard.productPrice}
-                                </p>
+                                <h3 className="line-clamp-1 text-[10px] font-bold text-gray-800">{animatingCard.productName}</h3>
+                                <p className="text-xs font-black text-orange-500">₱{animatingCard.productPrice.toFixed(2)}</p>
                             </div>
                         </div>
                     </div>
@@ -223,14 +220,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                             if (totalQty == 0) return null;
 
                             return (
-                                <span className="
-                                    absolute -top-1 -right-1 
-                                    bg-red-600 text-white text-xs font-bold 
-                                    px-1.5 py-0.5 
-                                    rounded-full 
-                                    flex items-center justify-center 
-                                    min-w-[1.25rem] h-[1.25rem]
-                                ">
+                                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-[1.25rem] h-[1.25rem]">
                                     {totalQty}
                                 </span>
                             );

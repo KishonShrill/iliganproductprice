@@ -2,37 +2,6 @@
 @use '../utils/mixins';
 
 .product {
-  &-container {
-    width: 100%;
-    //    height: calc(100vh - #{$height-header} - #{$height-searchbar});
-    padding-bottom: 5.5rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 240px);
-    grid-auto-rows: 1fr;
-    justify-content: center;
-    align-items: start;
-    overflow-y: auto;
-    gap: 20px;
-
-    @include mixins.respond-max(sm) {
-      padding-bottom: 7rem;
-      grid-template-columns: 1fr;
-      grid-template-rows: repeat(auto-fill, 180px);
-      grid-auto-rows: 180px;
-      overflow-y: auto;
-      /* Hide scrollbar for Firefox */
-      scrollbar-width: none;
-
-      /* Hide scrollbar for Chrome, Safari, Edge, Opera */
-      &::-webkit-scrollbar {
-        display: none;
-      }
-
-      /* Hide scrollbar for Internet Explorer and Edge (older versions) */
-      -ms-overflow-style: none;
-    }
-  }
-
   &-card {
     display: flex;
     flex-direction: column;
