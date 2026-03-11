@@ -5,7 +5,7 @@ export const defaultSettings = {
     hidePhotos: false,
     rightToLeft: false,
     soundEffects: false,
-    notications: false,
+    notifications: false,
     budgetAlerts: false,
 };
 

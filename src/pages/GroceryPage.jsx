@@ -152,7 +152,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
 
             </div>
             <section className="grocery bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                <main className='mb-16 grid grid-cols-2 gap-4 sm:grid-cols-3 md:gap-6 xl:grid-cols-4' id="productContainer">
+                <main className='mb-16 grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6 xl:grid-cols-4' id="productContainer">
                     <Suspense fallback={(
                         <main className='errorDisplay'>
                             <h2>Loading<span className="animated-dots"></span></h2>

@@ -6,6 +6,40 @@ import PropTypes from "prop-types";
 
 const cookies = new Cookies();
 
+const navLinks = [
+    {
+        to: "/",
+        label: "Home",
+        icon: "/UI/dashboard-square-01-stroke-rounded-white.svg",
+        alt: "Home Icon",
+    },
+    {
+        to: "/locations",
+        label: "Groceries",
+        icon: "/UI/package-stroke-rounded-white.svg",
+        alt: "Groceries Icon",
+    },
+    {
+        to: "#",
+        label: "Cuisines",
+        icon: "/UI/noodles-stroke-rounded-white.svg",
+        alt: "Cuisines Icon",
+    },
+    {
+        to: "#",
+        label: "About",
+        icon: "/UI/information-circle-stroke-rounded-white.svg",
+        alt: "About me Icon",
+    },
+    {
+        to: "/receipt",
+        label: "Cart",
+        icon: "/UI/shopping-cart-02-stroke-rounded-white.svg",
+        alt: "Cart Icon",
+    },
+];
+
+
 const Header = ({ token }) => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
@@ -39,6 +73,7 @@ const Header = ({ token }) => {
                 <Menu className="dark:text-white" />
             </button>
 
+
             <Link to="/" className="header__name" style={{ fontWeight: 700 }}>Budget Buddy</Link>
 
             {/* Quick Mobile Auth Icon */}
@@ -57,7 +92,7 @@ const Header = ({ token }) => {
 
                     {navLinks.map((link) => (
                         <li key={link.label}>
-                            <Link className="nav-link text-white md:text-black hover:text-orange-500" to={link.to} onClick={toggleMenu}>
+                            <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500" to={link.to} onClick={toggleMenu}>
                                 <span className="md:hidden">{link.icon}</span>
                                 {link.label}
                             </Link>
@@ -68,10 +103,10 @@ const Header = ({ token }) => {
                     <div className="flex flex-col mt-auto md:flex-row md:border-t-0 md:border-l border-gray-600 pt-4 md:pt-0 md:pl-4 md:mt-0 md:items-center md:gap-4">
                         {!token ? (
                             <>
-                                <Link className="nav-link text-white md:text-black hover:text-orange-500" to="/settings" onClick={toggleMenu}>
+                                <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500" to="/settings" onClick={toggleMenu}>
                                     <Settings size={20} /> <span className="md:hidden">Settings</span>
                                 </Link>
-                                <Link className="nav-link text-white md:text-black hover:text-orange-500" to="/authenticate" onClick={toggleMenu}>
+                                <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500" to="/authenticate" onClick={toggleMenu}>
                                     <LogIn size={20} /> <span className="md:hidden">Login</span>
                                 </Link>
                             </>

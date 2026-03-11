@@ -11,7 +11,8 @@
   border-bottom: 1px solid $outline-color;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   background-color: #fff;
-  z-index: 1000; /* Ensure header is on top */
+  z-index: 1000;
+  /* Ensure header is on top */
 
   &__menu,
   &__cart {
@@ -31,7 +32,7 @@
       margin-right: 1rem;
       display: flex;
       align-items: center;
-      gap: 1rem ;
+      gap: 1rem;
       list-style-type: none;
     }
 
@@ -63,21 +64,22 @@
 
   &:hover {
     color: $primary-color;
-    stroke: $primary-color; 
+    stroke: $primary-color;
   }
 }
+
 .svg-path {
   stroke: var(--clr-secondary);
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (max-width: 767px) {
   .header {
     display: grid;
     grid-template-columns: 30px 1fr 30px;
     grid-template-areas: 'navigation logo login';
     align-items: center;
     justify-items: center;
-    
+
     &__menu,
     &__cart {
       width: 30px;
@@ -105,11 +107,11 @@
         flex-direction: column;
         gap: 0;
 
-        & > li {
+        &>li {
           width: 100%;
         }
 
-        & > li:nth-child(6) .nav-link {
+        &>li:nth-child(6) .nav-link {
           border-bottom: 1px solid grey;
         }
       }
@@ -151,6 +153,7 @@
       grid-area: login;
     }
   }
+
   .nav-link {
     width: 100%;
     height: 4rem;

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import PropTypes from "prop-types";
 import { Outlet } from "react-router-dom";
 import Header from "./homepage/Header";
@@ -10,7 +11,13 @@ function HomepageLayout({ token }) {
     return (
         <>
             <Header token={token} />
-            <Outlet />
+            <Suspense fallback={(
+                <main className='errorDisplay'>
+                    <h2>Loading<span className="animated-dots"></span></h2>
+                </main>
+            )}>
+                <Outlet />
+            </Suspense>
             <BottomNavigation />
         </>
     );

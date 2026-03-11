@@ -1,9 +1,6 @@
 // routes/productRoutes.js
 import express from 'express';
-import multer from 'multer';
-import streamifier from 'streamifier';
 import mongoose from 'mongoose';
-import cloudinary from '../cloudinary.js'; // adjust if separate
 import getPaginationParams from '../helpers/getPaginationParams.js'; // adjust if separate
 
 import { Listing } from '../models/models.js'; // adjust path

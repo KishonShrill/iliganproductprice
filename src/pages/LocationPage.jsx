@@ -25,9 +25,9 @@ export default function LocationPage() {
     }
 
     return (
-        <section className="mx-auto max-w-6xl p-6 lg:p-10 bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+        <section className="mx-auto max-w-6xl p-6 lg:p-10">
             <div className="mb-8 text-center">
-                <h1 className="text-3xl font-black tracking-tight text-gray-900 md:text-5xl">
+                <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-gray-50 md:text-5xl">
                     Select a <span className="text-orange-500">Store</span>
                 </h1>
                 <p className="mt-3 text-gray-500">Choose a location to start building your budget.</p>

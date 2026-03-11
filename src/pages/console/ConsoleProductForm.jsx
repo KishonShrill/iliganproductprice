@@ -6,6 +6,9 @@ import { Label } from '../../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { ArrowLeft, Upload, Loader2 } from 'lucide-react';
+import useFetchCategories from '../../hooks/useFetchCategories';
+import { postData } from '../../helpers/utils';
+import { useAddCategory } from '../../hooks/useAddCategory';
 
 export default function ProductForm() {
     const navigate = useNavigate();
@@ -85,7 +88,6 @@ export default function ProductForm() {
             setInitialLoading(false);
         }
     };
-
     const handleInputChange = (field, value) => {
         setFormData(prev => ({
             ...prev,

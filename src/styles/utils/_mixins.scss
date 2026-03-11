@@ -6,7 +6,7 @@ $breakpoints: (
   "phone": 700px,
   "tablet": 950px,
   xs: 320px,
-  sm: 576px,
+  sm: 640px,
   md: 768px,
   lg: 1024px,
   xl: 1440px
@@ -25,7 +25,9 @@ $directions: (
     @media (max-width: map.get($breakpoints, $breakpoint)) {
       @content;
     }
-  } @else {
+  }
+
+  @else {
     @warn "Breakpoint `#{$breakpoint}` not found in $breakpoints.";
   }
 }
@@ -35,13 +37,16 @@ $directions: (
     @media (min-width: map.get($breakpoints, $breakpoint)) {
       @content;
     }
-  } @else {
+  }
+
+  @else {
     @warn "Breakpoint `#{$breakpoint}` not found in $breakpoints.";
   }
 }
 
 // Essential styles for designs
 @mixin border-stroke($val, $clr: black, $direction: '') {
+
   // Check for valid direction
   @if not map.has-key($directions, $direction) {
     @error "Property `#{$direction}` must be top, right, bottom, left, or empty.";
@@ -54,30 +59,36 @@ $directions: (
 
   $border-dir: map.get($directions, $direction);
 
-  @if $val == light {
+  @if $val ==light {
     border#{$border-dir}: 1px solid $clr;
-  } @else if $val == medium {
+  }
+
+  @else if $val ==medium {
     border#{$border-dir}: 3px solid $clr;
-  } @else if $val == heavy {
+  }
+
+  @else if $val ==heavy {
     border#{$border-dir}: 6px solid $clr;
-  } @else if $val == none {
+  }
+
+  @else if $val ==none {
     border#{$border-dir}: none;
   }
 }
 
 @mixin text-ellipsis {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @mixin button-reset {
-    padding: 0;
-    color: inherit;
-    font: inherit;
-    border: none;
-    cursor: pointer;
-    background: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  border: none;
+  cursor: pointer;
+  background: none;
 }
 
 
@@ -90,18 +101,18 @@ $directions: (
 }
 
 @mixin flex-center-column($gap: 0) {
-    display: flex;
-    justify-content: center;
-    gap: #{$gap}px;
+  display: flex;
+  justify-content: center;
+  gap: #{$gap}px;
 }
 
 @mixin flex-center-row($gap: 0) {
-    display: flex;
-    align-items: center;
-    gap: #{$gap}px;
+  display: flex;
+  align-items: center;
+  gap: #{$gap}px;
 }
 
 @mixin grid-center {
-    display: grid;
-    place-content: center;
+  display: grid;
+  place-content: center;
 }

@@ -139,7 +139,7 @@ section.grocery {
 
 @include respond-max("tablet") {
   .cart-summary {
-    width: 280px;
+    min-width: 230px;
     z-index: 4;
   }
 }
