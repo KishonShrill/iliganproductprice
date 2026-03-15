@@ -1,22 +1,26 @@
+import { Suspense } from "react";
 import PropTypes from "prop-types";
 import { Outlet } from "react-router-dom";
 import Header from "./homepage/Header";
 import BottomNavigation from "./BottomNavigation";
-import useSettings from "../hooks/useSettings";
 
 import '../styles/main-header.scss'
 
-function HomepageLayout({ token }) { 
-    
-  const { settings } = useSettings();
+function HomepageLayout({ token }) {
 
-  return (
-    <>
-      <Header token={token} />
-      <Outlet />
-      <BottomNavigation />
-    </>
-  );
+    return (
+        <>
+            <Header token={token} />
+            <Suspense fallback={
+                <div className='errorDisplay'>
+                    <h2 className="text-xl2">Loading<span className="animated-dots"></span></h2>
+                </div>
+            }>
+                <Outlet />
+            </Suspense>
+            <BottomNavigation />
+        </>
+    );
 }
 
 HomepageLayout.displayName = "Homepage Layout"

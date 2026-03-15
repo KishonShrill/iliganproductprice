@@ -1,7 +1,7 @@
 export const ADD = 'ADD';
 export const REMOVE = 'REMOVE';
 
-export const addToCart = (id, name, price, location) => {
+export const addToCart = (id, name, price, location, image) => {
     return {
         type: ADD,
         payload: {
@@ -9,6 +9,7 @@ export const addToCart = (id, name, price, location) => {
             product_name: name,
             product_price: price,
             product_location: location,
+            product_image: image
         }
     }
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, Separator, Select, Switch } from 'radix-ui';
 import {
@@ -34,6 +34,134 @@ const Settings = () => {
         setIsResetDialogOpen(false);
     };
 
+    // Define the setting categories as objects so they can be easily mapped
+    const settingCategories = [
+        {
+            title: "Appearance",
+            icon: Palette,
+            items: [
+                {
+                    title: "Theme (Beta)",
+                    description: "Switch between light and dark mode",
+                    icon: settings.theme === 'dark' ? Moon : Sun,
+                    control: (
+                        <CustomSwitch
+                            checked={settings.theme === 'dark'}
+                            onCheckedChange={(checked) => updateSetting('theme', checked ? 'dark' : 'light')}
+                        />
+                    )
+                },
+                {
+                    title: "Right-to-Left (RTL)",
+                    description: "Enable RTL layout for Arabic, Hebrew, and other RTL languages",
+                    icon: Globe,
+                    control: (
+                        <CustomSwitch
+                            checked={settings.rightToLeft}
+                            onCheckedChange={(checked) => updateSetting('rightToLeft', checked)}
+                        />
+                    )
+                },
+                {
+                    title: "Compact Mode",
+                    description: "Use a more compact layout by hiding the photos to fit more content",
+                    icon: Zap,
+                    control: (
+                        <CustomSwitch
+                            checked={settings.hidePhotos}
+                            onCheckedChange={(checked) => updateSetting('hidePhotos', checked)}
+                        />
+                    )
+                }
+            ]
+        },
+        {
+            title: "Notifications",
+            icon: Bell,
+            items: [
+                {
+                    title: "Push Notifications",
+                    description: "Receive notifications about budget alerts and updates",
+                    icon: Bell,
+                    control: (
+                        <CustomSwitch
+                            checked={settings.notifications}
+                            onCheckedChange={(checked) => updateSetting('notifications', checked)}
+                        />
+                    )
+                },
+                {
+                    title: "Budget Alerts",
+                    description: "Get notified when approaching your budget limit",
+                    icon: DollarSign,
+                    control: (
+                        <CustomSwitch
+                            checked={settings.budgetAlerts}
+                            onCheckedChange={(checked) => updateSetting('budgetAlerts', checked)}
+                            disabled={!settings.notifications}
+                        />
+                    )
+                },
+                {
+                    title: "Sound Effects",
+                    description: "Play sounds for notifications and interactions",
+                    icon: Volume2,
+                    control: (
+                        <CustomSwitch
+                            checked={settings.soundEffects}
+                            onCheckedChange={(checked) => updateSetting('soundEffects', checked)}
+                        />
+                    )
+                }
+            ]
+        },
+        /*
+        {
+            title: "Preferences",
+            icon: SettingsIcon,
+            items: [
+                {
+                    title: "Auto Save",
+                    description: "Automatically save your budget data as you make changes",
+                    icon: Save, // Note: You'll need to import 'Save' from lucide-react
+                    control: (
+                        <CustomSwitch
+                            checked={settings.autoSave}
+                            onCheckedChange={(checked) => updateSetting('autoSave', checked)}
+                        />
+                    )
+                },
+                {
+                    title: "Currency",
+                    description: "Choose your preferred currency for displaying prices",
+                    icon: DollarSign,
+                    control: (
+                        <CustomSelect
+                            value={settings.currency}
+                            onValueChange={(value) => updateSetting('currency', value)}
+                            options={currencyOptions} // Note: Ensure this is defined
+                            placeholder="Select currency"
+                        />
+                    )
+                },
+                {
+                    title: "Language",
+                    description: "Select your preferred language",
+                    icon: Globe,
+                    control: (
+                        <CustomSelect
+                            value={settings.language}
+                            onValueChange={(value) => updateSetting('language', value)}
+                            options={languageOptions} // Note: Ensure this is defined
+                            placeholder="Select language"
+                        />
+                    )
+                }
+            ]
+        }
+        */
+    ];
+
     return (
         <div className="hide-mobile-scrollbar min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 pt-8 pb-[6.5rem]">
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -48,149 +176,37 @@ const Settings = () => {
                             <p className="text-gray-600 dark:text-gray-400">Customize your Budget Buddy experience</p>
                         </div>
                     </div>
-                    <button className='w-12 h-12 mb-4 rounded-xl grid place-items-center bg-orange-600 dark:bg-white' onClick={goBack}>
+                    <button className='w-12 h-12 mb-4 rounded-xl grid place-items-center bg-orange-600 dark:bg-gray-800 dark:border dark:border-gray-700' onClick={goBack}>
                         <ArrowLeft className='w-6 h-6 dark:text-orange-600 text-white' />
                     </button>
                 </div>
 
                 <div className="space-y-8">
-                    {/* Appearance Section */}
-                    <section>
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <Palette className="w-5 h-5 mr-2 text-[#ee4d2d]" />
-                            Appearance
-                        </h2>
-                        <div className="space-y-4">
-                            <SettingItem
-                                icon={settings.theme === 'dark' ? Moon : Sun}
-                                title="Theme"
-                                description="Switch between light and dark mode"
-                            >
-                                <CustomSwitch
-                                    checked={settings.theme === 'dark'}
-                                    onCheckedChange={(checked) => updateSetting('theme', checked ? 'dark' : 'light')}
-                                />
-                            </SettingItem>
+                    {/* Map through categories */}
+                    {settingCategories.map((category, idx) => (
+                        <React.Fragment key={category.title}>
+                            <section>
+                                <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
+                                    <category.icon className="w-5 h-5 mr-2 text-[#ee4d2d]" />
+                                    {category.title}
+                                </h2>
+                                <div className="space-y-4">
+                                    {category.items.map((item) => (
+                                        <SettingItem
+                                            key={item.title}
+                                            icon={item.icon}
+                                            title={item.title}
+                                            description={item.description}
+                                        >
+                                            {item.control}
+                                        </SettingItem>
+                                    ))}
+                                </div>
+                            </section>
 
-                            <SettingItem
-                                icon={Globe}
-                                title="Right-to-Left (RTL)"
-                                description="Enable RTL layout for Arabic, Hebrew, and other RTL languages"
-                            >
-                                <CustomSwitch
-                                    checked={settings.rightToLeft}
-                                    onCheckedChange={(checked) => updateSetting('rightToLeft', checked)}
-                                />
-                            </SettingItem>
-
-                            <SettingItem
-                                icon={Zap}
-                                title="Compact Mode"
-                                description="Use a more compact layout by hiding the photos to fit more content"
-                            >
-                                <CustomSwitch
-                                    checked={settings.hidePhotos}
-                                    onCheckedChange={(checked) => updateSetting('hidePhotos', checked)}
-                                />
-                            </SettingItem>
-                        </div>
-                    </section>
-
-                    <Separator.Root className="h-px bg-gray-200 dark:bg-gray-700" />
-
-                    {/* Notifications Section */}
-                    <section>
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-                            <Bell className="w-5 h-5 mr-2 text-[#ee4d2d]" />
-                            Notifications
-                        </h2>
-                        <div className="space-y-4">
-                            <SettingItem
-                                icon={Bell}
-                                title="Push Notifications"
-                                description="Receive notifications about budget alerts and updates"
-                            >
-                                <CustomSwitch
-                                    checked={settings.notifications}
-                                    onCheckedChange={(checked) => updateSetting('notifications', checked)}
-                                />
-                            </SettingItem>
-
-                            <SettingItem
-                                icon={DollarSign}
-                                title="Budget Alerts"
-                                description="Get notified when approaching your budget limit"
-                            >
-                                <CustomSwitch
-                                    checked={settings.budgetAlerts}
-                                    onCheckedChange={(checked) => updateSetting('budgetAlerts', checked)}
-                                    disabled={!settings.notifications}
-                                />
-                            </SettingItem>
-
-                            <SettingItem
-                                icon={Volume2}
-                                title="Sound Effects"
-                                description="Play sounds for notifications and interactions"
-                            >
-                                <CustomSwitch
-                                    checked={settings.soundEffects}
-                                    onCheckedChange={(checked) => updateSetting('soundEffects', checked)}
-                                />
-                            </SettingItem>
-                        </div>
-                    </section>
-
-                    {/* Preferences Section
-          <Separator.Root className="h-px bg-gray-200 dark:bg-gray-700" />
-
-          <section>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4 flex items-center">
-              <SettingsIcon className="w-5 h-5 mr-2 text-[#ee4d2d]" />
-              Preferences
-            </h2>
-            <div className="space-y-4">
-              <SettingItem
-                icon={Save}
-                title="Auto Save"
-                description="Automatically save your budget data as you make changes"
-              >
-                <CustomSwitch
-                  checked={settings.autoSave}
-                  onCheckedChange={(checked) => updateSetting('autoSave', checked)}
-                />
-              </SettingItem>
-
-              <SettingItem
-                icon={DollarSign}
-                title="Currency"
-                description="Choose your preferred currency for displaying prices"
-              >
-                <CustomSelect
-                  value={settings.currency}
-                  onValueChange={(value) => updateSetting('currency', value)}
-                  options={currencyOptions}
-                  placeholder="Select currency"
-                />
-              </SettingItem>
-
-              <SettingItem
-                icon={Globe}
-                title="Language"
-                description="Select your preferred language"
-              >
-                <CustomSelect
-                  value={settings.language}
-                  onValueChange={(value) => updateSetting('language', value)}
-                  options={languageOptions}
-                  placeholder="Select language"
-                />
-              </SettingItem>
-            </div>
-          </section>
-          */}
-
-                    <Separator.Root className="h-px bg-gray-200 dark:bg-gray-700" />
+                            <Separator.Root className="h-px bg-gray-200 dark:bg-gray-700" />
+                        </React.Fragment>
+                    ))}
 
                     {/* Reset Section */}
                     <section>
@@ -275,10 +291,10 @@ const SettingItem = ({ icon: Icon, title, description, children, className = "" 
 );
 
 SettingItem.propTypes = {
-    icon: PropTypes.Icon,
+    icon: PropTypes.elementType,
     title: PropTypes.string,
     description: PropTypes.string,
-    children: PropTypes.asChild,
+    children: PropTypes.node,
     className: PropTypes.string
 };
 
@@ -334,7 +350,10 @@ CustomSelect.propTypes = {
     value: PropTypes.string,
     onValueChange: PropTypes.func,
     placeholder: PropTypes.string,
-    options: PropTypes.options,
+    options: PropTypes.arrayOf(PropTypes.shape({
+        value: PropTypes.string,
+        label: PropTypes.string
+    })),
 };
 
 export default Settings;

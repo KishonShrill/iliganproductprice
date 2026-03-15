@@ -199,7 +199,7 @@ router.get('/api/products/category/:categoryId', async (req, res) => {
 //? [ ] CHECK IF THIS WORKS
 // Using upload.single('productImage') middleware to handle the file upload
 // TODO: Edit works, let's make it detect for New Created Product...
-router.post('/api/products', upload.single('productImage'), async (req, res) => {
+router.post('/api/v1/products', upload.single('productImage'), async (req, res) => {
     // Initialize variable for image
     var uploadResult = null;
     var product = null;

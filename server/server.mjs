@@ -6,7 +6,7 @@ import rateLimit from 'express-rate-limit';
 import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
-
+import categoryRoutes from './routes/categoryRoutes.js';
 
 config();
 
@@ -110,6 +110,7 @@ app.use([
 app.use(authRoutes);
 app.use(productRoutes);
 app.use(locationRoutes);
+app.use(categoryRoutes);
 
 // Fallback for undefined routes
 app.use((req, res) => {

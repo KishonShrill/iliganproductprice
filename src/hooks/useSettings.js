@@ -14,13 +14,12 @@ function useSettings() {
             } else {
                 document.documentElement.classList.remove("dark");
             }
-            console.log("triggered")
         }
     }, []);
 
     const updateSetting = (key, value) => {
-        switch(key) {
-            case 'theme': 
+        switch (key) {
+            case 'theme':
                 if ('dark' === value) {
                     document.documentElement.classList.add("dark");
                 } else {

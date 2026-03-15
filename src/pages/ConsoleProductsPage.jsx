@@ -14,7 +14,6 @@ const columns = [
 ];
 
 export default function Products({ debugMode }) {
-    document.title = "BB:Console - Products"
     const navigate = useNavigate();
     const { isLoading, data } = useFetchProducts()
 
@@ -40,24 +39,27 @@ export default function Products({ debugMode }) {
     }
 
     return (
-        <div className="flex-1 overflow-auto bg-gray-50 min-w-[320px]">
-            <Header
-                title="Products"
-                actionLabel="Add Product"
-                onAction={add_product}
-            />
-            <div className="p-4 md:p-8">
-                {isLoading
-                    ? <h1>Loading...</h1>
-                    : <DataTable
-                        fetched={"products"}
-                        data={normalizedData}
-                        columns={columns}
-                        onEdit={edit_product}
-                    />
-                }
+        <>
+            <title>BB:Console - Products</title>
+            <div className="flex-1 overflow-auto bg-gray-50 min-w-[320px]">
+                <Header
+                    title="Products"
+                    actionLabel="Add Product"
+                    onAction={add_product}
+                />
+                <div className="p-4 md:p-8">
+                    {isLoading
+                        ? <h1>Loading...</h1>
+                        : <DataTable
+                            fetched={"products"}
+                            data={normalizedData}
+                            columns={columns}
+                            onEdit={edit_product}
+                        />
+                    }
+                </div>
             </div>
-        </div>
+        </>
     );
 }
 

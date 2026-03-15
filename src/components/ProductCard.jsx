@@ -12,14 +12,14 @@ import { mongoDateToText } from "../helpers/date";
 
 const ProductCard = ({ item, onAdd, settings }) => {
     return (
-        <div className="product-card group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-3 shadow-sm transition-all duration-300 hover:shadow-lg"
+        <div className={`product-card ${!settings.hidePhotos && 'grid-cols-2'} group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-3 shadow-sm transition-all duration-300 hover:shadow-lg`}
             data-product-id={item._id}
             data-product-name={item.product.product_name}
             data-product-price={item.updated_price}
         >
-            <div className="relative h-full aspect-square w-full overflow-hidden rounded-xl bg-gray-50">
-                {!settings.hidePhotos &&
-                    (item.product.imageUrl ? (
+            {!settings.hidePhotos && (
+                <div className="relative h-full aspect-square w-full overflow-hidden rounded-xl bg-gray-50">
+                    {item.product.imageUrl ? (
                         <LazyLoadImage
                             src={item.product.imageUrl}
                             alt={item.product.product_name}
@@ -31,15 +31,16 @@ const ProductCard = ({ item, onAdd, settings }) => {
                                 <Package className="w-16 h-16 text-gray-400" />
                             </div>
                         </div>
-                    ))}
+                    )}}
 
-                {/* Floating Location Tag */}
-                <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-[10px] font-medium text-white backdrop-blur-md">
-                    <MapPin size={10} className="text-orange-400" />
-                    <span className="max-w-[100px] truncate">{item.location.name.split(' - ')[0]}</span>
+                    {/* Floating Location Tag */}
+                    <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-[10px] font-medium text-white backdrop-blur-md">
+                        <MapPin size={10} className="text-orange-400" />
+                        <span className="max-w-[100px] truncate">{item.location.name.split(' - ')[0]}</span>
+                    </div>
+
                 </div>
-
-            </div>
+            )}
 
             <div className="mt-4 flex flex-1 flex-col">
                 <h3 className="line-clamp-2 text-sm font-bold leading-tight text-gray-800">

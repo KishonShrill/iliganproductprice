@@ -86,10 +86,18 @@ const listingSchema = new mongoose.Schema({
     date_updated: String,
 });
 
+// Category Schema
+const categorySchema = new mongoose.Schema({
+    category_list: { type: String, required: true },
+    category_name: { type: String, required: true },
+    category_catalog: { type: String, required: true },
+});
+
 const User = mongoose.model('Authentication', authenticationSchema, 'users');
 const Product = mongoose.model('Product', productSchema, 'products');
 const Location = mongoose.model('Location', locationSchema, 'locations');
 const Listing = mongoose.model('Listing', listingSchema, 'listings');
+const Category = mongoose.model('Category', categorySchema, 'category');
 
 // Export the models
-export { User, Product, Location, Listing };
+export { User, Product, Location, Listing, Category };

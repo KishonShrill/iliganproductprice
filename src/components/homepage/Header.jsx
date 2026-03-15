@@ -6,11 +6,11 @@ import PropTypes from "prop-types";
 
 const cookies = new Cookies();
 
-const Header = ({ token, cartItems }) => {
+
+const Header = ({ token }) => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const [active, setActive] = useState(false);
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -40,6 +40,7 @@ const Header = ({ token, cartItems }) => {
                 <Menu className="dark:text-white" />
             </button>
 
+
             <Link to="/" className="header__name" style={{ fontWeight: 700 }}>Budget Buddy</Link>
 
             {/* Quick Mobile Auth Icon */}
@@ -58,7 +59,7 @@ const Header = ({ token, cartItems }) => {
 
                     {navLinks.map((link) => (
                         <li key={link.label}>
-                            <Link className="nav-link text-white md:text-black hover:text-orange-500" to={link.to} onClick={toggleMenu}>
+                            <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500" to={link.to} onClick={toggleMenu}>
                                 <span className="md:hidden">{link.icon}</span>
                                 {link.label}
                             </Link>
@@ -69,10 +70,10 @@ const Header = ({ token, cartItems }) => {
                     <div className="flex flex-col mt-auto md:flex-row md:border-t-0 md:border-l border-gray-600 pt-4 md:pt-0 md:pl-4 md:mt-0 md:items-center md:gap-4">
                         {!token ? (
                             <>
-                                <Link className="nav-link text-white md:text-black hover:text-orange-500" to="/settings" onClick={toggleMenu}>
+                                <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500" to="/settings" onClick={toggleMenu}>
                                     <Settings size={20} /> <span className="md:hidden">Settings</span>
                                 </Link>
-                                <Link className="nav-link text-white md:text-black hover:text-orange-500" to="/authenticate" onClick={toggleMenu}>
+                                <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500" to="/authenticate" onClick={toggleMenu}>
                                     <LogIn size={20} /> <span className="md:hidden">Login</span>
                                 </Link>
                             </>
@@ -97,16 +98,6 @@ Header.displayName = "Header"
 // 👇 Define PropTypes
 Header.propTypes = {
     token: PropTypes.string,
-    cartItems: PropTypes.shape({
-        cart: PropTypes.objectOf(
-            PropTypes.shape({
-                name: PropTypes.string.isRequired,
-                price: PropTypes.number.isRequired,
-                quantity: PropTypes.number.isRequired,
-                location: PropTypes.string.isRequired,
-            })
-        )
-    }).isRequired,
 }
 
 export default React.memo(Header)
