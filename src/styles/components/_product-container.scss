@@ -13,7 +13,6 @@
     @include mixins.respond-max(sm) {
       height: 180px;
       display: grid;
-      grid-template-columns: 1fr 1fr;
       flex-direction: row;
       gap: 0.75rem
     }

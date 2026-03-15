@@ -1,15 +1,15 @@
 // --- React Query Setup ---
 if (import.meta.env.VITE_SCAN === "true") {
-  import('react-scan').then(({ scan }) => {
-    scan({ enabled: true });
-  });
+    import('react-scan').then(({ scan }) => {
+        scan({ enabled: true });
+    });
 }
 
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
-import { SpeedInsights } from "@vercel/speed-insights/react"; // <-- add this at the top
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Provider } from 'react-redux';
 import Cookies from "universal-cookie";
 import store from './redux/store/store.js';
@@ -38,59 +38,48 @@ const token = cookies.get("TOKEN");
 
 function App() {
 
-  const renderLoading = () => {
     return (
-      <div className='errorDisplay'>
-        <h2>Loading<span className="animated-dots"></span></h2>
-      </div>
+        <>
+            <QueryClientProvider client={queryClient}>
+                <BrowserRouter>
+                    <Provider store={store}>
+                        <Routes>
+                            <Route
+                                path="/"
+                                element={<HomepageLayout token={token} />}
+                            >
+                                <Route index element={<Homepage />} />
+                                <Route path="locations" element={<LocationPage />} />
+                                <Route path="location/*" element={<GroceryPage />} />
+                                <Route path="receipt" element={<ReceiptPage />} />
+                                <Route path="settings" element={<SettingsPage />} />
+
+                                <Route
+                                    path="authenticate"
+                                    element={!token ? <LoginPage debugMode={DEVELOPMENT} /> : <Navigate to="/dev-mode" replace />}
+                                />
+                                <Route path="*" element={<NotFound />} />
+                            </Route>
+
+                            <Route
+                                path="/dev-mode"
+                                element={token ? <ConsoleLayout debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />}
+                            >
+                                <Route index element={<ConsoleDashboardPage debugMode={DEVELOPMENT} />} />
+                                <Route path="products" element={<ConsoleProductsPage debugMode={DEVELOPMENT} />} />
+                                <Route path="locations" element={<ConsoleLocationsPage debugMode={DEVELOPMENT} />} />
+                                <Route path="listings" element={<ConsoleListingsPage debugMode={DEVELOPMENT} />} />
+                                <Route path="products/edit/*" element={<CRUDPage debugMode={DEVELOPMENT} />} />
+                                <Route path="products/new" element={<CRUDPage debugMode={DEVELOPMENT} />} />
+                            </Route>
+                        </Routes>
+                    </Provider>
+                    <SpeedInsights />
+                </BrowserRouter>
+                {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />}
+            </QueryClientProvider>
+        </>
     )
-  }
-
-  return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Provider store={store}>
-            <Suspense fallback={renderLoading}>
-              <Routes>
-                <Route path="/" element={<HomepageLayout token={token} />}>
-                  <Route index element={<Homepage />} />
-                  <Route path="locations" element={<LocationPage />} />
-                  <Route path="location/*" element={<GroceryPage />} />
-                  <Route path="receipt" element={<ReceiptPage />} />
-                  <Route path="settings" element={<SettingsPage />} />
-
-                  <Route
-                    path="authenticate"
-                    element={
-                      !token ? <LoginPage debugMode={DEVELOPMENT} /> : <Navigate to="/dev-mode" replace />
-                    }
-                  />
-                  <Route path="*" element={<NotFound />} />
-                </Route>
-      
-                <Route
-                  path="/dev-mode"
-                  element={
-                    token ? <ConsoleLayout debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />
-                  }
-                >
-                  <Route index element={<ConsoleDashboardPage debugMode={DEVELOPMENT} />} />
-                  <Route path="products" element={<ConsoleProductsPage debugMode={DEVELOPMENT} />} />
-                  <Route path="locations" element={<ConsoleLocationsPage debugMode={DEVELOPMENT} />} />
-                  <Route path="listings" element={<ConsoleListingsPage debugMode={DEVELOPMENT} />} />
-                  <Route path="products/edit/*" element={<CRUDPage debugMode={DEVELOPMENT} />} />
-                  <Route path="products/new" element={<CRUDPage debugMode={DEVELOPMENT} />} />
-                </Route>
-              </Routes>
-            </Suspense>
-          </Provider>
-          <SpeedInsights />
-        </BrowserRouter>
-        {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />}
-      </QueryClientProvider>
-    </>
-  )
 }
 
 export default App

@@ -13,11 +13,11 @@ const NotFound = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-orange-50 flex items-center justify-center px-4">
-            <div className="max-w-2xl mx-auto text-center">
+        <div className="bg-gradient-to-br from-gray-50 via-white to-orange-50 flex items-center justify-center px-4">
+            <div className="flex flex-col justify-center max-w-2xl mx-auto text-center sm:h-[calc(100vh-76px)] h-[calc(100vh-148px)]">
                 {/* Animated 404 */}
-                <div className="relative mb-8">
-                    <div className="text-[12rem] md:text-[16rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] leading-none animate-pulse">
+                <div className="relative mb-4 sm:mb-8">
+                    <div className="text-[8rem] sm:text-[12rem] md:text-[16rem] font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] leading-none animate-pulse">
                         404
                     </div>
 
@@ -34,20 +34,20 @@ const NotFound = () => {
                 </div>
 
                 {/* Content */}
-                <div className="mb-8">
-                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                <div className="mb:4 sm:mb-8">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                         Oops! Page Not Found
                     </h1>
-                    <p className="text-lg text-gray-600 mb-2">
+                    <p className="text-base sm:text-lg text-gray-600 mb-2">
                         Looks like this page went over budget and disappeared!
                     </p>
-                    <p className="text-gray-500">
-                        The page you&apos;,re looking for doesn&apos;t exist or has been moved.
+                    <p className="text-sm sm:text-base text-gray-500">
+                        The page you&apos;re looking for doesn&apos;t exist or has been moved.
                     </p>
                 </div>
 
                 {/* Budget Buddy Branding */}
-                <div className="flex items-center justify-center space-x-2 mb-8 group">
+                <div className="flex items-center justify-center space-x-2 mb-4 sm:mb-8 group">
                     <img src="/budgetbuddy.svg" />
                     <span className="text-xl font-bold text-gray-900 group-hover:text-[#ee4d2d] transition-colors duration-300">
                         Budget Buddy
@@ -55,10 +55,10 @@ const NotFound = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+                <div className="flex flex-col sm:flex-row gap-4 justify-center mb-4 sm:mb-12">
                     <button
                         onClick={handleGoHome}
-                        className="bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 group flex items-center justify-center"
+                        className="z-10 bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 group flex items-center justify-center"
                     >
                         <Home className="w-5 h-5 mr-2 group-hover:translate-x-1 transition-transform duration-300" />
                         Go Home
@@ -66,7 +66,7 @@ const NotFound = () => {
 
                     <button
                         onClick={handleGoBack}
-                        className="border-2 border-[#ee4d2d] text-[#ee4d2d] px-8 py-4 rounded-full font-semibold text-lg hover:bg-[#ee4d2d] hover:text-white transition-all duration-300 hover:scale-105 group flex items-center justify-center"
+                        className="z-10 border-2 border-[#ee4d2d] text-[#ee4d2d] px-8 py-4 rounded-full font-semibold text-lg hover:bg-[#ee4d2d] hover:text-white transition-all duration-300 hover:scale-105 group flex items-center justify-center"
                     >
                         <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform duration-300" />
                         Go Back
@@ -99,7 +99,7 @@ const NotFound = () => {
         </div> */}
 
                 {/* Fun Message */}
-                <div className="mt-8 p-4 bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 rounded-full">
+                <div className="mt-4 sm:mt-8 p-4 bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 rounded-full">
                     <p className="text-[#ee4d2d] font-medium">
                         💡 Pro tip: Use Budget Buddy to avoid going over budget on your shopping too!
                     </p>

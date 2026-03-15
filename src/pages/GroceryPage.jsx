@@ -6,6 +6,7 @@ import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import Searchbar from "../components/Searchbar";
 import useSettings from "../hooks/useSettings";
+import { Package } from "lucide-react";
 
 import '../styles/grocery.scss'
 
@@ -62,9 +63,9 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
         const card = el.closest('.product-card');
         const cartButton = (windowWidth < 700) ? cartButtonRef.current : cartRef.current; //TODO: this is a one time fetch thing, static fetch
 
+        console.log(`${card} : ${cartButton}`)
         if (!card || !cartButton) return;
 
-        console.log(settings.soundEffects)
         if (audioRef.current) {
             audioRef.current.currentTime = 0; // rewind so it can replay fast
             audioRef.current.play();
@@ -96,7 +97,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
         }, 800);
 
         // console.log(`${productId} | ${productName} | ${productPrice} | ${productLocation} | ${productImage}`)
-        addNewCartItem(productId, productName, productPrice, productLocation);
+        addNewCartItem(productId, productName, productPrice, productLocation, productImage);
     }, [count]);
 
     const searchTerm = (search || "").toLowerCase();
@@ -133,26 +134,19 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
 
     return (
         <>
-            <div style={{
-                zIndex: 5,
-                padding: "1rem",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "1rem",
-            }}>
+            <div className="z-10 p-2 flex w-full gap-2 items-center justify-center">
                 {/* 🔊 Hidden audio element */}
                 <audio ref={audioRef} src="/sounds/click-pop.mp3" preload="auto" muted={!settings.soundEffects} />
 
                 <Searchbar ref={searchbarRef} type={"text"} onChange={(e) => setSearch(e.target.value)}>
                     <Link to={"/locations"}>
-                        <img className="go-back" src="/UI/arrow-left-02-stroke-rounded.svg" alt="Go Back!" />
+                        <img className="go-back w-[40px] h-[40px] border-2 hover:border-[#ee4d2d]" src="/UI/arrow-left-02-stroke-rounded.svg" alt="Go Back!" />
                     </Link>
                 </Searchbar>
 
             </div>
-            <section className="grocery bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                <main className='mb-16 grid grid-cols-1 gap-4 sm:grid-cols-3 md:gap-6 xl:grid-cols-4' id="productContainer">
+            <section className="grocery px-5 max-md:pb-12 h-[calc(100%-72px)] bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+                <main className={`mb-16 grid ${!settings.hidePhotos && 'max-sm:grid-cols-1'} grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 md:gap-6`} id="productContainer">
                     <Suspense fallback={(
                         <main className='errorDisplay'>
                             <h2>Loading<span className="animated-dots"></span></h2>
@@ -186,6 +180,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                             top: animatingCard.startY,
                             width: '160px',
                             height: '200px',
+                            margin: '1rem',
                             animation: `flyToCart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
                             '--start-x': `${animatingCard.startX}px`,
                             '--start-y': `${animatingCard.startY}px`,
@@ -194,9 +189,18 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                         }}
                     >
                         <div className="flex h-full w-full flex-col overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5">
-                            <div className="relative aspect-square w-full bg-gray-50">
-                                <img src={animatingCard.productImage} alt={animatingCard.productName} className="h-full w-full object-cover" />
-                            </div>
+                            {animatingCard.productImage ? (
+                                <div className="relative aspect-square h-[9.5rem] bg-gray-50">
+                                    <img src={animatingCard.productImage} alt={animatingCard.productName} className="h-full w-full object-cover" />
+                                </div>
+                            ) : (
+                                <div className="relative h-full">
+                                    <div className="product-image-placeholder" style={{ backgroundColor: "#ffccaa" }}>
+                                        <Package className="w-16 h-16 text-gray-400" />
+                                    </div>
+                                </div>
+                            )}
+
                             <div className="p-2">
                                 <h3 className="line-clamp-1 text-[10px] font-bold text-gray-800">{animatingCard.productName}</h3>
                                 <p className="text-xs font-black text-orange-500">₱{animatingCard.productPrice.toFixed(2)}</p>
@@ -227,7 +231,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                         })()
                     )}
                 </button>
-            </section>
+            </section >
         </>
     );
 }

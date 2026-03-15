@@ -6,39 +6,6 @@ import PropTypes from "prop-types";
 
 const cookies = new Cookies();
 
-const navLinks = [
-    {
-        to: "/",
-        label: "Home",
-        icon: "/UI/dashboard-square-01-stroke-rounded-white.svg",
-        alt: "Home Icon",
-    },
-    {
-        to: "/locations",
-        label: "Groceries",
-        icon: "/UI/package-stroke-rounded-white.svg",
-        alt: "Groceries Icon",
-    },
-    {
-        to: "#",
-        label: "Cuisines",
-        icon: "/UI/noodles-stroke-rounded-white.svg",
-        alt: "Cuisines Icon",
-    },
-    {
-        to: "#",
-        label: "About",
-        icon: "/UI/information-circle-stroke-rounded-white.svg",
-        alt: "About me Icon",
-    },
-    {
-        to: "/receipt",
-        label: "Cart",
-        icon: "/UI/shopping-cart-02-stroke-rounded-white.svg",
-        alt: "Cart Icon",
-    },
-];
-
 
 const Header = ({ token }) => {
     const { pathname } = useLocation();

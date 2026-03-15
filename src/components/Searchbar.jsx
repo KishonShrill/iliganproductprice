@@ -6,11 +6,11 @@ const Searchbar = forwardRef(({ type, children, onChange }, ref) => {
         <>
             <div className="searchbar-container dark:bg-gray-700">
                 <img className="searchbar-logo dark:bg-gray-700" src="/UI/search-01-stroke-rounded.svg" alt="Search Logo" />
-                <input 
-                    ref={ref} 
-                    className="searchbar dark:bg-gray-700 dark:text-white" 
+                <input
+                    ref={ref}
+                    className="searchbar dark:bg-gray-700 dark:text-white"
                     type={type}
-                    placeholder="Search" 
+                    placeholder="Search"
                     onChange={onChange}
                 />
             </div>

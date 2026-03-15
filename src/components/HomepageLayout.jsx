@@ -11,11 +11,11 @@ function HomepageLayout({ token }) {
     return (
         <>
             <Header token={token} />
-            <Suspense fallback={(
-                <main className='errorDisplay'>
-                    <h2>Loading<span className="animated-dots"></span></h2>
-                </main>
-            )}>
+            <Suspense fallback={
+                <div className='errorDisplay'>
+                    <h2 className="text-xl2">Loading<span className="animated-dots"></span></h2>
+                </div>
+            }>
                 <Outlet />
             </Suspense>
             <BottomNavigation />
