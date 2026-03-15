@@ -63,7 +63,6 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
         const card = el.closest('.product-card');
         const cartButton = (windowWidth < 700) ? cartButtonRef.current : cartRef.current; //TODO: this is a one time fetch thing, static fetch
 
-        console.log(`${card} : ${cartButton}`)
         if (!card || !cartButton) return;
 
         if (audioRef.current) {
