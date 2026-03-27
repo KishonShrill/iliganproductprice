@@ -6,9 +6,9 @@
     "scripts": {
         "prestart": "node server/swagger.js",
         "start": "concurrently --names \"FRONTEND,SERVER\" --prefix-colors \"magenta,blue\" \"vite --host\" \"node ./server/server.mjs\"",
+        "predev": "vitest run",
         "dev": "vite --host",
         "server": "node ./server/server.mjs",
-        "prebuild": "vitest run",
         "build": "vite build",
         "preview": "vite preview",
         "prod": "concurrently --names \"FRONTEND,SERVER\" --prefix-colors \"magenta,blue\" \"vite preview --host\" \"node ./server/server.mjs\"",
