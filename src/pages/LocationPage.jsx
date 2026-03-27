@@ -4,8 +4,6 @@ import LocationCard from "../components/LocationCard";
 import '../styles/locations.scss'
 
 export default function LocationPage() {
-    document.title = "Locations - Budget Buddy"
-
     const { isLoading, data: locations, isError, error, isFetching } = useFetchLocations();
 
     // Display when fetched elements are empty or is loading...

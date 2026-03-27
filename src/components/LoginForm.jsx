@@ -5,6 +5,8 @@ import PropTypes from 'prop-types';
 import Cookies from "universal-cookie";
 import axios from 'axios'
 import { ResultAsync } from 'neverthrow';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode'
 
 import '../styles/login.scss'
 
@@ -64,7 +66,6 @@ const LoginForm = ({ debugMode }) => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="example@gmail.com"
-                    // React-Bootstrap automatically handles red/green borders with these props:
                     isInvalid={status === "error"}
                     isValid={status === "success"}
                     required
@@ -95,6 +96,16 @@ const LoginForm = ({ debugMode }) => {
             >
                 {status === "loading" ? "LOADING..." : "LOGIN"}
             </Button>
+
+            <div className='flex flex-col mt-4'>
+                <GoogleLogin
+                    onSuccess={(credentialResponse) => {
+                        console.log(credentialResponse);
+                        console.log(jwtDecode(credentialResponse.credential))
+                    }}
+                    onError={() => console.log("Login Error")}
+                />
+            </div>
 
             {/* 6. Clean Conditional Rendering for Messages */}
             <div className="mt-3 font-weight-bold">
