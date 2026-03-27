@@ -5,16 +5,15 @@ if (import.meta.env.VITE_SCAN === "true") {
     });
 }
 
-import { lazy, Suspense } from 'react'
+import { lazy } from 'react'
 import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Provider } from 'react-redux';
-import Cookies from "universal-cookie";
 import store from './redux/store/store.js';
 
-import HomepageLayout from "./components/HomepageLayout.jsx"
+import MainLayout from "./components/MainLayout.jsx"
 import Homepage from "./pages/Homepage.jsx"
 
 const LocationPage = lazy(() => import("./pages/LocationPage.jsx"))
@@ -33,8 +32,6 @@ const CRUDPage = lazy(() => import('./pages/console/ConsoleProductForm.jsx'));
 
 const queryClient = new QueryClient();
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
-const cookies = new Cookies();
-const token = cookies.get("TOKEN");
 
 function App() {
 
@@ -46,7 +43,7 @@ function App() {
                         <Routes>
                             <Route
                                 path="/"
-                                element={<HomepageLayout token={token} />}
+                                element={<MainLayout />}
                             >
                                 <Route index element={<Homepage />} />
                                 <Route path="locations" element={<LocationPage />} />
@@ -56,14 +53,14 @@ function App() {
 
                                 <Route
                                     path="authenticate"
-                                    element={!token ? <LoginPage debugMode={DEVELOPMENT} /> : <Navigate to="/dev-mode" replace />}
+                                    element={<LoginPage debugMode={DEVELOPMENT} />}
                                 />
                                 <Route path="*" element={<NotFound />} />
                             </Route>
 
                             <Route
                                 path="/dev-mode"
-                                element={token ? <ConsoleLayout debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />}
+                                element={<ConsoleLayout debugMode={DEVELOPMENT} />}
                             >
                                 <Route index element={<ConsoleDashboardPage debugMode={DEVELOPMENT} />} />
                                 <Route path="products" element={<ConsoleProductsPage debugMode={DEVELOPMENT} />} />

@@ -1,11 +1,22 @@
-import { lazy, Suspense } from "react";
+import { useEffect, lazy, Suspense } from "react";
+import { useNavigate, Outlet } from "react-router-dom";
 import PropTypes from "prop-types";
-import { Outlet } from "react-router-dom";
+import Cookies from "universal-cookie";
 import '../../styles/admin_console.scss'
 
-const Sidebar = lazy(() => import("./Sidebar"));
+import Sidebar from "./Sidebar";
+const cookies = new Cookies();
 
 export default function CRUDInterface({ debugMode }) {
+    const navigate = useNavigate()
+    const token = cookies.get("budgetbuddy_token")
+
+    useEffect(() => {
+        if (!token) {
+            navigate("/")
+        }
+    }, [token, navigate])
+    if (!token) return null;
 
     return (
         <div className="flex h-screen bg-gray-100 overflow-auto">

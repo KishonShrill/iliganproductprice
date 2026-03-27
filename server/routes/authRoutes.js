@@ -2,12 +2,12 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { ResultAsync, ok, err, errAsync, okAsync } from 'neverthrow'
 import user_verify from '../helpers/auth.js';
 
 import { User } from '../models/models.js'; // adjust this path if needed
 
 const router = express.Router();
-
 
 // free endpoint
 router.get("/free-endpoint", (req, res) => {
@@ -60,53 +60,38 @@ router.post("/register", async (req, res) => {
     }
 });
 
-// Login user to endpoint
 router.post("/login", async (req, res) => {
     // #swagger.tags = ['Authentication']
     // #swagger.description = 'Endpoint to login as a user.'
+    const { email, password } = req.body;
 
-    try {
-        // check if email exists
-        const user = await User.findOne({ email: req.body.email });
-
-        if (!user) {
-            return res.status(404).send({
-                message: "Email not found",
-            });
-        }
-
-        // compare the password entered and the hashed password found
-        const passwordCheck = await bcrypt.compare(req.body.password, user.password);
-
-        if (!passwordCheck) {
-            return res.status(400).send({
-                message: "Passwords does not match",
-            });
-        }
-
-        //   create JWT token
-        const token = jwt.sign(
-            {
-                userId: user._id,
-                userEmail: user.email,
-            },
-            process.env.JWT_SECRET || "RANDOM-TOKEN", // Use env variable for secret
-            { expiresIn: "24h" }
+    await ResultAsync
+        .fromPromise(User.findOne({ email: email }).exec(),
+            () => ({ status: 500, message: "Database connection failed" })
+        )
+        .andThen((user) =>
+            user ? okAsync(user) : errAsync({ status: 404, message: "User not found" })
+        )
+        .andThen((user) =>
+            ResultAsync.fromPromise(
+                bcrypt.compare(password, user.password),
+                () => ({ status: 500, message: "Encryption validation failed" })
+            ).andThen((isMatch) =>
+                isMatch ? ok(user) : err({ status: 400, message: "Passwords do not match" })
+            )
+        ).map((user) => {
+            const token = jwt.sign(
+                { userId: user._id, userEmail: user.email },
+                process.env.JWT_SECRET || "RANDOM-TOKEN",
+                { expiresIn: "24h" }
+            );
+            console.log("what happened?")
+            return { message: "Login Successful", email: user.email, token };
+        })
+        .match(
+            (successData) => res.status(200).send(successData),
+            (errorData) => res.status(errorData.status).send({ message: errorData.message })
         );
-
-        //   return success res
-        res.status(200).send({
-            message: "Login Successful",
-            email: user.email,
-            token,
-        });
-
-    } catch (error) {
-        res.status(500).send({
-            message: "Error during login",
-            error: error.message,
-        });
-    }
 });
 
 export default router;

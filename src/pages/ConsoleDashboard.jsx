@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import Header from '../components/console/Header';
 import Cookies from 'universal-cookie';
 
@@ -5,9 +6,10 @@ const cookies = new Cookies()
 
 
 export default function Products() {
+    const navigate = useNavigate();
     const logout = () => {
-        cookies.remove("TOKEN", { path: "/" });
-        window.location.href = "/";
+        cookies.remove("budgetbuddy_token", { path: "/" });
+        navigate("/");
     };
 
     return (

@@ -6,11 +6,11 @@ import BottomNavigation from "./BottomNavigation";
 
 import '../styles/main-header.scss'
 
-function HomepageLayout({ token }) {
+function HomepageLayout() {
 
     return (
         <>
-            <Header token={token} />
+            <Header />
             <Suspense fallback={
                 <div className='errorDisplay'>
                     <h2 className="text-xl2">Loading<span className="animated-dots"></span></h2>

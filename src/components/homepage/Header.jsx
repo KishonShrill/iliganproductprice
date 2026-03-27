@@ -2,15 +2,15 @@ import React, { useState, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Settings, LogIn, LogOut, Menu, X, LayoutDashboard, Package, Utensils, Info, ShoppingCart, User } from "lucide-react";
 import Cookies from "universal-cookie";
-import PropTypes from "prop-types";
 
 const cookies = new Cookies();
 
 
-const Header = ({ token }) => {
+const Header = () => {
     const { pathname } = useLocation();
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
+    const token = cookies.get("budgetbuddy_token")
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -94,10 +94,5 @@ const Header = ({ token }) => {
 
 // 👇 Give the component a name for debugging purposes
 Header.displayName = "Header"
-
-// 👇 Define PropTypes
-Header.propTypes = {
-    token: PropTypes.string,
-}
 
 export default React.memo(Header)
