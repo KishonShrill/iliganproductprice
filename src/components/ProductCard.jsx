@@ -31,7 +31,7 @@ const ProductCard = ({ item, onAdd, settings }) => {
                                 <Package className="w-16 h-16 text-gray-400" />
                             </div>
                         </div>
-                    )}}
+                    )}
 
                     {/* Floating Location Tag */}
                     <div className="absolute left-2 top-2 flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-[10px] font-medium text-white backdrop-blur-md">

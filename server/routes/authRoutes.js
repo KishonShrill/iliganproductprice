@@ -2,15 +2,34 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import auth from '../helpers/auth.js';
+import user_verify from '../helpers/auth.js';
 
 import { User } from '../models/models.js'; // adjust this path if needed
 
 const router = express.Router();
 
+
+// free endpoint
+router.get("/free-endpoint", (req, res) => {
+    // #swagger.tags = ['Authentication']
+    // #swagger.description = 'Sample of Free for All Endpoint'
+
+    res.json({ message: "You are free to access me anytime" });
+});
+
+// authentication endpoint
+router.get("/auth-endpoint", user_verify, (req, res) => {
+    // #swagger.tags = ['Authentication']
+    // #swagger.description = 'Sample of Authorized Endpoint.'
+
+    res.json({ message: "You are authorized to access me" });
+});
+
 // Resgister user to endpoint
 router.post("/register", async (req, res) => {
-    // Check if the required properties are present in the req body
+    // #swagger.tags = ['Authentication']
+    // #swagger.description = 'Endpoint to register a new user.'
+
     if (!req.body || !req.body.email || !req.body.password) {
         return res.status(400).send({ message: "Email and password are required" });
     }
@@ -43,6 +62,9 @@ router.post("/register", async (req, res) => {
 
 // Login user to endpoint
 router.post("/login", async (req, res) => {
+    // #swagger.tags = ['Authentication']
+    // #swagger.description = 'Endpoint to login as a user.'
+
     try {
         // check if email exists
         const user = await User.findOne({ email: req.body.email });
@@ -85,16 +107,6 @@ router.post("/login", async (req, res) => {
             error: error.message,
         });
     }
-});
-
-// free endpoint
-router.get("/free-endpoint", (req, res) => {
-    res.json({ message: "You are free to access me anytime" });
-});
-
-// authentication endpoint
-router.get("/auth-endpoint", auth, (req, res) => {
-    res.json({ message: "You are authorized to access me" });
 });
 
 export default router;

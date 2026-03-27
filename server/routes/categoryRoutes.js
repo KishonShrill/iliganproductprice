@@ -1,17 +1,17 @@
 // routes/locationRoutes.js
 import express from 'express';
-import mongoose from 'mongoose';
-
 import { Category } from '../models/models.js'; // adjust path
 
 const router = express.Router();
 
 
 //! [*] CHECK IF THIS WORKS
-router.get('/api/v1/category', async (req, res) => {
-    try {
-        const categories = await Category.find().sort({category_list: -1})
+router.get('/', async (req, res) => {
+    // #swagger.tags = ['v1 | Category']
+    // #swagger.description = 'Fetch all categories.'
 
+    try {
+        const categories = await v1 | Category.find().sort({ category_list: -1 })
         res.json(categories)
 
     } catch (error) {
