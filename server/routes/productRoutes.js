@@ -1,75 +1,20 @@
 // routes/productRoutes.js
 import express from 'express';
-import multer from 'multer';
-import streamifier from 'streamifier';
 import mongoose from 'mongoose';
 import cloudinary from '../cloudinary.js'; // adjust if separate
 import getPaginationParams from '../helpers/getPaginationParams.js'; // adjust if separate
+import generateProductId from '../helpers/generateProductId.js';
+import { upload, streamUpload } from '../helpers/upload.js';
 
 import { Product } from '../models/models.js'; // adjust path
 
 const router = express.Router();
 
-// Set up Multer for handling file uploads (in-memory storage is simple for relaying to Cloudinary)
-const upload = multer({ 
-    storage: multer.memoryStorage(),
-    fileFilter: (req, file, cb) => {
-        if (file.mimetype.startsWith('image/')) {
-            cb(null, true);
-        } else {
-            cb(new Error('Only image files are allowed!'), false);
-        }
-    },
-    limits: { fileSize: 5 * 1024 * 1024 } // 5MB limit
-});
 
-// Cloudinary Upload Helper
-const streamUpload = (reqFileBuffer, publicId) => {
-    return new Promise((resolve, reject) => {
-        console.log("PUBLIC ID: ", publicId)
-        const stream = cloudinary.uploader.upload_stream({
-                resource_type: 'image',
-                folder: 'iligancitystores_products',
-                public_id: publicId,
-                overwrite: true,
-            },
-            (error, result) => {
-                if (result) resolve(result);
-                else reject(error);
-            }
-        )
-    
-        streamifier.createReadStream(reqFileBuffer).pipe(stream);
-    });
-};
 
-//! [ ] CHECK IF THIS WORKS
-// Helper function to generate product_id (Year-Sequential Number)
-// TODO: Test this first before using it to the database
-async function generateProductId() {
-    const currentYear = new Date().getFullYear().toString();
-    // Find the latest product from the current year
-    const lastProduct = await Product.findOne({
-        product_id: new RegExp(`^${currentYear}-\\d{4}$`) // Regex to match the pattern
-    }).sort({ product_id: -1 }); // Sort descending to get the latest
-
-    let nextItemNumber = 1;
-    if (lastProduct) {
-        const lastProductId = lastProduct.product_id;
-        const lastItemNumber = praseInt(lastProductId.split('-')[1], 10);
-        nextItemNumber = lastItemNumber + 1;
-    }
-
-    // Format the item number with leading zeros (e.g., 0001, 0010, 0100)
-    const formattedItemNumber = nextItemNumber.toString().padStart(4, '0');
-
-    console.log(`Generated Item Number: ${currentYear}-${formattedItemNumber}`);
-    return `${currentYear}-${formattedItemNumber}`;
-}
-
-//! [*] CHECK IF THIS WORKS
-// Display to Groceries and to Dev Mode
-router.get('/api/products', async (req, res) => {
+router.get('/', async (req, res) => {
+    // #swagger.tags = ['v1 | Product']
+    // #swagger.description = 'Fetch all products.'
     try {
         const products = await Product.find(
             {},
@@ -77,7 +22,7 @@ router.get('/api/products', async (req, res) => {
                 "category.catalog": 0,
                 "location.id": 0,
             }
-        ).sort({product_id: -1});
+        ).sort({ product_id: -1 });
 
         res.json(products);
         //TODO: See if we need pagination on this... probably...
@@ -87,9 +32,10 @@ router.get('/api/products', async (req, res) => {
     }
 })
 
-//! [ ] CHECK IF THIS WORKS
-// Get endpoint to fetch a single product by _id
-router.get('/api/product/:id', async (req, res) => {
+
+router.get('/:id', async (req, res) => {
+    // #swagger.tags = ['v1 | Product']
+    // #swagger.description = 'Fetch a single product by _id'
     const id = req.params.id; // This is the MongoDB _id
 
     // Validate if the ID is a valid MongoDB ObjectId format
@@ -110,60 +56,15 @@ router.get('/api/product/:id', async (req, res) => {
     }
 });
 
-//! [ ] CHECK IF THIS WORKS
-// 1. Fetch items that match the query with pagination
-// GET /api/products/search?query=search_term&page=1&limit=20
-// router.get('/api/products/search', async (req, res) => {
-//     const searchTerm = req.query.query;
-//     const { page, limit, skip } = getPaginationParams(req);
-
-//     if (!searchTerm) {
-//         // If no search term, return an empty list or perhaps recent items (optional)
-//         // For now, return an empty list
-//         return res.status(200).json({
-//             message: 'Please provide a search query.',
-//             products: [],
-//             totalProducts: 0,
-//             totalPages: 0,
-//             currentPage: page
-//         });
-//     }
-
-//     try {
-//         // Create a case-insensitive regex for searching product name
-//         const queryRegex = new RegExp(searchTerm, 'i');
-
-//         // Build the search query filter
-//         const filter = { product_name: queryRegex };
-
-//         // Get total count of matching products (for pagination info)
-//         const totalProducts = await Product.countDocuments(filter);
-
-//         // Get the paginated products
-//         const products = await Product.find(filter)
-//             .skip(skip)
-//             .limit(limit);
-
-//         const totalPages = Math.ceil(totalProducts / limit);
-
-//         res.json({
-//             message: 'Products fetched successfully',
-//             products,
-//             totalProducts,
-//             totalPages,
-//             currentPage: page
-//         });
-
-//     } catch (error) {
-//         console.error('Error fetching products by search term:', error);
-//         res.status(500).json({ message: 'Failed to fetch products.', error: error.message });
-//     }
-// });
 
 //! [ ] CHECK IF THIS WORKS
 // 2. Fetch items according to category with pagination
 // GET /api/products/category/:categoryId?page=1&limit=20
-router.get('/api/products/category/:categoryId', async (req, res) => {
+router.get('/category/:categoryId', async (req, res) => {
+    // #swagger.tags = ['v1 | Product']
+    // #swagger.description = 'Fetch products according to category (paginated) ?page=1&limit=20'
+    const id = req.params.id; // This is the MongoDB _id
+
     const categoryId = req.params.categoryId;
     const { page, limit, skip } = getPaginationParams(req);
 
@@ -190,7 +91,7 @@ router.get('/api/products/category/:categoryId', async (req, res) => {
         });
 
     } catch (error) {
-         console.error(`Error fetching products for category ${categoryId}:`, error);
+        console.error(`Error fetching products for category ${categoryId}:`, error);
         res.status(500).json({ message: 'Failed to fetch products by category.', error: error.message });
     }
 });
@@ -199,7 +100,10 @@ router.get('/api/products/category/:categoryId', async (req, res) => {
 //? [ ] CHECK IF THIS WORKS
 // Using upload.single('productImage') middleware to handle the file upload
 // TODO: Edit works, let's make it detect for New Created Product...
-router.post('/api/v1/products', upload.single('productImage'), async (req, res) => {
+router.post('/', upload.single('productImage'), async (req, res) => {
+    // #swagger.tags = ['v1 | Product']
+    // #swagger.description = 'Endpoint for uploading images to cloudinary'
+
     // Initialize variable for image
     var uploadResult = null;
     var product = null;
@@ -262,7 +166,9 @@ router.post('/api/v1/products', upload.single('productImage'), async (req, res) 
 //! [ ] CHECK IF THIS WORKS
 // PUT endpoint to update a product by _id
 // Requires upload.single('productImage') if image update is allowed
-router.put('/api/products/:id', upload.single('productImage'), async (req, res) => {
+router.put('/:id', upload.single('productImage'), async (req, res) => {
+    // #swagger.tags = ['v1 | Product']
+    // #swagger.description = 'Update a product information by _id'
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -320,10 +226,12 @@ router.put('/api/products/:id', upload.single('productImage'), async (req, res) 
 
 //! [ ] CHECK IF THIS WORKS
 // DELETE endpoint to delete a product by _id
-router.delete('/api/products/:id', async (req, res) => {
+router.delete('/:id', async (req, res) => {
+    // #swagger.tags = ['v1 | Product']
+    // #swagger.description = 'Delete a product by _id'
     const id = req.params.id;
 
-     if (!mongoose.Types.ObjectId.isValid(id)) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: 'Invalid product ID format' });
     }
 
@@ -331,35 +239,35 @@ router.delete('/api/products/:id', async (req, res) => {
         // Optional: Find the product first to get the image URL for Cloudinary deletion
         const productToDelete = await Product.findById(id);
         if (!productToDelete) {
-             return res.status(404).json({ message: 'Product not found' });
+            return res.status(404).json({ message: 'Product not found' });
         }
 
         // Delete the product from MongoDB
         const deletedProduct = await Product.findByIdAndDelete(id);
 
-         // Optional: Delete the image from Cloudinary using the productToDelete's imageUrl
-         if (productToDelete.imageUrl) {
+        // Optional: Delete the image from Cloudinary using the productToDelete's imageUrl
+        if (productToDelete.imageUrl) {
             try {
-                 // Extract public ID from Cloudinary URL (logic depends on your upload settings)
-                 // Example: https://res.cloudinary.com/your_cloud_name/image/upload/v.../folder/public_id.jpg
-                 const urlParts = productToDelete.imageUrl.split('/');
-                 const publicIdWithExtension = urlParts[urlParts.length - 1];
-                 const publicId = publicIdWithExtension.split('.')[0];
-                 const folder = urlParts[urlParts.length - 2]; // Assuming the folder is the second to last part
+                // Extract public ID from Cloudinary URL (logic depends on your upload settings)
+                // Example: https://res.cloudinary.com/your_cloud_name/image/upload/v.../folder/public_id.jpg
+                const urlParts = productToDelete.imageUrl.split('/');
+                const publicIdWithExtension = urlParts[urlParts.length - 1];
+                const publicId = publicIdWithExtension.split('.')[0];
+                const folder = urlParts[urlParts.length - 2]; // Assuming the folder is the second to last part
 
-                 // If you used a specific folder in upload
-                 const publicIdWithFolder = folder && folder !== 'upload' ? `${folder}/${publicId}` : publicId;
+                // If you used a specific folder in upload
+                const publicIdWithFolder = folder && folder !== 'upload' ? `${folder}/${publicId}` : publicId;
 
 
-                 console.log(`Attempting to delete Cloudinary image with Public ID: ${publicIdWithFolder}`);
-                 await cloudinary.uploader.destroy(publicIdWithFolder);
-                 console.log('Cloudinary image deleted successfully.');
+                console.log(`Attempting to delete Cloudinary image with Public ID: ${publicIdWithFolder}`);
+                await cloudinary.uploader.destroy(publicIdWithFolder);
+                console.log('Cloudinary image deleted successfully.');
 
-             } catch (cloudinaryError) {
+            } catch (cloudinaryError) {
                 console.error('Error deleting Cloudinary image:', cloudinaryError);
                 // Continue with product deletion even if image deletion fails
-             }
-         }
+            }
+        }
 
 
         res.json({
@@ -368,7 +276,7 @@ router.delete('/api/products/:id', async (req, res) => {
         });
 
     } catch (error) {
-         console.error('Error deleting product:', error);
+        console.error('Error deleting product:', error);
         res.status(500).json({ message: 'Failed to delete product.', error: error.message });
     }
 });

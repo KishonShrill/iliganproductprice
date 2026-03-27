@@ -1,6 +1,9 @@
 import { config } from 'dotenv';
 import cors from 'cors';
 import express from 'express';
+import mongoose from 'mongoose';
+import swaggerUi from 'swagger-ui-express';
+import swaggerSpec from './swagger-output.json' with { type: 'json' }
 import rateLimit from 'express-rate-limit';
 
 import authRoutes from './routes/authRoutes.js';
@@ -12,6 +15,12 @@ config();
 
 const PORT = process.env.PORT || 5000; // Choose your desired port
 const DEVELOPMENT = process.env.LOCALHOST || "localhost";
+const uri = process.env.HIDDEN_URI;
+
+// Initialize Database Connection
+mongoose.connect(uri)
+    .then(() => { console.log('✅ Connected to MongoDB'); })
+    .catch(err => { console.error('❌ MongoDB connection error:', err.message); });
 
 // CORS Configuration
 const allowedOrigins = process.env.VITE_DEVELOPMENT
@@ -25,7 +34,7 @@ const allowedOrigins = process.env.VITE_DEVELOPMENT
     : 'https://productprice-iligan.vercel.app';
 
 const corsOptions = {
-    origin: function (origin, callback) {
+    origin: function(origin, callback) {
         console.log("Origin Requests: " + origin);
         console.log("Non-browser: " + !origin);
 
@@ -81,12 +90,15 @@ const limiter = rateLimit({
     max: 1000, // limit each IP to 100 requests per windowMs
     message: 'Too many requests from this IP, please try again after 15 minutes.',
 });
-app.use([
-    '/register',
-    '/login',
-    '/api',
 
-], limiter);
+app.use(['/auth/register', '/auth/login', '/api'], limiter);
+app.use('/api-docs', limiter, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+// Standardized Route Prefixes
+app.use('/auth', authRoutes);
+app.use('/api/v1/products', productRoutes);
+app.use('/api/v1/locations', locationRoutes);
+app.use('/api/v1/categories', categoryRoutes);
 
 
 /**
@@ -106,16 +118,9 @@ app.use([
  * [ ] Location search with pagination
  */
 
-// User Routes
-app.use(authRoutes);
-app.use(productRoutes);
-app.use(locationRoutes);
-app.use(categoryRoutes);
-
-// Fallback for undefined routes
-app.use((req, res) => {
-    res.status(404).json({ message: 'Endpoint not found' });
-});
+// Root Endpoints
+app.get('/', (req, res) => { res.status(200).json({ message: 'Server is healthy...' }); });
+app.use((req, res) => { res.status(404).json({ message: 'Endpoint not found' }); });
 
 app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server is running on port ${PORT}`);

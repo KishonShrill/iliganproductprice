@@ -8,9 +8,12 @@ const router = express.Router();
 
 
 //! [*] CHECK IF THIS WORKS
-router.get('/api/locations', async (req, res) => {
+router.get('/', async (req, res) => {
+    // #swagger.tags = ['v1 | Location']
+    // #swagger.description = 'Fetch all locations.'
+
     try {
-        const locations = await Location.find().sort({location_name: -1})
+        const locations = await Location.find().sort({ location_name: -1 })
 
         res.json(locations)
 
@@ -21,7 +24,10 @@ router.get('/api/locations', async (req, res) => {
 });
 
 //! [*] CHECK IF THIS WORKS
-router.get('/api/location/:locationId', async (req, res) => {
+router.get('/:locationId', async (req, res) => {
+    // #swagger.tags = ['v1 | Location']
+    // #swagger.description = 'Fetch products from this location.'
+
     const locationId = req.params.locationId;
     const locationObjectId = new mongoose.Types.ObjectId(locationId);
 
