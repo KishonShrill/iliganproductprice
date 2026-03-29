@@ -1,135 +1,166 @@
-import { useState, useRef } from 'react'
+import { useState, startTransition } from 'react'
 import { Form, Button } from "react-bootstrap";
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Cookies from "universal-cookie";
 import axios from 'axios'
-import '../styles/login.scss'
+import { ResultAsync } from 'neverthrow';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode'
 
-import { useThrottleCallback } from '../helpers/useDebounce';
+import '../styles/login.scss'
 
 const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 const cookies = new Cookies();
 
-const LoginForm = ({ debugMode }) => {
+const LoginForm = ({ debugMode, onSwitch }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [login, setLogin] = useState(false);
-    const [loading, setLoading] = useState(false);
 
-    const emailRef = useRef(null)
-    const passwordRef = useRef(null)
-    const logRef = useRef(null)
-    const submitRef = useRef(null);
+    // Using a single status state is often cleaner than multiple booleans
+    const [status, setStatus] = useState("idle"); // "idle" | "loading" | "success" | "error"
+    const [errorMessage, setErrorMessage] = useState("");
 
-    const handleSubmitBtn = (e) => {
+    const navigate = useNavigate();
+
+    let url = debugMode
+        ? `http://${LOCALHOST}:5000/auth/login`
+        : "https://iliganproductprice-mauve.vercel.app/auth/login";
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        debouncedLogin();
+
+        setStatus("loading");
+        setErrorMessage("");
+
+        await ResultAsync
+            .fromPromise(axios.post(url, { email, password }), (error) => {
+                return error.response?.data?.message || "Unable to connect to server. Please try again later.";
+            })
+            .map((response) => response.data)
+            .match(
+                (data) => {
+                    console.log(jwtDecode(data.token))
+                    cookies.set("budgetbuddy_token", data.token, { path: "/" });
+                    setStatus("success")
+                    startTransition(() => {
+                        navigate("/locations");
+                    });
+                },
+                (errorMsg) => {
+                    setStatus("error")
+                    setErrorMessage(errorMsg)
+                }
+            );
     }
 
-    const handleSubmit = () => {
-        // prevent the form from refreshing the whole page
-        setLoading(true);
-        submitRef.current.style.background = "#ee4d2da0";
-
-        let url = debugMode
-            ? `http://${LOCALHOST}:5000/login`
-            : "https://iliganproductprice-mauve.vercel.app/login";
-
-        const configuration = {
-            method: "post",
-            url,
-            data: {
-                email,
-                password,
-            },
-        };
-
-        // console.log({ configuration })
-
-        axios(configuration)
-            .then((result) => {
-                setLogin(true);
-                emailRef.current.style.borderColor = "green";
-                passwordRef.current.style.borderColor = "green";
-                logRef.current.style.color = "green";
-                cookies.set("TOKEN", result.data.token, {
-                    path: "/",
-                });
-                window.location.href = "/dev-mode";
-            })
-            .catch((error) => {
-                console.error(error);
-                setLoading(false);
-                emailRef.current.style.borderColor = "red";
-                passwordRef.current.style.borderColor = "red";
-                logRef.current.textContent = "Email or Password does not exist";
-                logRef.current.style.color = "red";
-                submitRef.current.style.background = "#ee4d2d";
-            });
-        // make a popup alert showing the "submitted" text
-        // alert("Submited");
-    };
-
-    const debouncedLogin = useThrottleCallback(handleSubmit, 1000)
-
     return (
-        <Form>
+        // 4. Attach onSubmit to the Form, not the Button (Allows 'Enter' key to submit)
+        <Form onSubmit={handleSubmit}>
             <h2>DEVELOPER LOGIN</h2>
             <p>Insert your credentials</p>
-            {/* email */}
-            <Form.Group controlId="formBasicEmail">
+
+            <Form.Group controlId="formBasicEmail" className="mb-3">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
                     type="email"
                     name="email"
                     value={email}
-                    ref={emailRef}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="example@gmail.com"
+                    isInvalid={status === "error"}
+                    isValid={status === "success"}
+                    required
                 />
             </Form.Group>
 
-            {/* password */}
-            <Form.Group controlId="formBasicPassword">
+            <Form.Group controlId="formBasicPassword" className="mb-3">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                     type="password"
                     name="password"
                     value={password}
-                    ref={passwordRef}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="password"
+                    isInvalid={status === "error"}
+                    isValid={status === "success"}
+                    required
                 />
             </Form.Group>
 
             <p className="forget">Forgot your Password?</p>
 
-            {/* submit button */}
             <Button
-                ref={submitRef}
-                variant="primary"
+                variant={status === "error" ? "danger" : "primary"}
                 type="submit"
-                onClick={(e) => handleSubmitBtn(e)}
+                // 5. Disable button to prevent double-clicks instead of using a complex debounce
+                disabled={status === "loading" || !email || !password}
             >
-                {loading ? "LOADING..." : "LOGIN"}
+                {status === "loading" ? "LOADING..." : "LOGIN"}
             </Button>
-            {login ? (
-                <p className="text-success">You Are Logged in Successfully</p>
-            ) : (
-                <p ref={logRef} className="text-danger">
-                    You Are Not Logged in
+
+            <div className='flex flex-col mt-4'>
+                <GoogleLogin
+                    onSuccess={async (credentialResponse) => {
+
+                        setStatus("loading");
+                        setErrorMessage("");
+
+                        await ResultAsync
+                            .fromPromise(axios.post(url, jwtDecode(credentialResponse.credential)), (error) => {
+                                return error.response?.data?.message || "Unable to connect to server. Please try again later.";
+                            })
+                            .map((response) => response.data)
+                            .match(
+                                (data) => {
+                                    console.log(jwtDecode(data.token))
+                                    cookies.set("budgetbuddy_token", data.token, { path: "/" });
+                                    setStatus("success")
+                                    startTransition(() => {
+                                        navigate("/locations");
+                                    });
+                                },
+                                (errorMsg) => {
+                                    setStatus("error")
+                                    setErrorMessage(errorMsg)
+                                }
+                            );
+                    }}
+                    onError={() => console.log("Login Error")}
+                />
+            </div>
+
+            {/* 6. Clean Conditional Rendering for Messages */}
+            <div className="mt-3 font-weight-bold">
+                {status === "success" && (
+                    <p className="text-green-700">You Are Logged in Successfully</p>
+                )}
+                {status === "error" && (
+                    <p className="text-red-600">{errorMessage || "You Are Not Logged in"}</p>
+                )}
+            </div>
+
+            {/* 👇 Add the Toggle Link Here 👇 */}
+            <div className="mt-4 text-center text-sm">
+                <p className="text-gray-600">
+                    Don&apos;t have an account?{' '}
+                    <span
+                        onClick={onSwitch}
+                        className="text-blue-600 font-medium cursor-pointer hover:underline"
+                    >
+                        Register here
+                    </span>
                 </p>
-            )}
+            </div>
         </Form>
     );
 };
 
-// 👇 Give the component a name for debugging purposes
-LoginForm.displayName = "Debug Form"
+LoginForm.displayName = "LoginForm";
 
-// 👇 Define PropTypes
 LoginForm.propTypes = {
     debugMode: PropTypes.bool.isRequired,
-}
+    onSwitch: PropTypes.func.isRequired,
+};
 
-export default LoginForm
+export default LoginForm;

@@ -5,6 +5,7 @@ import cloudinary from '../cloudinary.js'; // adjust if separate
 import getPaginationParams from '../helpers/getPaginationParams.js'; // adjust if separate
 import generateProductId from '../helpers/generateProductId.js';
 import { upload, streamUpload } from '../helpers/upload.js';
+import { user_verify, requireRole } from '../helpers/auth.js';
 
 import { Product } from '../models/models.js'; // adjust path
 
@@ -100,7 +101,7 @@ router.get('/category/:categoryId', async (req, res) => {
 //? [ ] CHECK IF THIS WORKS
 // Using upload.single('productImage') middleware to handle the file upload
 // TODO: Edit works, let's make it detect for New Created Product...
-router.post('/', upload.single('productImage'), async (req, res) => {
+router.post('/', user_verify, requireRole("moderator"), upload.single('productImage'), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
     // #swagger.description = 'Endpoint for uploading images to cloudinary'
 
@@ -166,7 +167,7 @@ router.post('/', upload.single('productImage'), async (req, res) => {
 //! [ ] CHECK IF THIS WORKS
 // PUT endpoint to update a product by _id
 // Requires upload.single('productImage') if image update is allowed
-router.put('/:id', upload.single('productImage'), async (req, res) => {
+router.put('/:id', user_verify, requireRole("moderator"), upload.single('productImage'), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
     // #swagger.description = 'Update a product information by _id'
     const id = req.params.id;
@@ -226,7 +227,7 @@ router.put('/:id', upload.single('productImage'), async (req, res) => {
 
 //! [ ] CHECK IF THIS WORKS
 // DELETE endpoint to delete a product by _id
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', user_verify, requireRole("admin"), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
     // #swagger.description = 'Delete a product by _id'
     const id = req.params.id;

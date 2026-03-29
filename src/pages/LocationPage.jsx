@@ -4,8 +4,6 @@ import LocationCard from "../components/LocationCard";
 import '../styles/locations.scss'
 
 export default function LocationPage() {
-    document.title = "Locations - Budget Buddy"
-
     const { isLoading, data: locations, isError, error, isFetching } = useFetchLocations();
 
     // Display when fetched elements are empty or is loading...
@@ -26,6 +24,7 @@ export default function LocationPage() {
 
     return (
         <section className="mx-auto max-w-6xl p-6 lg:p-10">
+            <title>Locations - Budget Buddy</title>
             <div className="mb-8 text-center">
                 <h1 className="text-3xl font-black tracking-tight text-gray-900 dark:text-gray-50 md:text-5xl">
                     Select a <span className="text-orange-500">Store</span>

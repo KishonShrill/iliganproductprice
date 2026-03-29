@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Package, MapPin, FileText, Home, Menu, Settings, LogOut, House } from 'lucide-react';
 import { cn } from '../../helpers/utils';
 import { Button } from '../ui/button';
@@ -95,10 +95,11 @@ export default function Sidebar() {
 
 function SideNavButton({ item, isCollapsed }) {
     const isActive = location.pathname === item.href;
+    const navigate = useNavigate()
 
     const logout = () => {
         cookies.remove("TOKEN", { path: "/" });
-        window.location.href = "/";
+        navigate("/");
     };
 
     if (item.name === "Logout") {

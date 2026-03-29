@@ -1,6 +1,37 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import { ResultAsync } from 'neverthrow';
 import { Heart, Github, Linkedin, Facebook } from 'lucide-react';
 
 const Footer = () => {
+    // State to track the server health: 'checking' | 'operational' | 'offline'
+    const [systemStatus, setSystemStatus] = useState('checking');
+
+    useEffect(() => {
+        // Ping the backend root to check health
+        ResultAsync.fromPromise(
+            axios.get("https://iliganproductprice-mauve.vercel.app/"),
+            (error) => error // Catch network errors (e.g., server is completely down)
+        )
+            .map((response) => response.data)
+            .match(
+                (data) => {
+                    // Check if the payload explicitly says healthy === true
+                    console.log({ data })
+                    if (data && data.healthy === true) {
+                        setSystemStatus('operational');
+                    } else {
+                        setSystemStatus('offline');
+                    }
+                },
+                (error) => {
+                    // If the promise fails (500 error, CORS, or server sleep), mark as offline
+                    console.error("System check failed:", error.message);
+                    setSystemStatus('offline');
+                }
+            );
+    }, []);
+
     const footerLinks = {
         product: [
             { name: 'Features', href: '#features' },
@@ -168,10 +199,18 @@ const Footer = () => {
                         </div>
                         <div className="flex items-center space-x-6 text-sm text-gray-400">
                             <span className="flex items-center">
-                                <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                                All systems operational
+                                {/* Dynamic Dot Color */}
+                                <div className={`w-2 h-2 rounded-full mr-2 ${systemStatus === 'operational' ? 'bg-green-500' :
+                                    systemStatus === 'offline' ? 'bg-red-500' :
+                                        'bg-yellow-500 animate-pulse'
+                                    }`}></div>
+
+                                {/* Dynamic Text */}
+                                {systemStatus === 'operational' && "All systems operational"}
+                                {systemStatus === 'offline' && "Systems offline"}
+                                {systemStatus === 'checking' && "Checking systems..."}
                             </span>
-                            <span>Version 2.0.0</span>
+                            <span>Version 2.1.3</span>
                         </div>
                     </div>
                 </div>

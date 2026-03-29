@@ -6,15 +6,14 @@ if (import.meta.env.VITE_SCAN === "true") {
 }
 
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { Provider } from 'react-redux';
-import Cookies from "universal-cookie";
 import store from './redux/store/store.js';
 
-import HomepageLayout from "./components/HomepageLayout.jsx"
+import MainLayout from "./components/MainLayout.jsx"
 import Homepage from "./pages/Homepage.jsx"
 
 const LocationPage = lazy(() => import("./pages/LocationPage.jsx"))
@@ -33,8 +32,6 @@ const CRUDPage = lazy(() => import('./pages/console/ConsoleProductForm.jsx'));
 
 const queryClient = new QueryClient();
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
-const cookies = new Cookies();
-const token = cookies.get("TOKEN");
 
 function App() {
 
@@ -43,41 +40,47 @@ function App() {
             <QueryClientProvider client={queryClient}>
                 <BrowserRouter>
                     <Provider store={store}>
-                        <Routes>
-                            <Route
-                                path="/"
-                                element={<HomepageLayout token={token} />}
-                            >
-                                <Route index element={<Homepage />} />
-                                <Route path="locations" element={<LocationPage />} />
-                                <Route path="location/*" element={<GroceryPage />} />
-                                <Route path="receipt" element={<ReceiptPage />} />
-                                <Route path="settings" element={<SettingsPage />} />
+                        <Suspense fallback={
+                            <div className='errorDisplay'>
+                                <h2>Loading<span className="animated-dots"></span></h2>
+                            </div>
+                        }>
+                            <Routes>
+                                <Route
+                                    path="/"
+                                    element={<MainLayout />}
+                                >
+                                    <Route index element={<Homepage />} />
+                                    <Route path="locations" element={<LocationPage />} />
+                                    <Route path="location/*" element={<GroceryPage />} />
+                                    <Route path="receipt" element={<ReceiptPage />} />
+                                    <Route path="settings" element={<SettingsPage />} />
+
+                                    <Route
+                                        path="authenticate"
+                                        element={<LoginPage debugMode={DEVELOPMENT} />}
+                                    />
+                                    <Route path="*" element={<NotFound />} />
+                                </Route>
 
                                 <Route
-                                    path="authenticate"
-                                    element={!token ? <LoginPage debugMode={DEVELOPMENT} /> : <Navigate to="/dev-mode" replace />}
-                                />
-                                <Route path="*" element={<NotFound />} />
-                            </Route>
-
-                            <Route
-                                path="/dev-mode"
-                                element={token ? <ConsoleLayout debugMode={DEVELOPMENT} /> : <Navigate to="/" replace />}
-                            >
-                                <Route index element={<ConsoleDashboardPage debugMode={DEVELOPMENT} />} />
-                                <Route path="products" element={<ConsoleProductsPage debugMode={DEVELOPMENT} />} />
-                                <Route path="locations" element={<ConsoleLocationsPage debugMode={DEVELOPMENT} />} />
-                                <Route path="listings" element={<ConsoleListingsPage debugMode={DEVELOPMENT} />} />
-                                <Route path="products/edit/*" element={<CRUDPage debugMode={DEVELOPMENT} />} />
-                                <Route path="products/new" element={<CRUDPage debugMode={DEVELOPMENT} />} />
-                            </Route>
-                        </Routes>
+                                    path="/dev-mode"
+                                    element={<ConsoleLayout debugMode={DEVELOPMENT} />}
+                                >
+                                    <Route index element={<ConsoleDashboardPage debugMode={DEVELOPMENT} />} />
+                                    <Route path="products" element={<ConsoleProductsPage debugMode={DEVELOPMENT} />} />
+                                    <Route path="locations" element={<ConsoleLocationsPage debugMode={DEVELOPMENT} />} />
+                                    <Route path="listings" element={<ConsoleListingsPage debugMode={DEVELOPMENT} />} />
+                                    <Route path="products/edit/*" element={<CRUDPage debugMode={DEVELOPMENT} />} />
+                                    <Route path="products/new" element={<CRUDPage debugMode={DEVELOPMENT} />} />
+                                </Route>
+                            </Routes>
+                        </Suspense>
                     </Provider>
                     <SpeedInsights />
                 </BrowserRouter>
                 {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />}
-            </QueryClientProvider>
+            </QueryClientProvider >
         </>
     )
 }
