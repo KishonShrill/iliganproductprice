@@ -14,7 +14,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 config();
 
 const PORT = process.env.PORT || 5000; // Choose your desired port
-const DEVELOPMENT = process.env.LOCALHOST || "localhost";
+const DEVELOPMENT = process.env.VITE_LOCALHOST || "localhost";
 const uri = process.env.HIDDEN_URI;
 
 // Initialize Database Connection
@@ -29,6 +29,7 @@ const allowedOrigins = process.env.VITE_DEVELOPMENT
         'http://localhost:4173',
         'http://192.168.1.10:5173',
         `http://${DEVELOPMENT}:5173`,
+        'http://localhost:5000',
         'https://productprice-iligan.vercel.app',
     ]
     : 'https://productprice-iligan.vercel.app';
@@ -87,7 +88,7 @@ app.use(cors(corsOptions));
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 1000, // limit each IP to 100 requests per windowMs
+    max: 100, // limit each IP to 100 requests per windowMs
     message: 'Too many requests from this IP, please try again after 15 minutes.',
 });
 
@@ -119,7 +120,7 @@ app.use('/api/v1/categories', categoryRoutes);
  */
 
 // Root Endpoints
-app.get('/', (req, res) => { res.status(200).json({ message: 'Server is healthy...' }); });
+app.get('/', (req, res) => { res.status(200).json({ message: 'Server is healthy...', healthy: true }); });
 app.use((req, res) => { res.status(404).json({ message: 'Endpoint not found' }); });
 
 app.listen(PORT, '0.0.0.0', () => {

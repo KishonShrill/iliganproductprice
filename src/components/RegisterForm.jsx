@@ -1,18 +1,28 @@
-import { useState } from 'react';
+import { useState, startTransition } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Form, Button } from "react-bootstrap";
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { ResultAsync } from 'neverthrow';
+import { GoogleLogin } from '@react-oauth/google';
+import { jwtDecode } from 'jwt-decode';
+import Cookies from 'universal-cookie';
 
 const LOCALHOST = import.meta.env.VITE_LOCALHOST || "localhost";
+const cookies = new Cookies();
 
-const RegisterForm = ({ debugMode }) => {
+const RegisterForm = ({ debugMode, onSwitch }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const [status, setStatus] = useState("idle"); // "idle" | "loading" | "success" | "error"
     const [errorMessage, setErrorMessage] = useState("");
+    const navigate = useNavigate();
+
+    const url = debugMode
+        ? `http://${LOCALHOST}:5000/auth/register`
+        : "https://iliganproductprice-mauve.vercel.app/auth/register";
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,10 +37,6 @@ const RegisterForm = ({ debugMode }) => {
         setStatus("loading");
         setErrorMessage("");
 
-        const url = debugMode
-            ? `http://${LOCALHOST}:5000/auth/register`
-            : "https://iliganproductprice-mauve.vercel.app/auth/register";
-
         await ResultAsync.fromPromise(
             axios.post(url, { email, password }),
             (error) => {
@@ -43,15 +49,14 @@ const RegisterForm = ({ debugMode }) => {
         )
             .map((response) => response.data)
             .match(
-                (data) => {
+                () => {
                     setStatus("success");
                     // Clear the form fields on success
                     setEmail("");
                     setPassword("");
                     setConfirmPassword("");
 
-                    // If using React Router, you could do: navigate("/login?registered=true")
-                    // For now, we will just rely on the success message below.
+                    navigate("/locations")
                 },
                 (errorMsg) => {
                     setStatus("error");
@@ -108,22 +113,64 @@ const RegisterForm = ({ debugMode }) => {
                 variant={status === "error" ? "danger" : "success"}
                 type="submit"
                 disabled={status === "loading" || !email || !password || !confirmPassword}
-                className="w-100 mb-3"
+                className="w-100"
             >
                 {status === "loading" ? "REGISTERING..." : "SIGN UP"}
             </Button>
+
+            <div className='flex flex-col mt-4'>
+                <GoogleLogin
+                    onSuccess={async (credentialResponse) => {
+                        await ResultAsync
+                            .fromPromise(axios.post(url, jwtDecode(credentialResponse.credential)), (error) => {
+                                return error.response?.data?.message || "Unable to connect to server. Please try again later.";
+                            })
+                            .map((response) => response.data)
+                            .match(
+                                (data) => {
+                                    console.log(jwtDecode(data.token))
+                                    cookies.set("budgetbuddy_token", data.token, { path: "/" });
+                                    setStatus("success")
+                                    startTransition(() => {
+                                        navigate("/locations");
+                                    });
+                                },
+                                (errorMsg) => {
+                                    setStatus("error")
+                                    setErrorMessage(errorMsg)
+                                }
+                            );
+                    }}
+                    onError={() => console.log("Login Error")}
+                />
+            </div>
 
             <div className="text-center font-weight-bold">
                 {status === "success" && (
                     <div className="text-success">
                         <p className="mb-1">Account created successfully!</p>
-                        <a href="/login" style={{ textDecoration: 'underline', color: 'green' }}>Click here to log in.</a>
+                        <a href="/locations" style={{ textDecoration: 'underline', color: 'green' }}>Click here to log in.</a>
                     </div>
                 )}
                 {status === "error" && (
                     <p className="text-danger">{errorMessage}</p>
                 )}
             </div>
+
+            {/* 👇 Add the Toggle Link Here 👇 */}
+            {status !== "success" && (
+                <div className="mt-4 text-center text-sm">
+                    <p className="text-gray-600">
+                        Already have an account?{' '}
+                        <span
+                            onClick={onSwitch}
+                            className="text-blue-600 font-medium cursor-pointer hover:underline"
+                        >
+                            Log in
+                        </span>
+                    </p>
+                </div>
+            )}
         </Form>
     );
 };
@@ -132,6 +179,7 @@ RegisterForm.displayName = "RegisterForm";
 
 RegisterForm.propTypes = {
     debugMode: PropTypes.bool.isRequired,
+    onSwitch: PropTypes.func.isRequired,
 };
 
 export default RegisterForm;

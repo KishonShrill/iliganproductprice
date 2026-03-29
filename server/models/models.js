@@ -9,21 +9,26 @@ const uri = process.env.HIDDEN_URI;
 
 mongoose.connect(uri)
     .then(() => { console.log('✅ Connected to MongoDB'); })
-    .catch(err => { console.error('❌ MongoDB connection error:', err.message);});
+    .catch(err => { console.error('❌ MongoDB connection error:', err.message); });
 
 
 // User Schema
 const authenticationSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        unique: [true, "This username is taken..."],
+    },
     email: {
         type: String,
         required: [true, "Please provide an Email!"],
         unique: [true, "Email Exist"],
     },
-    password: {
+    password: { type: String },
+    role: {
         type: String,
-        required: [true, "Please provide a password!"],
-        unique: false,
-    }
+        enum: ["admin", "moderator", "regular"],
+    },
+    profile_picture: { type: String }
 });
 
 // Product Schema
@@ -58,10 +63,10 @@ const locationSchema = new mongoose.Schema({
         open: String,   // Format: "HH:mm"
         close: String,  // Format: "HH:mm"
     },
-    is_open_24hrs: { 
+    is_open_24hrs: {
         type: String,
         enum: ["active", "inactive"],
-        default: "inactive" 
+        default: "inactive"
     },
     type: String
 });

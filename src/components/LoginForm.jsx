@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, startTransition } from 'react'
 import { Form, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -13,7 +13,7 @@ import '../styles/login.scss'
 const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 const cookies = new Cookies();
 
-const LoginForm = ({ debugMode }) => {
+const LoginForm = ({ debugMode, onSwitch }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -23,15 +23,15 @@ const LoginForm = ({ debugMode }) => {
 
     const navigate = useNavigate();
 
+    let url = debugMode
+        ? `http://${LOCALHOST}:5000/auth/login`
+        : "https://iliganproductprice-mauve.vercel.app/auth/login";
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         setStatus("loading");
         setErrorMessage("");
-
-        let url = debugMode
-            ? `http://${LOCALHOST}:5000/auth/login`
-            : "https://iliganproductprice-mauve.vercel.app/auth/login";
 
         await ResultAsync
             .fromPromise(axios.post(url, { email, password }), (error) => {
@@ -40,10 +40,12 @@ const LoginForm = ({ debugMode }) => {
             .map((response) => response.data)
             .match(
                 (data) => {
-                    console.log(data.token)
+                    console.log(jwtDecode(data.token))
                     cookies.set("budgetbuddy_token", data.token, { path: "/" });
                     setStatus("success")
-                    navigate("/dev-mode")
+                    startTransition(() => {
+                        navigate("/locations");
+                    });
                 },
                 (errorMsg) => {
                     setStatus("error")
@@ -99,9 +101,30 @@ const LoginForm = ({ debugMode }) => {
 
             <div className='flex flex-col mt-4'>
                 <GoogleLogin
-                    onSuccess={(credentialResponse) => {
-                        console.log(credentialResponse);
-                        console.log(jwtDecode(credentialResponse.credential))
+                    onSuccess={async (credentialResponse) => {
+
+                        setStatus("loading");
+                        setErrorMessage("");
+
+                        await ResultAsync
+                            .fromPromise(axios.post(url, jwtDecode(credentialResponse.credential)), (error) => {
+                                return error.response?.data?.message || "Unable to connect to server. Please try again later.";
+                            })
+                            .map((response) => response.data)
+                            .match(
+                                (data) => {
+                                    console.log(jwtDecode(data.token))
+                                    cookies.set("budgetbuddy_token", data.token, { path: "/" });
+                                    setStatus("success")
+                                    startTransition(() => {
+                                        navigate("/locations");
+                                    });
+                                },
+                                (errorMsg) => {
+                                    setStatus("error")
+                                    setErrorMessage(errorMsg)
+                                }
+                            );
                     }}
                     onError={() => console.log("Login Error")}
                 />
@@ -116,6 +139,19 @@ const LoginForm = ({ debugMode }) => {
                     <p className="text-red-600">{errorMessage || "You Are Not Logged in"}</p>
                 )}
             </div>
+
+            {/* 👇 Add the Toggle Link Here 👇 */}
+            <div className="mt-4 text-center text-sm">
+                <p className="text-gray-600">
+                    Don&apos;t have an account?{' '}
+                    <span
+                        onClick={onSwitch}
+                        className="text-blue-600 font-medium cursor-pointer hover:underline"
+                    >
+                        Register here
+                    </span>
+                </p>
+            </div>
         </Form>
     );
 };
@@ -124,6 +160,7 @@ LoginForm.displayName = "LoginForm";
 
 LoginForm.propTypes = {
     debugMode: PropTypes.bool.isRequired,
+    onSwitch: PropTypes.func.isRequired,
 };
 
 export default LoginForm;

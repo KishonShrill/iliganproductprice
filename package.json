@@ -1,11 +1,11 @@
 {
     "name": "budget-buddy",
     "private": true,
-    "version": "2.0.3",
+    "version": "2.1.3",
     "type": "module",
     "scripts": {
         "prestart": "node server/swagger.js",
-        "start": "concurrently --names \"FRONTEND,SERVER\" --prefix-colors \"magenta,blue\" \"vite --host\" \"node ./server/server.mjs\"",
+        "start": "concurrently --names \"FRONTEND,SERVER\" --prefix-colors \"magenta,blue\" \"vite --host\" \"nodemon ./server/server.mjs\"",
         "predev": "vitest run",
         "dev": "vite --host",
         "server": "node ./server/server.mjs",

@@ -3,6 +3,8 @@ import Header from '../components/console/Header';
 import DataTable from '../components/DataTable';
 import useFetchProducts from '../hooks/useFetchProducts';
 import PropTypes from 'prop-types';
+import Cookies from 'universal-cookie';
+import { jwtDecode } from 'jwt-decode';
 
 const columns = [
     { key: 'product_id', label: 'Item ID', sortable: true },
@@ -13,9 +15,14 @@ const columns = [
     { key: 'actions', label: "Actions" }
 ];
 
+const cookies = new Cookies();
+
 export default function Products({ debugMode }) {
     const navigate = useNavigate();
     const { isLoading, data } = useFetchProducts()
+
+    const token = cookies.get("budgetbuddy_token");
+    const decodedUser = token ? jwtDecode(token) : null;
 
     const normalizedData = data?.map(item => ({
         _id: item._id,
@@ -26,6 +33,11 @@ export default function Products({ debugMode }) {
         category_list: item.category.list,
         category_name: item.category.name
     }))
+
+    const logout = () => {
+        cookies.remove("budgetbuddy_token", { path: "/" });
+        navigate("/");
+    };
 
     function add_product() {
         navigate('/dev-mode/products/new');
@@ -46,8 +58,10 @@ export default function Products({ debugMode }) {
                     title="Products"
                     actionLabel="Add Product"
                     onAction={add_product}
+                    onLogout={logout}
+                    user={decodedUser}
                 />
-                <div className="p-4 md:p-8">
+                <div className="p-4 sm:p-8">
                     {isLoading
                         ? <h1>Loading...</h1>
                         : <DataTable

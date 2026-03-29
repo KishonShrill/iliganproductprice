@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Settings, LogIn, LogOut, Menu, X, LayoutDashboard, Package, Utensils, Info, ShoppingCart, User } from "lucide-react";
+import { Settings, LogIn, LogOut, Menu, X, LayoutDashboard, Package, Utensils, Info, ShoppingCart, User, Computer, CircleUserRound } from "lucide-react";
 import Cookies from "universal-cookie";
+import { jwtDecode } from "jwt-decode";
 
 const cookies = new Cookies();
 
@@ -11,11 +12,24 @@ const Header = () => {
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const token = cookies.get("budgetbuddy_token")
+    let isAdvancedUser = false;
+
+    if (token) {
+        try {
+            const decoded = jwtDecode(token);
+            // Check if they are above a regular user. 
+            // (Note: use decoded.userRole if that's what you named it in your backend JWT payload!)
+            const role = decoded.user_role;
+            isAdvancedUser = role === "admin" || role === "moderator";
+        } catch (error) {
+            console.error("Failed to decode token", error);
+        }
+    }
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
     const logout = () => {
-        cookies.remove("TOKEN", { path: "/" });
+        cookies.remove("budgetbuddy_token", { path: "/" });
         setIsOpen(false);
         navigate("/");
         window.location.reload(); // Ensures state clears
@@ -79,8 +93,19 @@ const Header = () => {
                             </>
                         ) : (
                             <>
-                                <Link className="nav-link text-orange-500 font-medium" to="/dev-mode" onClick={toggleMenu}>Dev Mode</Link>
-                                <button className="flex items-center gap-2 text-white md:text-gray-400 hover:text-red-400" onClick={logout}>
+                                {/* Toggle between Dev Mode and Profile based on role */}
+                                {isAdvancedUser ? (
+                                    <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 font-medium" to="/dev-mode" onClick={toggleMenu}>
+                                        <Computer size={20} /> <span className="md:hidden">Dev Mode</span>
+                                    </Link>
+                                ) : (
+                                    <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 font-medium" to="/profile" onClick={toggleMenu}>
+                                        <CircleUserRound size={20} /> <span className="md:hidden">Profile</span>
+                                    </Link>
+                                )}
+
+                                {/* Logout button shows for ALL logged-in users */}
+                                <button className="nav-link flex items-center text-white md:text-red-700 hover:text-red-400" onClick={logout}>
                                     <LogOut size={20} /> <span className="md:hidden">Logout</span>
                                 </button>
                             </>
@@ -88,7 +113,7 @@ const Header = () => {
                     </div>
                 </ul>
             </nav>
-        </header>
+        </header >
     );
 };
 

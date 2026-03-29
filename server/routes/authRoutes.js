@@ -3,8 +3,7 @@ import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { ResultAsync, ok, err, errAsync, okAsync } from 'neverthrow'
-import user_verify from '../helpers/auth.js';
-
+import { user_verify, requireRole } from '../helpers/auth.js';
 import { User } from '../models/models.js'; // adjust this path if needed
 
 const router = express.Router();
@@ -18,52 +17,94 @@ router.get("/free-endpoint", (req, res) => {
 });
 
 // authentication endpoint
-router.get("/auth-endpoint", user_verify, (req, res) => {
+router.post("/me", user_verify, requireRole("regular"), (req, res) => {
     // #swagger.tags = ['Authentication']
-    // #swagger.description = 'Sample of Authorized Endpoint.'
+    // #swagger.description = 'Return your information inside bearer token.'
 
-    res.json({ message: "You are authorized to access me" });
+    res.json(req.user);
 });
 
-// Resgister user to endpoint
+// ==========================================
+// REGISTER ENDPOINT
+// ==========================================
 router.post("/register", async (req, res) => {
     // #swagger.tags = ['Authentication']
     // #swagger.description = 'Endpoint to register a new user.'
+    const { iss, email, password, picture, name, email_verified } = req.body;
 
-    if (!req.body || !req.body.email || !req.body.password) {
+    if (iss === "https://accounts.google.com" && !email_verified) {
+        return res.status(400).send({ message: "Please verify your google account" });
+    }
+    if (iss !== "https://accounts.google.com" && (!email || !password)) {
         return res.status(400).send({ message: "Email and password are required" });
     }
 
-    try {
-        const hashedPassword = await bcrypt.hash(req.body.password, 10);
-        const user = new User({
-            email: req.body.email,
-            password: hashedPassword,
-        });
-
-        const result = await user.save();
-        res.status(201).send({
-            message: "User Created Successfully",
-            result,
-        });
-    } catch (error) {
-        if (error.code === 11000) { // MongoDB duplicate key error
-            return res.status(409).send({
-                message: "Email already exists",
-                error: error.message,
-            });
+    const prepareUser = () => {
+        if (iss === "https://accounts.google.com") {
+            return okAsync(new User({
+                email,
+                role: "regular",
+                profile_picture: picture,
+                username: name
+            }));
         }
-        res.status(500).send({
-            message: "Error creating user",
-            error: error.message,
-        });
-    }
+
+        return ResultAsync.fromPromise(
+            bcrypt.hash(password, 10),
+            (error) => ({ status: 500, message: "Failed to secure password", error })
+        ).map((hashedPassword) => new User({
+            email,
+            password: hashedPassword,
+            role: "regular",
+            username: name
+        }));
+    };
+
+    await prepareUser()
+        .andThen((user) =>
+            ResultAsync.fromPromise(
+                user.save(),
+                (error) => {
+                    // Catch MongoDB duplicate email error cleanly
+                    console.log(error)
+                    if (error.code === 11000 || error.cause?.code === 11000) return { status: 409, message: "Email is already used" };
+                    return { status: 500, message: "Error creating user", error: error.message };
+                }
+            )
+        ).map((user) => {
+            const payload = {
+                user_id: user._id,
+                user_email: user.email,
+                user_role: user.role,
+                username: user.username,
+            };
+
+            if (iss === "https://accounts.google.com") {
+                payload.user_picture = user.profile_picture;
+            }
+
+            // BUG FIX: Replaced `const token` with standard return
+            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+            return {
+                message: "Login Successful",
+                token
+            };
+        })
+        .match(
+            (successData) => res.status(201).send({ message: "User Created Successfully", result: successData }),
+            (errorData) => res.status(errorData.status).send({ message: errorData.message, error: errorData.error })
+        );
 });
 
+
+// ==========================================
+// LOGIN ENDPOINT
+// ==========================================
 router.post("/login", async (req, res) => {
     // #swagger.tags = ['Authentication']
     // #swagger.description = 'Endpoint to login as a user.'
-    const { email, password } = req.body;
+    const { iss, email, password } = req.body;
 
     await ResultAsync
         .fromPromise(User.findOne({ email: email }).exec(),
@@ -72,21 +113,35 @@ router.post("/login", async (req, res) => {
         .andThen((user) =>
             user ? okAsync(user) : errAsync({ status: 404, message: "User not found" })
         )
-        .andThen((user) =>
-            ResultAsync.fromPromise(
+        .andThen((user) => {
+            if (iss === "https://accounts.google.com") {
+                return okAsync(user);
+            }
+
+            return ResultAsync.fromPromise(
                 bcrypt.compare(password, user.password),
                 () => ({ status: 500, message: "Encryption validation failed" })
             ).andThen((isMatch) =>
                 isMatch ? ok(user) : err({ status: 400, message: "Passwords do not match" })
-            )
-        ).map((user) => {
-            const token = jwt.sign(
-                { userId: user._id, userEmail: user.email },
-                process.env.JWT_SECRET || "RANDOM-TOKEN",
-                { expiresIn: "24h" }
             );
-            console.log("what happened?")
-            return { message: "Login Successful", email: user.email, token };
+        }).map((user) => {
+            const payload = {
+                user_id: user._id,
+                user_email: user.email,
+                user_role: user.role,
+                username: user.username,
+            };
+
+            if (iss === "https://accounts.google.com") {
+                payload.user_picture = user.profile_picture;
+            }
+
+            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
+
+            return {
+                message: "Login Successful",
+                token
+            };
         })
         .match(
             (successData) => res.status(200).send(successData),

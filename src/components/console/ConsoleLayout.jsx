@@ -1,4 +1,4 @@
-import { useEffect, lazy, Suspense } from "react";
+import { useEffect, Suspense } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import PropTypes from "prop-types";
 import Cookies from "universal-cookie";
