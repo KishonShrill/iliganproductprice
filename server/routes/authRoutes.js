@@ -32,6 +32,10 @@ router.post("/register", async (req, res) => {
     // #swagger.description = 'Endpoint to register a new user.'
     const { iss, email, password, picture, name, email_verified } = req.body;
 
+    if (typeof email !== "string") {
+        return res.status(400).send({ message: "Invalid email" });
+    }
+
     if (iss === "https://accounts.google.com" && !email_verified) {
         return res.status(400).send({ message: "Please verify your google account" });
     }
@@ -105,6 +109,10 @@ router.post("/login", async (req, res) => {
     // #swagger.tags = ['Authentication']
     // #swagger.description = 'Endpoint to login as a user.'
     const { iss, email, password } = req.body;
+
+    if (typeof email !== "string") {
+        return res.status(400).send({ message: "Invalid email" });
+    }
 
     await ResultAsync
         .fromPromise(User.findOne({ email: email }).exec(),
