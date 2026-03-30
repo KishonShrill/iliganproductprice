@@ -1,7 +1,9 @@
-![](./assets/image-preview.png)
+# Budget Buddy Iligan City
+
+![preview image of budget buddy groceries price list](./assets/image-preview.png)
 
 <h1 align=center style="display:flex; align-items: center; justify-content: center; gap: 1rem;">
-  <a align=center href="https://github.com/KishonShrill/iliganproductprice/blob/main/public/">
+  <a align=center href="https://productprice-iligan.vercel.app/">
     <picture>
       <img src="./public/budgetbuddy.svg" width="100px" alt="nvm project logo" />
     </picture>

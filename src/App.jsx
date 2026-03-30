@@ -10,6 +10,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { QueryClientProvider, QueryClient } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools'
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { HelmetProvider } from 'react-helmet-async';
 import { Provider } from 'react-redux';
 import store from './redux/store/store.js';
 
@@ -37,50 +38,52 @@ function App() {
 
     return (
         <>
-            <QueryClientProvider client={queryClient}>
-                <BrowserRouter>
-                    <Provider store={store}>
-                        <Suspense fallback={
-                            <div className='errorDisplay'>
-                                <h2>Loading<span className="animated-dots"></span></h2>
-                            </div>
-                        }>
-                            <Routes>
-                                <Route
-                                    path="/"
-                                    element={<MainLayout />}
-                                >
-                                    <Route index element={<Homepage />} />
-                                    <Route path="locations" element={<LocationPage />} />
-                                    <Route path="location/*" element={<GroceryPage />} />
-                                    <Route path="receipt" element={<ReceiptPage />} />
-                                    <Route path="settings" element={<SettingsPage />} />
+            <HelmetProvider>
+                <QueryClientProvider client={queryClient}>
+                    <BrowserRouter>
+                        <Provider store={store}>
+                            <Suspense fallback={
+                                <div className='errorDisplay'>
+                                    <h2>Loading<span className="animated-dots"></span></h2>
+                                </div>
+                            }>
+                                <Routes>
+                                    <Route
+                                        path="/"
+                                        element={<MainLayout />}
+                                    >
+                                        <Route index element={<Homepage />} />
+                                        <Route path="locations" element={<LocationPage />} />
+                                        <Route path="location/*" element={<GroceryPage />} />
+                                        <Route path="receipt" element={<ReceiptPage />} />
+                                        <Route path="settings" element={<SettingsPage />} />
+
+                                        <Route
+                                            path="authenticate"
+                                            element={<LoginPage debugMode={DEVELOPMENT} />}
+                                        />
+                                        <Route path="*" element={<NotFound />} />
+                                    </Route>
 
                                     <Route
-                                        path="authenticate"
-                                        element={<LoginPage debugMode={DEVELOPMENT} />}
-                                    />
-                                    <Route path="*" element={<NotFound />} />
-                                </Route>
-
-                                <Route
-                                    path="/dev-mode"
-                                    element={<ConsoleLayout debugMode={DEVELOPMENT} />}
-                                >
-                                    <Route index element={<ConsoleDashboardPage debugMode={DEVELOPMENT} />} />
-                                    <Route path="products" element={<ConsoleProductsPage debugMode={DEVELOPMENT} />} />
-                                    <Route path="locations" element={<ConsoleLocationsPage debugMode={DEVELOPMENT} />} />
-                                    <Route path="listings" element={<ConsoleListingsPage debugMode={DEVELOPMENT} />} />
-                                    <Route path="products/edit/*" element={<CRUDPage debugMode={DEVELOPMENT} />} />
-                                    <Route path="products/new" element={<CRUDPage debugMode={DEVELOPMENT} />} />
-                                </Route>
-                            </Routes>
-                        </Suspense>
-                    </Provider>
-                    <SpeedInsights />
-                </BrowserRouter>
-                {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />}
-            </QueryClientProvider >
+                                        path="/dev-mode"
+                                        element={<ConsoleLayout debugMode={DEVELOPMENT} />}
+                                    >
+                                        <Route index element={<ConsoleDashboardPage debugMode={DEVELOPMENT} />} />
+                                        <Route path="products" element={<ConsoleProductsPage debugMode={DEVELOPMENT} />} />
+                                        <Route path="locations" element={<ConsoleLocationsPage debugMode={DEVELOPMENT} />} />
+                                        <Route path="listings" element={<ConsoleListingsPage debugMode={DEVELOPMENT} />} />
+                                        <Route path="products/edit/*" element={<CRUDPage debugMode={DEVELOPMENT} />} />
+                                        <Route path="products/new" element={<CRUDPage debugMode={DEVELOPMENT} />} />
+                                    </Route>
+                                </Routes>
+                            </Suspense>
+                        </Provider>
+                        <SpeedInsights />
+                    </BrowserRouter>
+                    {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />}
+                </QueryClientProvider >
+            </HelmetProvider>
         </>
     )
 }

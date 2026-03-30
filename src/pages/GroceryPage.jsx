@@ -7,6 +7,7 @@ import ProductCard from '../components/ProductCard';
 import Searchbar from "../components/Searchbar";
 import useSettings from "../hooks/useSettings";
 import { Package } from "lucide-react";
+import SEO from "../components/SEO";
 
 import '../styles/grocery.scss'
 
