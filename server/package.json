@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "vite",
         "prestart": "node swagger.js",
-        "start": "nodemon server.mjs",
+        "start": "node server.mjs",
+        "start:dev": "nodemon server.mjs",
         "build": "vite build",
         "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
         "preview": "vite preview"
