@@ -4,6 +4,7 @@ import LoginForm from "../components/LoginForm";
 import RegisterForm from "../components/RegisterForm"; // Make sure to import this!
 import PropTypes from "prop-types";
 import Cookies from 'universal-cookie';
+import SEO from '../components/SEO';
 
 const cookies = new Cookies();
 
@@ -21,6 +22,11 @@ const Login = ({ debugMode }) => {
 
     return (
         <main className="px-8 flex justify-center items-center h-[calc(100vh-12rem)]">
+            <SEO
+                title={"Login | Budget Buddy"}
+                specificUrl='authenticate'
+                description={"Get all the max benefits of budget buddy by logging in."}
+            />
             <div className="w-full max-w-md">
                 {isLoginView ? (
                     <LoginForm

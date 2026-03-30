@@ -4,12 +4,13 @@ const Features = lazy(() => import("../components/homepage/Features"));
 const About = lazy(() => import("../components/homepage/About"));
 const HowItWorks = lazy(() => import("../components/homepage/HowItWorks"));
 const Footer = lazy(() => import("../components/homepage/Footer"));
+import SEO from '../components/SEO';
 import '../styles/homepage.scss'
 
 export default function HomePage() {
     return (
         <>
-            <title>Budget Buddy</title>
+            <SEO title={"Budget Buddy"} />
             <main className="homepage">
                 <Hero />
                 <Features />
