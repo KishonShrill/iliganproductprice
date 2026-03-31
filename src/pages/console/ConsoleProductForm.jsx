@@ -1,93 +1,98 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { ArrowLeft, Upload, Loader2 } from 'lucide-react';
-import useFetchCategories from '../../hooks/useFetchCategories';
-import { postData } from '../../helpers/utils';
-import { useAddCategory } from '../../hooks/useAddCategory';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft, Upload, Loader2, Store, Utensils } from 'lucide-react';
+import useFetchCategories from '@/hooks/useFetchCategories';
+import useFetchProduct from '@/hooks/useFetchProduct';
+import { ResultAsync } from 'neverthrow';
+import Cookies from 'universal-cookie';
+import axios from 'axios';
+
+
+const cookies = new Cookies();
+const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
+const LOCALHOST = import.meta.env.VITE_LOCALHOST;
+const API_VERSION = import.meta.env.VITE_API_VERSION;
 
 export default function ProductForm() {
     const navigate = useNavigate();
     const { id } = useParams();
     const isEdit = !!id;
 
+    const { data: fetchedCategories = [], isLoading: categoriesLoading } = useFetchCategories();
+    const { data: fetchedProduct, isLoading: productLoading } = useFetchProduct(id)
+
     const [formData, setFormData] = useState({
         productId: id || '',
         productName: '',
         categoryId: '',
-        updatedPrice: 0,
-        locationId: '',
-        productImage: '',
+        productImage: null,
         formType: isEdit ? 'edit' : 'add'
     });
 
+    let saveProductUrl = DEVELOPMENT
+        ? `http://${LOCALHOST}:5000/api/${API_VERSION}/products`
+        : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/products`;
+
     const [originalData, setOriginalData] = useState(null);
-    const [categories, setCategories] = useState([]);
-    const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(isEdit);
     const [imagePreview, setImagePreview] = useState('');
+    const [activeList, setActiveList] = useState('Groceries');
 
     // Check if form has changes
     const hasChanges = originalData ?
         JSON.stringify(formData) !== JSON.stringify(originalData) :
-        formData.productName || formData.categoryId || formData.locationId || formData.updatedPrice > 0;
+        formData.productName && formData.categoryId;
 
     useEffect(() => {
-        loadInitialData();
+        if (isEdit && id) {
+            loadProductData();
+        } else {
+            setInitialLoading(false);
+        }
     }, [id]);
 
-    const loadInitialData = async () => {
+    useEffect(() => {
+        if (!initialLoading) {
+            setFormData(prev => ({ ...prev, categoryId: '' }));
+        }
+    }, [activeList]);
+
+    const loadProductData = async () => {
         try {
-            // Load categories and locations
-            const [categoriesRes, locationsRes] = await Promise.all([
-                api.getCategories(),
-                api.getLocations()
-            ]);
+            // Mock API call based on your structure
+            const productRes = fetchedProduct;
+            if (productRes.success && productRes.data) {
+                const product = productRes.data;
+                const initialFormData = {
+                    productId: product.id,
+                    productName: product.name,
+                    categoryId: product.categoryId,
+                    productImage: product.productImage || null,
+                    formType: 'edit'
+                };
 
-            setCategories(categoriesRes.data)
-            setLocations(locationsRes.data);
+                // Set the active list based on the loaded product's category if needed here
+                // (You would need a way to look up if the product's category is Groceries or Cuisines)
 
-            // Load product data if editing
-            if (isEdit && id) {
-                const productRes = await api.getProductById(id);
-                if (productRes.success && productRes.data) {
-                    const product = productRes.data;
-                    const initialFormData = {
-                        productId: product.id,
-                        productName: product.name,
-                        categoryId: product.categoryId,
-                        updatedPrice: product.price,
-                        locationId: product.locationId,
-                        productImage: product.productImage || '',
-                        formType: 'edit'
-                    };
-                    setFormData(initialFormData);
-                    setOriginalData(initialFormData);
-                    setImagePreview(product.productImage || '');
-                } else {
-                    //          toast({
-                    //            title: "Error",
-                    //            description: "Product not found",
-                    //            variant: "destructive",
-                    //          });
-                    navigate('/dev-mode/products');
-                }
+                setFormData(initialFormData);
+                setOriginalData(initialFormData);
+                setImagePreview(product.productImage || '');
+            } else {
+                navigate('/dev-mode/products');
             }
         } catch (error) {
-            //      toast({
-            //        title: "Error",
-            //        description: "Failed to load data",
-            //        variant: "destructive",
-            //      });
+            console.error(error);
         } finally {
             setInitialLoading(false);
         }
     };
+
     const handleInputChange = (field, value) => {
         setFormData(prev => ({
             ...prev,
@@ -112,7 +117,7 @@ export default function ProductForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.productName || !formData.categoryId || !formData.locationId || formData.updatedPrice <= 0) {
+        if (!formData.productName || !formData.categoryId) {
             //      toast({
             //        title: "Validation Error",
             //        description: "Please fill in all required fields",
@@ -121,10 +126,53 @@ export default function ProductForm() {
             return;
         }
 
+        const selectedCategory = fetchedCategories.find(c => c._id === formData.categoryId);
+        const formatProduct = {
+            product_name: formData.productName,
+            imageUrl: formData.productImage,
+            category: {
+                list: selectedCategory.category_list,
+                name: selectedCategory.category_name,
+                catalog: selectedCategory.category_catalog,
+            },
+        }
+
+        console.log(formatProduct)
+
         setLoading(true);
         try {
-            const response = await api.saveProduct(formData);
+            const response = await ResultAsync
+                .fromPromise(
+                    axios.post(saveProductUrl, formatProduct, {
+                        headers: {
+                            Authorization: `Bearer ${cookies.get("budgetbuddy_token")}`
+                        }
+                    }),
+                    (error) => {
+                        return error.response?.data?.message || "Unable to connect to server. Please try again later.";
+                    }
+                )
+                .match(
+                    (axiosResponse) => {
+                        console.log("Server responded with:", axiosResponse.data);
 
+                        // toast({
+                        //   title: "Success",
+                        //   description: "Product successfully created!",
+                        // });
+
+                        navigate('/dev-mode/products');
+                    },
+                    (errorMessage) => {
+                        console.error("Submission failed:", errorMessage);
+
+                        // toast({
+                        //     title: "Error",
+                        //     description: errorMessage,
+                        //     variant: "destructive",
+                        // });
+                    }
+                );
             if (response.success) {
                 //        toast({
                 //          title: "Success",
@@ -135,21 +183,51 @@ export default function ProductForm() {
                 throw new Error(response.message);
             }
         } catch (error) {
-            toast({
-                title: "Error",
-                description: error instanceof Error ? error.message : "Failed to save product",
-                variant: "destructive",
-            });
+            //toast({
+            //    title: "Error",
+            //    description: error instanceof Error ? error.message : "Failed to save product",
+            //    variant: "destructive",
+            //});
+            console.error(error)
         } finally {
             setLoading(false);
         }
     };
 
-    if (initialLoading) {
+    // --- DATA PROCESSING FOR DROPDOWN ---
+    // useMemo ensures we only recalculate this when fetchedCategories or activeList changes
+    const processedCategories = useMemo(() => {
+        if (!fetchedCategories.length) return [];
+
+        // 1. Filter by active toggle
+        const filtered = fetchedCategories.filter(c => c.category_list === activeList);
+
+        // 2. Group by category_catalog
+        const grouped = filtered.reduce((acc, cat) => {
+            const catalog = cat.category_catalog;
+            if (!acc[catalog]) acc[catalog] = [];
+            acc[catalog].push(cat);
+            return acc;
+        }, {});
+
+        // 3. Sort catalogs alphabetically, then sort items within each catalog
+        const sortedCatalogs = Object.keys(grouped).sort();
+
+        console.log(sortedCatalogs)
+
+        return sortedCatalogs.map(catalog => ({
+            catalogName: catalog,
+            items: grouped[catalog].sort((a, b) =>
+                a.category_name.localeCompare(b.category_name)
+            )
+        }));
+    }, [fetchedCategories, activeList]);
+
+    if (initialLoading || categoriesLoading || productLoading) {
         return (
             <div className="flex-1 overflow-auto bg-gray-50 min-h-screen">
                 <div className="flex items-center justify-center h-64">
-                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
                 </div>
             </div>
         );
@@ -189,6 +267,7 @@ export default function ProductForm() {
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-6">
+
                                 {/* Product Name */}
                                 <div className="space-y-2">
                                     <Label htmlFor="productName">Product Name <span className='text-red-500'>*</span></Label>
@@ -201,7 +280,32 @@ export default function ProductForm() {
                                     />
                                 </div>
 
-                                {/* Category */}
+                                {/* Category Type Toggle */}
+                                <div className="space-y-2 pt-2 border-t">
+                                    <Label>Inventory Type</Label>
+                                    <div className="flex space-x-2">
+                                        <Button
+                                            type="button"
+                                            variant={activeList === 'Groceries' ? 'default' : 'outline'}
+                                            onClick={() => setActiveList('Groceries')}
+                                            className={`${activeList === 'Groceries' && 'bg-orange-500 text-white'} w-full flex items-center justify-center`}
+                                        >
+                                            <Store className="w-4 h-4 mr-2" />
+                                            Groceries
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant={activeList === 'Cuisines' ? 'default' : 'outline'}
+                                            onClick={() => setActiveList('Cuisines')}
+                                            className={`${activeList === 'Cuisines' && 'bg-orange-500 text-white'} w-full flex items-center justify-center`}
+                                        >
+                                            <Utensils className="w-4 h-4 mr-2" />
+                                            Cuisines
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {/* Grouped Category Dropdown */}
                                 <div className="space-y-2">
                                     <Label htmlFor="categoryId">Category <span className='text-red-500'>*</span></Label>
                                     <Select
@@ -209,19 +313,32 @@ export default function ProductForm() {
                                         onValueChange={(value) => handleInputChange('categoryId', value)}
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select a category" />
+                                            <SelectValue placeholder={`Select a ${activeList.toLowerCase()} category`} />
                                         </SelectTrigger>
-                                        <SelectContent>
-                                            {categories.map((category) => (
-                                                <SelectItem key={category.id} value={category.id}>
-                                                    {category.name}
-                                                </SelectItem>
-                                            ))}
+                                        <SelectContent className="bg-white">
+                                            {processedCategories.length > 0 ? (
+                                                processedCategories.map((group) => (
+                                                    <SelectGroup key={group.catalogName}>
+                                                        <SelectLabel className="font-bold text-gray-900 bg-gray-100 border-b border-gray-100 py-2 cursor-default">
+                                                            {group.catalogName}
+                                                        </SelectLabel>
+                                                        {group.items.map((category) => (
+                                                            <SelectItem key={category._id} value={category._id} className="ml-2 bg-white hover:bg-gray-200 cursor-pointer">
+                                                                {category.category_name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectGroup>
+                                                ))
+                                            ) : (
+                                                <div className="p-4 text-center text-sm text-gray-500">
+                                                    No categories found.
+                                                </div>
+                                            )}
                                         </SelectContent>
                                     </Select>
                                 </div>
 
-                                {/* Price */}
+                                {/* Price
                                 <div className="space-y-2">
                                     <Label htmlFor="updatedPrice">Price <span className='text-red-500'>*</span></Label>
                                     <Input
@@ -234,9 +351,9 @@ export default function ProductForm() {
                                         placeholder="0.00"
                                         required
                                     />
-                                </div>
+                                </div> */}
 
-                                {/* Location */}
+                                {/* Location
                                 <div className="space-y-2">
                                     <Label htmlFor="locationId">Location <span className='text-red-500'>*</span></Label>
                                     <Select
@@ -254,7 +371,7 @@ export default function ProductForm() {
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                </div>
+                                </div> */}
 
                                 {/* Product Image */}
                                 <div className="space-y-2">
@@ -295,7 +412,7 @@ export default function ProductForm() {
                                     <Button
                                         type="submit"
                                         disabled={!hasChanges || loading}
-                                        className="bg-blue-600 hover:bg-blue-700"
+                                        className={`${!hasChanges ? 'bg-gray-300' : 'bg-blue-600'} hover:bg-blue-700 text-white`}
                                     >
                                         {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                                         {isEdit ? 'Update Product' : 'Create Product'}

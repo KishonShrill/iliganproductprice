@@ -1,13 +1,14 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button } from '../ui/button';
-import { Plus, LogOut, ChevronDown, Settings } from 'lucide-react';
+import { Plus, LogOut, ChevronDown, Settings, House } from 'lucide-react';
 
 export default function Header({ title, actionLabel, onAction, onLogout, user }) {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const navigate = useNavigate();
 
-    // Provide a safe fallback just in case the user prop hasn't loaded yet
-    const currentUser = user || { username: 'Admin', email: 'Loading...' };
+    const currentUser = user || { username: 'Admin', user_email: 'Loading...' };
 
     return (
         <div className="flex flex-col items-start justify-between border-b border-gray-200 bg-white px-8 py-6 relative">
@@ -59,12 +60,19 @@ export default function Header({ title, actionLabel, onAction, onLogout, user })
                                             {currentUser.username}
                                         </p>
                                         <p className="text-xs text-gray-500 truncate mt-0.5">
-                                            {currentUser.email}
+                                            {currentUser.user_email}
                                         </p>
                                     </div>
 
                                     {/* Menu Actions */}
                                     <div className="py-1">
+                                        <button
+                                            onClick={() => navigate('/locations')}
+                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                                        >
+                                            <House className="h-4 w-4 text-gray-400" />
+                                            Go Home
+                                        </button>
                                         <button className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors">
                                             <Settings className="h-4 w-4 text-gray-400" />
                                             Account Settings

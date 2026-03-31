@@ -1,0 +1,96 @@
+@keyframes flyToCart {
+  0% {
+    transform: translate(var(--start-x), var(--start-y)) scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: translate(calc((var(--start-x) + var(--target-x)) / 2), calc(var(--start-y) - 100px)) scale(0.8) rotate(10deg);
+    opacity: 0.9;
+  }
+
+  100% {
+    transform: translate(var(--target-x), var(--target-y)) scale(0.1) rotate(20deg);
+    opacity: 0;
+  }
+}
+
+/* Radix Toast Animations */
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUpOut {
+  from {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.ToastRoot[data-state='open'] {
+  animation: slideDown 0.4s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+}
+
+.ToastRoot[data-state='closed'] {
+  animation: slideUpOut 0.3s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+}
+
+.ToastRoot[data-swipe='move'] {
+  transform: translateX(var(--radix-toast-swipe-move-x));
+}
+
+.ToastRoot[data-swipe='cancel'] {
+  transform: translateX(0);
+  transition: transform 200ms ease-out;
+}
+
+.ToastRoot[data-swipe='end'] {
+  animation: slideOutRight 0.4s ease-out forwards;
+}
+
+@media (min-width: 1024px) {
+  .ToastRoot[data-state='open'] {
+    animation: slideInRight 0.4s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+  }
+
+  .ToastRoot[data-state='closed'] {
+    animation: slideOutRight 0.4s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+  }
+}

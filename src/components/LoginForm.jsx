@@ -55,9 +55,11 @@ const LoginForm = ({ debugMode, onSwitch }) => {
     }
 
     return (
-        // 4. Attach onSubmit to the Form, not the Button (Allows 'Enter' key to submit)
-        <Form onSubmit={handleSubmit}>
-            <h2>DEVELOPER LOGIN</h2>
+        <Form
+            className='my-8 mx-auto p-8 max-w-[400px] border-2 border-solid border-black rounded-md bg-white shadow-[0.5rem_0.5rem_0_#ee4d2d]'
+            onSubmit={handleSubmit}
+        >
+            <h2>CUSTOMER LOGIN</h2>
             <p>Insert your credentials</p>
 
             <Form.Group controlId="formBasicEmail" className="mb-3">
@@ -88,7 +90,7 @@ const LoginForm = ({ debugMode, onSwitch }) => {
                 />
             </Form.Group>
 
-            <p className="forget">Forgot your Password?</p>
+            {/* <p className="forget">Forgot your Password?</p> */}
 
             <Button
                 variant={status === "error" ? "danger" : "primary"}
@@ -107,7 +109,7 @@ const LoginForm = ({ debugMode, onSwitch }) => {
                         setErrorMessage("");
 
                         await ResultAsync
-                            .fromPromise(axios.post(url, jwtDecode(credentialResponse.credential)), (error) => {
+                            .fromPromise(axios.post(url, { token: credentialResponse.credential }), (error) => {
                                 return error.response?.data?.message || "Unable to connect to server. Please try again later.";
                             })
                             .map((response) => response.data)

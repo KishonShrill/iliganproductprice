@@ -23,7 +23,7 @@ const useFetchProduct = (productId) => {
             // refetchOnMount: boolean or 'always' - data updater
             refetchOnWindowFocus: false, //boolean or 'always' - self explanatory
             // refetshInterval: int millisec
-            enabled: true, // - will control for automatic fetch
+            enabled: !!productId, // - will control for automatic fetch
             select: (res) => res.data,
         }
     )

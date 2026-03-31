@@ -34,6 +34,8 @@ const CRUDPage = lazy(() => import('./pages/console/ConsoleProductForm.jsx'));
 const queryClient = new QueryClient();
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 
+import './styles/toast.scss'
+
 function App() {
 
     return (

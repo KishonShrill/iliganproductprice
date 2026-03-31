@@ -66,7 +66,10 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
     };
 
     return (
-        <Form onSubmit={handleSubmit}>
+        <Form
+            className='my-8 mx-auto p-8 max-w-[400px] border-2 border-solid border-black rounded-md bg-white shadow-[0.5rem_0.5rem_0_#ee4d2d]'
+            onSubmit={handleSubmit}
+        >
             <h2>CREATE ACCOUNT</h2>
             <p>Register as a new developer</p>
 
@@ -122,7 +125,7 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
                 <GoogleLogin
                     onSuccess={async (credentialResponse) => {
                         await ResultAsync
-                            .fromPromise(axios.post(url, jwtDecode(credentialResponse.credential)), (error) => {
+                            .fromPromise(axios.post(url, { token: credentialResponse.credential }), (error) => {
                                 return error.response?.data?.message || "Unable to connect to server. Please try again later.";
                             })
                             .map((response) => response.data)
