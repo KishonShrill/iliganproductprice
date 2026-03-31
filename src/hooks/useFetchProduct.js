@@ -7,8 +7,8 @@ const API_VERSION = import.meta.env.VITE_API_VERSION;
 
 const useFetchProduct = (productId) => {
     const DATBASE_URL = DEVELOPMENT
-        ? `http://${LOCALHOST}:5000/api/${API_VERSION}/product/${productId}`
-        : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/product/${productId}`;
+        ? `http://${LOCALHOST}:5000/api/${API_VERSION}/products/${productId}`
+        : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/products/${productId}`;
 
     const fetchURL = () => {
         return axios.get(DATBASE_URL);

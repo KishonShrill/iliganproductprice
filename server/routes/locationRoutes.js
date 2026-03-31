@@ -13,7 +13,7 @@ router.get('/', async (req, res) => {
     // #swagger.description = 'Fetch all locations.'
 
     try {
-        const locations = await Location.find()
+        const locations = await Location.find().sort({ location_name: -1 })
 
         res.json(locations)
 
@@ -38,6 +38,7 @@ router.get('/:locationId', async (req, res) => {
                     "location.id": locationObjectId
                 }
             },
+            { $sort: { "product.product_id": -1 } },
             {
                 $project: {
                     "product.product_id": true,

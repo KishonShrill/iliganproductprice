@@ -28,11 +28,11 @@ const ROLE_HIERARCHY = {
 export const requireRole = (minimumRequiredRole) => {
     return (req, res, next) => {
         // Ensure the user actually has a token payload (user_verify must run first)
-        if (!req.user || !req.user.userRole) {
+        if (!req.user || !req.user.user_role) {
             return res.status(403).json({ message: "Forbidden: Role not found in token." });
         }
 
-        const userLevel = ROLE_HIERARCHY[req.user.userRole] || 0;
+        const userLevel = ROLE_HIERARCHY[req.user.user_role] || 0;
         const requiredLevel = ROLE_HIERARCHY[minimumRequiredRole];
 
         // The Magic Check: Does their rank meet or exceed the required rank?

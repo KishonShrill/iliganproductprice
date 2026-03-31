@@ -18,7 +18,7 @@ router.get('/api/listings', async (req, res) => {
                 "category.catalog": 0,
                 "location.id": 0,
             }
-        ).sort({product_id: -1});
+        ).sort({ "prouct.product_id": -1 });
 
         res.json(products);
         //TODO: See if we need pagination on this... probably...
@@ -81,7 +81,7 @@ router.get('/api/listings/category/:categoryId', async (req, res) => {
         });
 
     } catch (error) {
-         console.error(`Error fetching products for category ${categoryId}:`, error);
+        console.error(`Error fetching products for category ${categoryId}:`, error);
         res.status(500).json({ message: 'Failed to fetch products by category.', error: error.message });
     }
 });

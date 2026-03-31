@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useSearchParams, useOutletContext } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -20,14 +20,17 @@ const API_VERSION = import.meta.env.VITE_API_VERSION;
 
 export default function ProductForm() {
     const navigate = useNavigate();
-    const { id } = useParams();
-    const isEdit = !!id;
+    const [searchParams, setSearchParams] = useSearchParams();
+    const productId = searchParams.get('productId');
+    console.log(productId)
+    const isEdit = !!productId;
 
+    const { addToast } = useOutletContext();
     const { data: fetchedCategories = [], isLoading: categoriesLoading } = useFetchCategories();
-    const { data: fetchedProduct, isLoading: productLoading } = useFetchProduct(id)
+    const { data: fetchedProduct, isLoading: productLoading } = useFetchProduct(productId)
 
     const [formData, setFormData] = useState({
-        productId: id || '',
+        productId: productId || null,
         productName: '',
         categoryId: '',
         productImage: null,
@@ -50,12 +53,12 @@ export default function ProductForm() {
         formData.productName && formData.categoryId;
 
     useEffect(() => {
-        if (isEdit && id) {
+        if (productId) {
             loadProductData();
         } else {
             setInitialLoading(false);
         }
-    }, [id]);
+    }, [productId]);
 
     useEffect(() => {
         if (!initialLoading) {
@@ -67,13 +70,13 @@ export default function ProductForm() {
         try {
             // Mock API call based on your structure
             const productRes = fetchedProduct;
-            if (productRes.success && productRes.data) {
-                const product = productRes.data;
+            if (productRes) {
+                const selectedCategory = fetchedCategories.find(c => c.category_name === productRes.category.name && c.category_catalog === productRes.category.catalog);
                 const initialFormData = {
-                    productId: product.id,
-                    productName: product.name,
-                    categoryId: product.categoryId,
-                    productImage: product.productImage || null,
+                    productId: productRes.product_id,
+                    productName: productRes.product_name,
+                    categoryId: selectedCategory._id,
+                    productImage: productRes.productImage || null,
                     formType: 'edit'
                 };
 
@@ -82,7 +85,7 @@ export default function ProductForm() {
 
                 setFormData(initialFormData);
                 setOriginalData(initialFormData);
-                setImagePreview(product.productImage || '');
+                setImagePreview(productRes.imageUrl || '');
             } else {
                 navigate('/dev-mode/products');
             }
@@ -117,81 +120,59 @@ export default function ProductForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.productName || !formData.categoryId) {
-            //      toast({
-            //        title: "Validation Error",
-            //        description: "Please fill in all required fields",
-            //        variant: "destructive",
-            //      });
-            return;
-        }
-
         const selectedCategory = fetchedCategories.find(c => c._id === formData.categoryId);
-        const formatProduct = {
-            product_name: formData.productName,
-            imageUrl: formData.productImage,
-            category: {
-                list: selectedCategory.category_list,
-                name: selectedCategory.category_name,
-                catalog: selectedCategory.category_catalog,
-            },
-        }
+        const submitData = new FormData();
 
-        console.log(formatProduct)
+        submitData.append('product_id', formData.productId);
+        submitData.append('product_name', formData.productName);
+        submitData.append('imageUrl', formData.productImage);
+        submitData.append('category', JSON.stringify({
+            list: selectedCategory.category_list,
+            name: selectedCategory.category_name,
+            catalog: selectedCategory.category_catalog,
+        }));
+        submitData.append('formType', formData.formType);
+
+        console.log(submitData)
 
         setLoading(true);
-        try {
-            const response = await ResultAsync
-                .fromPromise(
-                    axios.post(saveProductUrl, formatProduct, {
-                        headers: {
-                            Authorization: `Bearer ${cookies.get("budgetbuddy_token")}`
-                        }
-                    }),
-                    (error) => {
-                        return error.response?.data?.message || "Unable to connect to server. Please try again later.";
+        await ResultAsync
+            .fromPromise(
+                axios.post(saveProductUrl, submitData, {
+                    headers: {
+                        Authorization: `Bearer ${cookies.get("budgetbuddy_token")}`
                     }
-                )
-                .match(
-                    (axiosResponse) => {
-                        console.log("Server responded with:", axiosResponse.data);
+                }),
+                (error) => {
+                    return error.response?.data?.message || "Unable to connect to server. Please try again later.";
+                }
+            )
+            .match(
+                (axiosResponse) => {
+                    console.log("Server responded with:", axiosResponse.data);
 
-                        // toast({
-                        //   title: "Success",
-                        //   description: "Product successfully created!",
-                        // });
+                    addToast("Success", "Product successfully created!")
+                    // toast({
+                    //   title: "Success",
+                    //   description: "Product successfully created!",
+                    // });
 
-                        navigate('/dev-mode/products');
-                    },
-                    (errorMessage) => {
-                        console.error("Submission failed:", errorMessage);
+                    setLoading(false);
+                    navigate('/dev-mode/products');
 
-                        // toast({
-                        //     title: "Error",
-                        //     description: errorMessage,
-                        //     variant: "destructive",
-                        // });
-                    }
-                );
-            if (response.success) {
-                //        toast({
-                //          title: "Success",
-                //          description: response.message,
-                //        });
-                navigate('/dev-mode/products');
-            } else {
-                throw new Error(response.message);
-            }
-        } catch (error) {
-            //toast({
-            //    title: "Error",
-            //    description: error instanceof Error ? error.message : "Failed to save product",
-            //    variant: "destructive",
-            //});
-            console.error(error)
-        } finally {
-            setLoading(false);
-        }
+                },
+                (errorMessage) => {
+                    console.error("Submission failed:", errorMessage);
+
+                    addToast("Error", errorMessage)
+                    setLoading(false);
+                    // toast({
+                    //     title: "Error",
+                    //     description: errorMessage,
+                    //     variant: "destructive",
+                    // });
+                }
+            );
     };
 
     // --- DATA PROCESSING FOR DROPDOWN ---

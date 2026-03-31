@@ -35,14 +35,12 @@ const authenticationSchema = new mongoose.Schema({
 const productSchema = new mongoose.Schema({
     product_id: { type: String, unique: true, required: true },
     product_name: { type: String, required: true },
-    category_id: { type: String, required: false },
-    updated_price: { type: Number, required: true },
-    date_updated: String, //? Might come in handy someday { type: Date, default: Date.now }
-    location_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Locations' // Assuming 'Location' is the model name for the referenced collection
-    },
-    imageUrl: { type: String }
+    imageUrl: { type: String },
+    category: {
+        list: { type: String, required: true },
+        name: { type: String },
+        catalog: { type: String },
+    }
 });
 
 // Location Schema

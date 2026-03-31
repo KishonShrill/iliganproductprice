@@ -74,22 +74,13 @@
             "schema": {
               "type": "object",
               "properties": {
-                "iss": {
+                "token": {
                   "example": "any"
                 },
                 "email": {
                   "example": "any"
                 },
                 "password": {
-                  "example": "any"
-                },
-                "picture": {
-                  "example": "any"
-                },
-                "name": {
-                  "example": "any"
-                },
-                "email_verified": {
                   "example": "any"
                 }
               }
@@ -119,7 +110,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "iss": {
+                "token": {
                   "example": "any"
                 },
                 "email": {
@@ -174,22 +165,16 @@
             "schema": {
               "type": "object",
               "properties": {
+                "product_id": {
+                  "example": "any"
+                },
+                "product_name": {
+                  "example": "any"
+                },
+                "category": {
+                  "example": "any"
+                },
                 "formType": {
-                  "example": "any"
-                },
-                "productId": {
-                  "example": "any"
-                },
-                "productName": {
-                  "example": "any"
-                },
-                "categoryId": {
-                  "example": "any"
-                },
-                "updatedPrice": {
-                  "example": "any"
-                },
-                "locationId": {
                   "example": "any"
                 }
               }

@@ -296,8 +296,6 @@ export default function DataTable({
                         c.key !== 'status'
                     );
 
-                    console.log(columns)
-
                     return (
                         <div key={item._id} className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden transition-all hover:shadow-md">
 

@@ -45,9 +45,9 @@ export default function Products({ debugMode }) {
 
     function edit_product(productId) {
         let location = debugMode
-            ? `http://localhost:5173/groceries/edit-item?productId=${productId}&type=edit`
-            : `https://productprice-iligan.vercel.app/groceries/edit-item?productId=${productId}&type=edit`;
-        window.location.href = location;
+            ? `http://localhost:5173/dev-mode/products/edit?productId=${productId}`
+            : `https://productprice-iligan.vercel.app/dev-mode/products/edit?productId=${productId}`;
+        navigate(location);
     }
 
     return (

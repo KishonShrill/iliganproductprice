@@ -6,11 +6,11 @@ import getPaginationParams from '../helpers/getPaginationParams.js'; // adjust i
 import generateProductId from '../helpers/generateProductId.js';
 import { upload, streamUpload } from '../helpers/upload.js';
 import { user_verify, requireRole } from '../helpers/auth.js';
+import { ResultAsync, okAsync, errAsync } from 'neverthrow';
 
 import { Product } from '../models/models.js'; // adjust path
 
 const router = express.Router();
-
 
 
 router.get('/', async (req, res) => {
@@ -101,66 +101,104 @@ router.get('/category/:categoryId', async (req, res) => {
 //? [ ] CHECK IF THIS WORKS
 // Using upload.single('productImage') middleware to handle the file upload
 // TODO: Edit works, let's make it detect for New Created Product...
-router.post('/', user_verify, requireRole("moderator"), upload.single('productImage'), async (req, res) => {
+router.post('/', user_verify, requireRole("moderator"), upload.single('imageUrl'), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
     // #swagger.description = 'Endpoint for uploading images to cloudinary'
+    const { product_id, product_name, category: rawCategory, formType } = req.body;
+    const category = rawCategory ? JSON.parse(rawCategory) : null;
+    const imageFile = req.file;
 
-    // Initialize variable for image
-    var uploadResult = null;
-    var product = null;
+    // Safely handles the Cloudinary upload. If no file, returns a successful empty result.
+    const handleUpload = (file, idToUse) => {
+        if (!file) return okAsync(null);
 
-    // Upload image to Cloudinary
-    try {
-        console.log("Type: ", req.body.formType)
-        if (req?.body.formType === "edit") {
-            product = await Product.findOne({ product_id: req.body.productId });
-            if (!product) return res.status(404).json({ message: 'Product not found.' });
+        return ResultAsync.fromPromise(
+            streamUpload(file.buffer, idToUse),
+            (error) => new Error(`Cloudinary upload failed: ${error.message}`)
+        );
+    };
 
-            if (req.file) {
-                uploadResult = await streamUpload(req.file.buffer, req.body.productId);
-                product.imageUrl = uploadResult.secure_url || product.imageUrl;
-            }
+    // Chain for EDITING a product
+    const editProductFlow = () => {
+        return ResultAsync.fromPromise(
+            Product.findOne({ product_id: product_id }),
+            (error) => new Error(`Database find error: ${error.message}`)
+        )
+            .andThen((product) => {
+                // Explicitly handle the 404 case as an Error Result
+                if (!product) return errAsync(new Error("Product not found."));
 
-            product.product_id = req.body.productId || product.product_id;
-            product.product_name = req.body.productName || product.product_name;
-            product.category_id = req.body.categoryId || product.category_id;
-            product.updated_price = req.body.updatedPrice || product.updated_price;
-            product.location_id = req.body.locationId || product.location_id;
-            product.date_updated = new Date().toISOString().split('T')[0];
+                // Handle the upload, then map the new values onto the existing product
+                return handleUpload(imageFile, product_id).map((uploadResult) => {
+                    if (uploadResult) {
+                        product.imageUrl = uploadResult.secure_url;
+                    }
 
-        } else {
-            const newProductId = await generateProductId();
+                    // Update fields (using your original fallback logic)
+                    product.product_id = product_id || product.product_id;
+                    product.product_name = product_name || product_name || product.product_name;
+                    product.category = category || product.category;
+                    // product.date_updated = new Date().toISOString().split('T')[0];
 
-            if (req.file) {
-                uploadResult = await streamUpload(req.file.buffer, newProductId);
-            }
-
-            product = new Product({
-                product_id: newProductId,
-                product_name: req.body.productName,
-                category_id: req.body.categoryId || null,
-                updated_price: req.body.updatedPrice,
-                location_id: req.body.locationId || null,
-                date_updated: new Date().toISOString().split('T')[0],
-                imageUrl: uploadResult.secure_url || null, // cloudinary hosted image URL
+                    return product;
+                });
             });
-        }
+    };
 
-        // Save the product to MongoDB
-        const updatedProduct = await product.save();
+    // Chain for ADDING a product
+    const addProductFlow = () => {
+        return ResultAsync.fromPromise(
+            generateProductId(),
+            (error) => new Error(`Failed to generate product ID: ${error.message}`)
+        )
+            .andThen((newProductId) => {
+                return handleUpload(imageFile, newProductId).map((uploadResult) => {
+                    return new Product({
+                        product_id: newProductId,
+                        product_name: product_name,
+                        imageUrl: uploadResult ? uploadResult.secure_url : null,
+                        category: category,
+                        // date_updated: new Date().toISOString().split('T')[0],
+                    });
+                });
+            });
+    };
 
-        res.status(201).json({
-            message: 'Product added successfully!',
-            product: updatedProduct,
-        });
 
-    } catch (error) {
-        console.error('Error adding product:', error);
-        res.status(500).json({
-            message: 'Failed to add product.',
-            error: error.message
-        });
-    }
+    console.log("Type: ", formType)
+    const processAction = formType === "edit" ? editProductFlow() : addProductFlow();
+    await processAction
+        .andThen((readyProduct) => {
+            // Save the product to MongoDB (works for both updated and new instances)
+            return ResultAsync.fromPromise(
+                readyProduct.save(),
+                (error) => new Error(`Failed to save product: ${error.message}`)
+            );
+        })
+        .match(
+            (savedProduct) => {
+                // SUCCESS ARM
+                return res.status(201).json({
+                    message: `Product ${formType === 'edit' ? 'updated' : 'added'} successfully!`,
+                    product: savedProduct,
+                });
+            },
+            (error) => {
+                // ERROR ARM
+                console.error('Error processing product:', error);
+
+                // Catch our specific 404 error
+                if (error.message === "Product not found.") {
+                    return res.status(404).json({ message: error.message });
+                }
+
+                // Catch all other 500 errors
+                return res.status(500).json({
+                    message: 'Failed to process product.',
+                    error: error.message
+                });
+            }
+        );
 });
 
 

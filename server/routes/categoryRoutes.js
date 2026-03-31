@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
     // #swagger.description = 'Fetch all categories.'
 
     try {
-        const categories = await v1 | Category.find()
+        const categories = await Category.find().sort({ category_list: -1, category_catalog: -1 })
         res.json(categories)
 
     } catch (error) {
