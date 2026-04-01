@@ -139,7 +139,7 @@ router.post("/login", async (req, res) => {
     }
 
     await ResultAsync
-        .fromPromise(token ? User.findOne({ email: payload.email }) : User.findOne({ email: email }).exec(),
+        .fromPromise(token ? User.findOne({ email: { $eq: payload.email } }) : User.findOne({ email: { $eq: email } }).exec(),
             () => ({ status: 500, message: "Database connection failed" })
         )
         .andThen((user) =>
