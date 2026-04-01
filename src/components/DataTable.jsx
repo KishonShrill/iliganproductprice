@@ -17,16 +17,34 @@ export default function DataTable({
     fetched,
     data,
     columns,
+    filterableColumns = [],
     onEdit,
     onDelete,
     onView,
 }) {
     const [searchTerm, setSearchTerm] = useState('');
-    const [filtersState, setFiltersState] = useState({
-        status: 'all',
-    });
+    const [filtersState, setFiltersState] = useState({ status: 'all' });
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
+
+    // This scans your data for the keys you passed in and pulls out all unique values!
+    const dynamicFilters = useMemo(() => {
+        if (!data || !filterableColumns.length) return [];
+
+        return filterableColumns.map(columnKey => {
+            // Find all unique values for this specific column
+            const uniqueValues = [...new Set(data.map(item => item[columnKey]))].filter(Boolean);
+
+            // Find the matching column definition so we can use its nice Label (e.g. "Section" instead of "category_list")
+            const columnDef = columns.find(c => c.key === columnKey);
+
+            return {
+                key: columnKey,
+                label: columnDef ? columnDef.label : columnKey,
+                values: uniqueValues.sort() // Alphabetize the dropdowns
+            };
+        });
+    }, [data, filterableColumns, columns]);
 
     // Filter data based on search term and status
     const filteredData = data.filter((item) => {
@@ -34,22 +52,13 @@ export default function DataTable({
             String(value).toLowerCase().includes(searchTerm.toLowerCase())
         );
 
-        // Go through each filter
+        // Dynamic Filter check
         const matchesFilters = Object.entries(filtersState).every(([key, val]) => {
-            if (val === "all") return true;
-            if (key === "status") {
-                return item.status === val;
-            }
+            // If the user hasn't selected a filter for this column, or selected "all", ignore it
+            if (val === "all" || val === undefined) return true;
 
-            // Example for Category (adjust key to match your data)
-            if (key === "Category") {
-                return item.category_name === val;
-            }
-            if (key === "Type") {
-                return item.type === val;
-            }
-
-            return true; // fallback
+            // Because our keys match our data perfectly, it's a simple 1:1 check!
+            return String(item[key]) === String(val);
         });
 
         return matchesSearch && matchesFilters;
@@ -63,16 +72,14 @@ export default function DataTable({
     // Helper function to change page and scroll up
     const handlePageChange = (newPage) => {
         setCurrentPage(newPage);
-
-        // Smoothly scroll to the top of the window
         window.scrollTo(0, 0);
     };
 
     const formatValue = (value, key) => {
         if (key === 'price' || key === 'product_price' && typeof value === 'number') {
-            return `$${value.toFixed(2)}`;
+            return `₱${value.toFixed(2)}`;
         }
-        if (key === 'status') {
+        if (key === 'status' || key === 'has_image') {
             const statusColors = {
                 active: 'bg-green-100 text-green-800',
                 yes: 'bg-green-100 text-green-800',
@@ -88,51 +95,17 @@ export default function DataTable({
                 </Badge>
             );
         }
-        if (key === 'createdAt' || key === 'date_updated') {
+        if (key === 'createdAt' || key === 'date_updated' || key === 'date') {
             return new Date(value).toLocaleDateString();
         }
         return value;
     };
 
-    const filters = useMemo(() => {
-        if (!data) return [];
-
-        if (fetched === "products") {
-            const categorySet = new Set();
-            data.forEach(item => {
-                if (item.category_name) categorySet.add(item.category_name);
-            });
-
-            return [
-                {
-                    label: "Category",
-                    values: Array.from(categorySet),
-                },
-            ];
-        }
-
-        if (fetched === "locations") {
-            const typeSet = new Set();
-            data.forEach(item => {
-                if (item.type) typeSet.add(item.type);
-            });
-
-            return [
-                {
-                    label: "Type",
-                    values: Array.from(typeSet),
-                },
-            ];
-        }
-
-        return [];
-    }, [fetched, data]);
-
 
     return (
-        <div className="space-y-6 mb-[4.5rem]">
+        <div className="space-y-6 max-md:mb-[4.5rem]">
             {/* Toolbar */}
-            <div id="toolbar" className="flex flex-col gap-2 bg-gray-50 p-4 rounded-lg">
+            <div id="toolbar" className="flex flex-col gap-2 bg-gray-50 pt-4 rounded-lg">
 
                 {/* Top Row: Search Bar & Desktop Results Count */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -154,52 +127,37 @@ export default function DataTable({
                 </div>
 
                 {/* Bottom Row: Filters */}
-                <div className="flex flex-wrap items-center gap-2">
-                    <Select
-                        value={filtersState['status']}
-                        onValueChange={(val) =>
-                            setFiltersState(prev => ({ ...prev, 'status': val }))
-                        }
-                    >
-                        {/* Note: Changed fixed w-36 to w-full sm:w-40 so it adapts to mobile */}
-                        <SelectTrigger className="w-full sm:w-40 bg-white select-none">
-                            <div className="flex items-center">
-                                <Filter className="h-4 w-4 mr-2 text-gray-500" />
-                                <SelectValue placeholder="Status" />
-                            </div>
-                        </SelectTrigger>
-                        <SelectContent className="bg-white select-none cursor-pointer">
-                            <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="all">All Status</SelectItem>
-                            <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="active">Active</SelectItem>
-                            <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="inactive">Inactive</SelectItem>
-                            <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="draft">Draft</SelectItem>
-                            <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="published">Published</SelectItem>
-                            <SelectItem className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold" value="archived">Archived</SelectItem>
-                        </SelectContent>
-                    </Select>
-
-                    {filters.map(filter => (
+                <div className="max-sm:grid max-sm:grid-cols-2 flex flex-wrap items-center gap-2">
+                    {dynamicFilters.map(filter => (
                         <Select
-                            key={filter.label}
-                            value={filtersState[filter.label]}
-                            onValueChange={(val) =>
-                                setFiltersState(prev => ({ ...prev, [filter.label]: val }))
-                            }
+                            key={filter.key}
+                            value={filtersState[filter.key] || "all"} // Default to "all" visually
+                            onValueChange={(val) => {
+                                setFiltersState(prev => ({ ...prev, [filter.key]: val }));
+                                setCurrentPage(1); // Reset to page 1 when a filter is applied!
+                            }}
                         >
-                            {/* Note: Changed fixed w-[200px] to w-full sm:w-48 */}
-                            <SelectTrigger className="w-full sm:w-48 bg-white select-none">
-                                <SelectValue placeholder={`Select ${filter.label}`} />
+                            <SelectTrigger className="w-full sm:w-40 bg-white select-none capitalize overflow-hidden">
+                                <div className="flex items-center">
+                                    <Filter className="h-4 w-4 mr-2 text-gray-500 shrink-0" />
+                                    <SelectValue placeholder={filter.label} />
+                                </div>
                             </SelectTrigger>
                             <SelectContent className="bg-white select-none cursor-pointer">
                                 <SelectItem
                                     className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold"
-                                    value="all">All {filter.label}
+                                    value="all"
+                                >
+                                    All {filter.label}
                                 </SelectItem>
+
                                 {filter.values.map(value => (
                                     <SelectItem
-                                        className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold"
+                                        className="cursor-pointer capitalize data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold"
                                         key={value}
-                                        value={value}> {value}
+                                        value={String(value)}
+                                    >
+                                        {value}
                                     </SelectItem>
                                 ))}
                             </SelectContent>
@@ -208,11 +166,87 @@ export default function DataTable({
                 </div>
 
                 {/* Mobile-only Results Count (Sits neatly at the bottom) */}
-                <div className="text-sm text-gray-500 sm:hidden text-center">
+                <div className="text-sm text-gray-500 sm:hidden text-center max-sm:mt-4">
                     Showing {startIndex + 1}-{Math.min(startIndex + itemsPerPage, filteredData.length)} of{' '}
                     {filteredData.length} results
                 </div>
             </div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+                <div className="flex items-center justify-between bg-white px-4 py-3 border border-gray-200 rounded-lg">
+                    <div className="flex-1 flex justify-between sm:hidden">
+                        <Button
+                            variant="outline"
+                            onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                            disabled={currentPage === 1}
+                        >
+                            Previous
+                        </Button>
+                        <Button
+                            variant="outline"
+                            onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                            disabled={currentPage === totalPages}
+                        >
+                            Next
+                        </Button>
+                    </div>
+                    <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+                        <div>
+                            <p className="text-sm text-gray-700">
+                                Page <span className="font-medium">{currentPage}</span> of{' '}
+                                <span className="font-medium">{totalPages}</span>
+                            </p>
+                        </div>
+                        <div>
+                            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                                    disabled={currentPage === 1}
+                                    className="rounded-r-none"
+                                >
+                                    Previous
+                                </Button>
+                                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                                    let pageNum = i + 1;
+                                    if (totalPages > 5) {
+                                        if (currentPage <= 3) {
+                                            pageNum = i + 1;
+                                        } else if (currentPage >= totalPages - 2) {
+                                            pageNum = totalPages - 4 + i;
+                                        } else {
+                                            pageNum = currentPage - 2 + i;
+                                        }
+                                    }
+                                    return (
+                                        <Button
+                                            key={pageNum}
+                                            variant={currentPage === pageNum ? 'default' : 'outline'}
+                                            size="sm"
+                                            onClick={() => setCurrentPage(pageNum)}
+                                            className="rounded-none"
+                                        >
+                                            {pageNum}
+                                        </Button>
+                                    );
+                                })}
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                                    disabled={currentPage === totalPages}
+                                    className="rounded-l-none"
+                                >
+                                    Next
+                                </Button>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            )}
+
 
             {/* Desktop Table */}
             <div className="hidden md:block bg-white rounded-lg border border-gray-200 overflow-auto">

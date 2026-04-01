@@ -8,9 +8,9 @@ import { Listing } from '../models/models.js'; // adjust path
 const router = express.Router();
 
 
-//! [*] CHECK IF THIS WORKS
-// Display to Groceries and to Dev Mode
-router.get('/api/listings', async (req, res) => {
+router.get('/', async (req, res) => {
+    // #swagger.tags = ['v1 | Listing']
+    // #swagger.description = 'Fetch all listing products.'
     try {
         const products = await Listing.find(
             {},
@@ -21,7 +21,6 @@ router.get('/api/listings', async (req, res) => {
         ).sort({ "prouct.product_id": -1 });
 
         res.json(products);
-        //TODO: See if we need pagination on this... probably...
 
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -30,7 +29,7 @@ router.get('/api/listings', async (req, res) => {
 
 //! [ ] CHECK IF THIS WORKS
 // Get endpoint to fetch a single product by _id
-router.get('/api/listing/:id', async (req, res) => {
+router.get('/:id', async (req, res) => {
     const id = req.params.id; // This is the MongoDB _id
 
     // Validate if the ID is a valid MongoDB ObjectId format

@@ -289,6 +289,7 @@ export default function ProductForm() {
                                 <div className="space-y-2">
                                     <Label htmlFor="productName">Product Name <span className='text-red-500'>*</span></Label>
                                     <Input
+                                        className="hover:bg-orange-100"
                                         id="productName"
                                         value={formData.productName}
                                         onChange={(e) => handleInputChange('productName', e.target.value)}
@@ -305,7 +306,7 @@ export default function ProductForm() {
                                             type="button"
                                             variant={activeList === 'Groceries' ? 'default' : 'outline'}
                                             onClick={() => setActiveList('Groceries')}
-                                            className={`${activeList === 'Groceries' && 'bg-orange-500 text-white'} w-full flex items-center justify-center`}
+                                            className={`${activeList === 'Groceries' ? 'bg-orange-500 text-white' : 'hover:bg-orange-100'} !flex-shrink w-full flex items-center justify-center`}
                                         >
                                             <Store className="w-4 h-4 mr-2" />
                                             Groceries
@@ -314,7 +315,7 @@ export default function ProductForm() {
                                             type="button"
                                             variant={activeList === 'Cuisines' ? 'default' : 'outline'}
                                             onClick={() => setActiveList('Cuisines')}
-                                            className={`${activeList === 'Cuisines' && 'bg-orange-500 text-white'} w-full flex items-center justify-center`}
+                                            className={`${activeList === 'Cuisines' ? 'bg-orange-500 text-white' : 'hover:bg-orange-100'} !flex-shrink w-full flex items-center justify-center`}
                                         >
                                             <Utensils className="w-4 h-4 mr-2" />
                                             Cuisines
@@ -329,7 +330,7 @@ export default function ProductForm() {
                                         value={formData.categoryId}
                                         onValueChange={(value) => handleInputChange('categoryId', value)}
                                     >
-                                        <SelectTrigger>
+                                        <SelectTrigger className="hover:bg-orange-100">
                                             <SelectValue placeholder={`Select a ${activeList.toLowerCase()} category`} />
                                         </SelectTrigger>
                                         <SelectContent className="bg-white">
@@ -355,41 +356,6 @@ export default function ProductForm() {
                                     </Select>
                                 </div>
 
-                                {/* Price
-                                <div className="space-y-2">
-                                    <Label htmlFor="updatedPrice">Price <span className='text-red-500'>*</span></Label>
-                                    <Input
-                                        id="updatedPrice"
-                                        type="number"
-                                        step="0.01"
-                                        min="0"
-                                        value={formData.updatedPrice || ''}
-                                        onChange={(e) => handleInputChange('updatedPrice', parseFloat(e.target.value) || 0)}
-                                        placeholder="0.00"
-                                        required
-                                    />
-                                </div> */}
-
-                                {/* Location
-                                <div className="space-y-2">
-                                    <Label htmlFor="locationId">Location <span className='text-red-500'>*</span></Label>
-                                    <Select
-                                        value={formData.locationId}
-                                        onValueChange={(value) => handleInputChange('locationId', value)}
-                                    >
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a location" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {locations.map((location) => (
-                                                <SelectItem key={location.id} value={location.id}>
-                                                    {location.name} - {location.city}, {location.state}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
-                                </div> */}
-
                                 {/* Product Image */}
                                 <div className="space-y-2">
                                     <Label htmlFor="productImage">Product Image</Label>
@@ -399,12 +365,8 @@ export default function ProductForm() {
                                             type="file"
                                             accept="image/*"
                                             onChange={handleImageChange}
-                                            className="flex-1"
+                                            className="flex-1 cursor-pointer hover:bg-orange-100"
                                         />
-                                        <Button type="button" variant="outline" size="sm">
-                                            <Upload className="h-4 w-4 mr-2" />
-                                            Upload
-                                        </Button>
                                     </div>
                                     {imagePreview && (
                                         <div className="mt-2">

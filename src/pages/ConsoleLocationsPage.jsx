@@ -52,13 +52,14 @@ export default function Locations() {
                     onLogout={logout}
                     user={decodedUser}
                 />
-                <div className="p-4 sm:p-8">
+                <div className="p-4 sm:p-8 h-[calc(100vh-120px)] overflow-y-auto">
                     {isLoading
                         ? <h1>Loading...</h1>
                         : <DataTable
                             fetched={"locations"}
                             data={normalizedData}
                             columns={columns}
+                            filterableColumns={['status', 'type']}
                             onView={handleView}
                         />
                     }

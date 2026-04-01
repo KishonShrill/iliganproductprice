@@ -10,6 +10,8 @@ import authRoutes from './routes/authRoutes.js';
 import productRoutes from './routes/productRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import listingRoutes from './routes/listingRoutes.js';
+import { requireRole } from './helpers/auth.js';
 
 config();
 
@@ -100,24 +102,7 @@ app.use('/auth', authRoutes);
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/locations', locationRoutes);
 app.use('/api/v1/categories', categoryRoutes);
-
-
-/**
- * The code below is old but will 
- * only be deleted if the code above works
- * 
- * Migration Checks:
- * [ ] Generation of Product ID
- * [ ] Upload image
- * [ ] Fetch all Products
- * [ ] Fetch product by _id
- * [ ] Update product by _id
- * [ ] Delete product by _id
- * [ ] Getting Pagination Parameters
- * [ ] Product search with pagination
- * [ ] Category search with pagination
- * [ ] Location search with pagination
- */
+app.use('/api/v1/listings', listingRoutes);
 
 // Root Endpoints
 app.get('/', (req, res) => { res.status(200).json({ message: 'Server is healthy...', healthy: true }); });

@@ -23,10 +23,7 @@ const useFetchListings = () => {
             // refetchOnMount: boolean or 'always' - data updater
             refetchOnWindowFocus: false,//boolean or 'always' - self explanatory
             // refetshInterval: int millisec
-            // select: (data) => {
-            //   const student
-            //   return student
-            // }
+            select: (res) => res.data
         }
     )
 }
