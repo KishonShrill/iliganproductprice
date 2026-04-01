@@ -70,11 +70,12 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
             className='my-8 mx-auto p-8 max-w-[400px] border-2 border-solid border-black rounded-md bg-white shadow-[0.5rem_0.5rem_0_#ee4d2d]'
             onSubmit={handleSubmit}
         >
-            <h2>CREATE ACCOUNT</h2>
-            <p>Register as a new developer</p>
+            <h2 className="text-center font-bold text-xl mb-2">CREATE ACCOUNT</h2>
+            <p className="text-center text-[0.8rem]">Register as a new developer</p>
 
-            <Form.Group controlId="formBasicEmail" className="mb-3">
-                <Form.Label>Email</Form.Label>
+            {/* Added mt-6 (1.5rem) to match :first-of-type, plus w-full flex flex-col */}
+            <Form.Group controlId="formBasicEmail" className="mb-3 mt-6 w-full flex flex-col">
+                <Form.Label className="mb-1 text-[0.8rem]">Email</Form.Label>
                 <Form.Control
                     type="email"
                     name="email"
@@ -83,11 +84,13 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
                     placeholder="example@gmail.com"
                     isInvalid={status === "error" && errorMessage !== "Passwords do not match."}
                     required
+                    className="px-[0.8rem] py-[0.4rem] border border-black"
                 />
             </Form.Group>
 
-            <Form.Group controlId="formBasicPassword" className="mb-3">
-                <Form.Label>Password</Form.Label>
+            {/* Added w-full flex flex-col */}
+            <Form.Group controlId="formBasicPassword" className="mb-3 w-full flex flex-col">
+                <Form.Label className="mb-1 text-[0.8rem]">Password</Form.Label>
                 <Form.Control
                     type="password"
                     name="password"
@@ -96,11 +99,13 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
                     placeholder="Password"
                     isInvalid={status === "error"}
                     required
+                    className="px-[0.8rem] py-[0.4rem] border border-black"
                 />
             </Form.Group>
 
-            <Form.Group controlId="formConfirmPassword" className="mb-4">
-                <Form.Label>Confirm Password</Form.Label>
+            {/* Added w-full flex flex-col */}
+            <Form.Group controlId="formConfirmPassword" className="mb-3 w-full flex flex-col">
+                <Form.Label className="mb-1 text-[0.8rem]">Confirm Password</Form.Label>
                 <Form.Control
                     type="password"
                     name="confirmPassword"
@@ -109,6 +114,7 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
                     placeholder="Confirm Password"
                     isInvalid={status === "error" && errorMessage === "Passwords do not match."}
                     required
+                    className="px-[0.8rem] py-[0.4rem] border border-black"
                 />
             </Form.Group>
 
@@ -116,12 +122,13 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
                 variant={status === "error" ? "danger" : "success"}
                 type="submit"
                 disabled={status === "loading" || !email || !password || !confirmPassword}
-                className="w-100"
+                className="w-full mt-6 py-3 text-white border-none rounded bg-[#ee4d2d] hover:bg-[#d43d1f] disabled:opacity-70 disabled:cursor-not-allowed"
             >
                 {status === "loading" ? "REGISTERING..." : "SIGN UP"}
             </Button>
 
-            <div className='flex flex-col mt-4'>
+            {/* Added w-full */}
+            <div className='flex flex-col mt-4 w-full'>
                 <GoogleLogin
                     onSuccess={async (credentialResponse) => {
                         await ResultAsync
@@ -148,26 +155,27 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
                 />
             </div>
 
-            <div className="text-center font-weight-bold">
+            {/* Replaced Bootstrap text utility classes with Tailwind */}
+            <div className="mt-3 text-center font-bold w-full flex flex-col">
                 {status === "success" && (
-                    <div className="text-success">
+                    <div className="text-green-700 text-[0.8rem]">
                         <p className="mb-1">Account created successfully!</p>
-                        <a href="/locations" style={{ textDecoration: 'underline', color: 'green' }}>Click here to log in.</a>
+                        <a href="/locations" className="underline hover:text-green-800 transition-colors">Click here to log in.</a>
                     </div>
                 )}
                 {status === "error" && (
-                    <p className="text-danger">{errorMessage}</p>
+                    <p className="text-red-600 text-[0.8rem]">{errorMessage}</p>
                 )}
             </div>
 
-            {/* 👇 Add the Toggle Link Here 👇 */}
+            {/* Changed mt-4 to mt-5 (1.25rem) to match :last-of-type logic */}
             {status !== "success" && (
-                <div className="mt-4 text-center text-sm">
-                    <p className="text-gray-600">
+                <div className="mt-5 text-center text-sm w-full flex flex-col">
+                    <p className="text-gray-600 text-[0.8rem] mt-4">
                         Already have an account?{' '}
                         <span
                             onClick={onSwitch}
-                            className="text-blue-600 font-medium cursor-pointer hover:underline"
+                            className="text-blue-600 font-medium cursor-pointer hover:underline hover:text-[#ee4d2d]"
                         >
                             Log in
                         </span>
@@ -176,7 +184,7 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
             )}
         </Form>
     );
-};
+}
 
 RegisterForm.displayName = "RegisterForm";
 

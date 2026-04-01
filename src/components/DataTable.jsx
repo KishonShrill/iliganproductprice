@@ -75,7 +75,9 @@ export default function DataTable({
         if (key === 'status') {
             const statusColors = {
                 active: 'bg-green-100 text-green-800',
+                yes: 'bg-green-100 text-green-800',
                 inactive: 'bg-red-100 text-red-800',
+                no: 'bg-red-100 text-red-800',
                 draft: 'bg-yellow-100 text-yellow-800',
                 published: 'bg-green-100 text-green-800',
                 archived: 'bg-gray-100 text-gray-800',

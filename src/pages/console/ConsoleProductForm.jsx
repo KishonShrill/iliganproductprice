@@ -6,11 +6,12 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, Upload, Loader2, Store, Utensils } from 'lucide-react';
+import { ResultAsync } from 'neverthrow';
+import { useQueryClient } from 'react-query';
 import useFetchCategories from '@/hooks/useFetchCategories';
 import useFetchProduct from '@/hooks/useFetchProduct';
-import { ResultAsync } from 'neverthrow';
-import Cookies from 'universal-cookie';
 import axios from 'axios';
+import Cookies from 'universal-cookie';
 
 
 const cookies = new Cookies();
@@ -20,9 +21,9 @@ const API_VERSION = import.meta.env.VITE_API_VERSION;
 
 export default function ProductForm() {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const [searchParams, setSearchParams] = useSearchParams();
     const productId = searchParams.get('productId');
-    console.log(productId)
     const isEdit = !!productId;
 
     const { addToast } = useOutletContext();
@@ -53,48 +54,58 @@ export default function ProductForm() {
         formData.productName && formData.categoryId;
 
     useEffect(() => {
-        if (productId) {
-            loadProductData();
-        } else {
+        if (!productId) {
+            setInitialLoading(false);
+            return;
+        }
+
+        // 2. If React Query is still fetching the product OR the categories, do nothing. Just wait.
+        if (productLoading || categoriesLoading) {
+            return;
+        }
+
+        // 3. If loading is done, but there is no product data (e.g., 404 from server)
+        if (!fetchedProduct) {
+            addToast("Redirecting...", "Product not found or fetch failed");
+            navigate('/dev-mode/products');
+            return;
+        }
+
+        if (fetchedProduct && fetchedCategories.length > 0) {
+
+            // Find the matching category to get the ID for the dropdown
+            const selectedCategory = fetchedCategories.find(c =>
+                c.category_name === fetchedProduct.category.name &&
+                c.category_catalog === fetchedProduct.category.catalog
+            );
+
+            const initialFormData = {
+                productId: fetchedProduct.product_id,
+                productName: fetchedProduct.product_name,
+                categoryId: selectedCategory ? selectedCategory._id : '',
+                productImage: fetchedProduct.imageUrl || null,
+                formType: 'edit'
+            };
+
+            // CRITICAL: Ensure the UI toggle matches the fetched product's inventory type (Groceries vs Cuisines)
+            if (fetchedProduct.category && fetchedProduct.category.list) {
+                setActiveList(fetchedProduct.category.list);
+            }
+
+            setFormData(initialFormData);
+            setOriginalData(initialFormData);
+            setImagePreview(fetchedProduct.imageUrl || '');
+
+            // Finally, turn off the loading screen
             setInitialLoading(false);
         }
-    }, [productId]);
+    }, [productId, fetchedProduct, fetchedCategories, productLoading, categoriesLoading, navigate, addToast]);
 
     useEffect(() => {
         if (!initialLoading) {
             setFormData(prev => ({ ...prev, categoryId: '' }));
         }
     }, [activeList]);
-
-    const loadProductData = async () => {
-        try {
-            // Mock API call based on your structure
-            const productRes = fetchedProduct;
-            if (productRes) {
-                const selectedCategory = fetchedCategories.find(c => c.category_name === productRes.category.name && c.category_catalog === productRes.category.catalog);
-                const initialFormData = {
-                    productId: productRes.product_id,
-                    productName: productRes.product_name,
-                    categoryId: selectedCategory._id,
-                    productImage: productRes.productImage || null,
-                    formType: 'edit'
-                };
-
-                // Set the active list based on the loaded product's category if needed here
-                // (You would need a way to look up if the product's category is Groceries or Cuisines)
-
-                setFormData(initialFormData);
-                setOriginalData(initialFormData);
-                setImagePreview(productRes.imageUrl || '');
-            } else {
-                navigate('/dev-mode/products');
-            }
-        } catch (error) {
-            console.error(error);
-        } finally {
-            setInitialLoading(false);
-        }
-    };
 
     const handleInputChange = (field, value) => {
         setFormData(prev => ({
@@ -133,12 +144,13 @@ export default function ProductForm() {
         }));
         submitData.append('formType', formData.formType);
 
-        console.log(submitData)
-
         setLoading(true);
         await ResultAsync
             .fromPromise(
-                axios.post(saveProductUrl, submitData, {
+                axios({
+                    method: isEdit ? 'put' : 'post',
+                    url: isEdit ? `${saveProductUrl}/${productId}` : `${saveProductUrl}`,
+                    data: submitData,
                     headers: {
                         Authorization: `Bearer ${cookies.get("budgetbuddy_token")}`
                     }
@@ -149,13 +161,41 @@ export default function ProductForm() {
             )
             .match(
                 (axiosResponse) => {
-                    console.log("Server responded with:", axiosResponse.data);
+                    const data = axiosResponse.data;
+                    const savedProduct = data.product;
+                    console.log("Server responded with:", data);
 
-                    addToast("Success", "Product successfully created!")
-                    // toast({
-                    //   title: "Success",
-                    //   description: "Product successfully created!",
-                    // });
+                    queryClient.setQueryData("fetchedProducts_Admin", (oldData) => {
+
+                        // Helper function to handle the array logic cleanly
+                        const updateArray = (currentArray) => {
+                            if (isEdit) {
+                                // EDIT: Map through and replace the matching item
+                                return currentArray.map(item =>
+                                    item._id === data.product_id ? savedProduct : item
+                                );
+                            } else {
+                                // ADD: Unshift the new item to the very top of the list
+                                return [savedProduct, ...currentArray];
+                            }
+                        };
+
+                        // Apply the helper to whichever format your Axios data is in
+                        if (oldData.data && Array.isArray(oldData.data)) {
+                            return {
+                                ...oldData,
+                                data: updateArray(oldData.data)
+                            };
+                        }
+
+                        if (Array.isArray(oldData)) {
+                            return updateArray(oldData);
+                        }
+
+                        return oldData;
+                    });
+
+                    addToast("Success", `Product ${data.product.product_id} successfully created!`)
 
                     setLoading(false);
                     navigate('/dev-mode/products');
@@ -165,12 +205,8 @@ export default function ProductForm() {
                     console.error("Submission failed:", errorMessage);
 
                     addToast("Error", errorMessage)
+
                     setLoading(false);
-                    // toast({
-                    //     title: "Error",
-                    //     description: errorMessage,
-                    //     variant: "destructive",
-                    // });
                 }
             );
     };
@@ -243,8 +279,8 @@ export default function ProductForm() {
             <div className="p-4 md:p-8 pb-20 md:pb-8">
                 <div className="max-w-2xl mx-auto bg-white">
                     <Card>
-                        <CardHeader>
-                            <CardTitle>Product Information</CardTitle>
+                        <CardHeader className='flex-row!'>
+                            <CardTitle>Product Information {isEdit && ` - ${productId}`}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-6">

@@ -152,7 +152,7 @@
         "tags": [
           "v1 | Product"
         ],
-        "description": "Endpoint for uploading images to cloudinary",
+        "description": "Endpoint for posting new products with/without images to cloudinary",
         "parameters": [
           {
             "name": "authorization",
@@ -165,16 +165,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "product_id": {
-                  "example": "any"
-                },
                 "product_name": {
                   "example": "any"
                 },
                 "category": {
-                  "example": "any"
-                },
-                "formType": {
                   "example": "any"
                 }
               }
@@ -190,9 +184,6 @@
           },
           "403": {
             "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -233,7 +224,7 @@
         "tags": [
           "v1 | Product"
         ],
-        "description": "Update a product information by _id",
+        "description": "Update a product information by MongoDB _id",
         "parameters": [
           {
             "name": "id",
@@ -245,6 +236,24 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "product_id": {
+                  "example": "any"
+                },
+                "product_name": {
+                  "example": "any"
+                },
+                "category": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -272,7 +281,7 @@
         "tags": [
           "v1 | Product"
         ],
-        "description": "Delete a product by _id",
+        "description": "Delete a product by MongoDB _id",
         "parameters": [
           {
             "name": "id",
