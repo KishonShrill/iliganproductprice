@@ -1,5 +1,6 @@
 import multer from 'multer';
 import streamifier from 'streamifier';
+import cloudinary from '../cloudinary.js';
 
 
 // Set up Multer for handling file uploads (in-memory storage is simple for relaying to Cloudinary)

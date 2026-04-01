@@ -6,11 +6,11 @@ import getPaginationParams from '../helpers/getPaginationParams.js'; // adjust i
 import generateProductId from '../helpers/generateProductId.js';
 import { upload, streamUpload } from '../helpers/upload.js';
 import { user_verify, requireRole } from '../helpers/auth.js';
+import { ResultAsync, okAsync, errAsync } from 'neverthrow';
 
 import { Product } from '../models/models.js'; // adjust path
 
 const router = express.Router();
-
 
 
 router.get('/', async (req, res) => {
@@ -98,188 +98,199 @@ router.get('/category/:categoryId', async (req, res) => {
 });
 
 
-//? [ ] CHECK IF THIS WORKS
-// Using upload.single('productImage') middleware to handle the file upload
-// TODO: Edit works, let's make it detect for New Created Product...
-router.post('/', user_verify, requireRole("moderator"), upload.single('productImage'), async (req, res) => {
+router.post('/', user_verify, requireRole("moderator"), upload.single('imageUrl'), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
-    // #swagger.description = 'Endpoint for uploading images to cloudinary'
+    // #swagger.description = 'Endpoint for posting new products with/without images to cloudinary'
+    const { product_name, category: rawCategory } = req.body;
+    const category = rawCategory ? JSON.parse(rawCategory) : null;
+    const imageFile = req.file;
 
-    // Initialize variable for image
-    var uploadResult = null;
-    var product = null;
+    const handleUpload = (file, idToUse) => {
+        if (!file) return okAsync(null);
 
-    // Upload image to Cloudinary
-    try {
-        console.log("Type: ", req.body.formType)
-        if (req?.body.formType === "edit") {
-            product = await Product.findOne({ product_id: req.body.productId });
-            if (!product) return res.status(404).json({ message: 'Product not found.' });
+        return ResultAsync.fromPromise(
+            streamUpload(file.buffer, idToUse),
+            (error) => new Error(`Cloudinary upload failed: ${error.message}`)
+        );
+    };
 
-            if (req.file) {
-                uploadResult = await streamUpload(req.file.buffer, req.body.productId);
-                product.imageUrl = uploadResult.secure_url || product.imageUrl;
-            }
-
-            product.product_id = req.body.productId || product.product_id;
-            product.product_name = req.body.productName || product.product_name;
-            product.category_id = req.body.categoryId || product.category_id;
-            product.updated_price = req.body.updatedPrice || product.updated_price;
-            product.location_id = req.body.locationId || product.location_id;
-            product.date_updated = new Date().toISOString().split('T')[0];
-
-        } else {
-            const newProductId = await generateProductId();
-
-            if (req.file) {
-                uploadResult = await streamUpload(req.file.buffer, newProductId);
-            }
-
-            product = new Product({
-                product_id: newProductId,
-                product_name: req.body.productName,
-                category_id: req.body.categoryId || null,
-                updated_price: req.body.updatedPrice,
-                location_id: req.body.locationId || null,
-                date_updated: new Date().toISOString().split('T')[0],
-                imageUrl: uploadResult.secure_url || null, // cloudinary hosted image URL
+    await ResultAsync.fromPromise(
+        generateProductId(),
+        (error) => new Error(`Failed to generate product ID: ${error.message}`)
+    )
+        .andThen((newProductId) => {
+            return handleUpload(imageFile, newProductId).map((uploadResult) => {
+                return new Product({
+                    product_id: newProductId,
+                    product_name: product_name,
+                    imageUrl: uploadResult ? uploadResult.secure_url : null,
+                    category: category,
+                    // date_updated: new Date().toISOString().split('T')[0],
+                });
             });
-        }
-
-        // Save the product to MongoDB
-        const updatedProduct = await product.save();
-
-        res.status(201).json({
-            message: 'Product added successfully!',
-            product: updatedProduct,
-        });
-
-    } catch (error) {
-        console.error('Error adding product:', error);
-        res.status(500).json({
-            message: 'Failed to add product.',
-            error: error.message
-        });
-    }
+        })
+        .andThen((newProduct) => {
+            // Save the product to MongoDB (works for both updated and new instances)
+            return ResultAsync.fromPromise(
+                newProduct.save(),
+                (error) => new Error(`Failed to save product: ${error.message}`)
+            );
+        })
+        .match(
+            (savedProduct) => {
+                // SUCCESS ARM
+                return res.status(201).json({
+                    message: `Product added successfully!`,
+                    product: savedProduct,
+                });
+            },
+            (error) => {
+                // ERROR ARM
+                console.error('Error processing product:', error);
+                return res.status(500).json({
+                    message: 'Failed to process product.',
+                    error: error.message
+                });
+            }
+        );
 });
 
 
-//! [ ] CHECK IF THIS WORKS
-// PUT endpoint to update a product by _id
-// Requires upload.single('productImage') if image update is allowed
 router.put('/:id', user_verify, requireRole("moderator"), upload.single('productImage'), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
-    // #swagger.description = 'Update a product information by _id'
+    // #swagger.description = 'Update a product information by MongoDB _id'
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: 'Invalid product ID format' });
     }
 
-    try {
-        const updateData = { ...req.body }; // Copy request body data
+    const { product_id, product_name, category: rawCategory } = req.body;
+    const category = rawCategory ? JSON.parse(rawCategory) : null;
+    const imageFile = req.file;
 
-        // Handle image update if a new file is provided
-        if (req.file) {
-            // Upload new image to Cloudinary
-            const result = await cloudinary.uploader.upload(req.file.buffer.toString('base64'), {
-                resource_type: "image",
-                folder: "iligancitystores_products"
-            });
-            updateData.imageUrl = result.secure_url; // Add new image URL to update data
-
-            // Optional: Delete the old image from Cloudinary
-            // You would need to fetch the product first to get the old imageUrl
-            // and then use cloudinary.uploader.destroy()
-        }
-
-        // Update the date_updated if price is being updated or always on update
-        if (updateData.updatedPrice !== undefined) {
-            updateData.date_updated = new Date(); // Update date if price is provided
-        } else {
-            // Decide if date_updated should always update or only with price
-            // For now, let's update it whenever *any* field is updated
-            updateData.date_updated = new Date();
-        }
-
-
-        const updatedProduct = await Product.findByIdAndUpdate(
-            id,
-            updateData,
-            { new: true } // Return the updated document
+    const handleUpload = (file, idToUse) => {
+        if (!file) return okAsync(null);
+        return ResultAsync.fromPromise(
+            streamUpload(file.buffer, idToUse),
+            (error) => new Error(`Cloudinary upload failed: ${error.message}`)
         );
+    };
 
-        if (!updatedProduct) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
+    await ResultAsync.fromPromise(
+        Product.findById(id),
+        (error) => new Error(`Database find error: ${error.message}`)
+    )
+        .andThen((product) => {
+            // Explicitly handle the 404 case
+            if (!product) return errAsync(new Error("Product not found."));
 
-        res.json({
-            message: 'Product updated successfully!',
-            product: updatedProduct
-        });
+            // If an image was provided, upload it using the existing product_id for the naming convention
+            return handleUpload(imageFile, product.product_id).map((uploadResult) => {
+                if (uploadResult) {
+                    product.imageUrl = uploadResult.secure_url;
+                }
 
-    } catch (error) {
-        console.error('Error updating product:', error);
-        // Handle Mongoose validation errors specifically if needed
-        res.status(500).json({ message: 'Failed to update product.', error: error.message });
-    }
+                // Update fields if they were provided in the request
+                if (product_id) product.product_id = product_id;
+                if (product_name) product.product_name = product_name;
+                if (category) product.category = category;
+
+                // product.date_updated = new Date().toISOString().split('T')[0];
+
+                return product;
+            });
+        })
+        .andThen((readyProduct) => {
+            // Save the updated product to MongoDB
+            return ResultAsync.fromPromise(
+                readyProduct.save(),
+                (error) => new Error(`Failed to save updated product: ${error.message}`)
+            );
+        })
+        .match(
+            (savedProduct) => {
+                // Return 200 OK for updates instead of 201 Created
+                return res.status(200).json({
+                    message: 'Product updated successfully!',
+                    product: savedProduct,
+                });
+            },
+            (error) => {
+                console.error('Error updating product:', error);
+
+                if (error.message === "Product not found.") {
+                    return res.status(404).json({ message: error.message });
+                }
+
+                return res.status(500).json({
+                    message: 'Failed to update product.',
+                    error: error.message
+                });
+            }
+        );
 });
 
 //! [ ] CHECK IF THIS WORKS
 // DELETE endpoint to delete a product by _id
 router.delete('/:id', user_verify, requireRole("admin"), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
-    // #swagger.description = 'Delete a product by _id'
+    // #swagger.description = 'Delete a product by MongoDB _id'
     const id = req.params.id;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ message: 'Invalid product ID format' });
     }
 
-    try {
-        // Optional: Find the product first to get the image URL for Cloudinary deletion
-        const productToDelete = await Product.findById(id);
-        if (!productToDelete) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
+    await ResultAsync.fromPromise(
+        Product.findById(id),
+        (error) => new Error(`Database find error: ${error.message}`)
+    )
+        .andThen((product) => {
+            if (!product) return errAsync(new Error("Product not found."));
 
-        // Delete the product from MongoDB
-        const deletedProduct = await Product.findByIdAndDelete(id);
+            // Clean up Cloudinary in the background if an image exists
+            if (product.imageUrl) {
+                // We know exactly what the public ID is based on our POST/PUT routes!
+                const exactPublicId = `iligancitystores_products/${product.product_id}`;
 
-        // Optional: Delete the image from Cloudinary using the productToDelete's imageUrl
-        if (productToDelete.imageUrl) {
-            try {
-                // Extract public ID from Cloudinary URL (logic depends on your upload settings)
-                // Example: https://res.cloudinary.com/your_cloud_name/image/upload/v.../folder/public_id.jpg
-                const urlParts = productToDelete.imageUrl.split('/');
-                const publicIdWithExtension = urlParts[urlParts.length - 1];
-                const publicId = publicIdWithExtension.split('.')[0];
-                const folder = urlParts[urlParts.length - 2]; // Assuming the folder is the second to last part
+                console.log(`Attempting to delete Cloudinary image: ${exactPublicId}`);
 
-                // If you used a specific folder in upload
-                const publicIdWithFolder = folder && folder !== 'upload' ? `${folder}/${publicId}` : publicId;
-
-
-                console.log(`Attempting to delete Cloudinary image with Public ID: ${publicIdWithFolder}`);
-                await cloudinary.uploader.destroy(publicIdWithFolder);
-                console.log('Cloudinary image deleted successfully.');
-
-            } catch (cloudinaryError) {
-                console.error('Error deleting Cloudinary image:', cloudinaryError);
-                // Continue with product deletion even if image deletion fails
+                // Fire and forget: We don't await this in the main chain so a Cloudinary 
+                // failure doesn't prevent the MongoDB document from being deleted.
+                cloudinary.uploader.destroy(exactPublicId).catch(err => {
+                    console.error('Non-fatal error cleaning up Cloudinary:', err);
+                });
             }
-        }
 
+            // Proceed to delete the product from MongoDB
+            return ResultAsync.fromPromise(
+                Product.findByIdAndDelete(id),
+                (error) => new Error(`Database delete error: ${error.message}`)
+            );
+        })
+        .match(
+            (deletedProduct) => {
+                // SUCCESS ARM
+                return res.status(200).json({
+                    message: 'Product deleted successfully!',
+                    product: deletedProduct
+                });
+            },
+            (error) => {
+                // ERROR ARM
+                console.error('Error deleting product:', error);
 
-        res.json({
-            message: 'Product deleted successfully!',
-            product: deletedProduct
-        });
+                if (error.message === "Product not found.") {
+                    return res.status(404).json({ message: error.message });
+                }
 
-    } catch (error) {
-        console.error('Error deleting product:', error);
-        res.status(500).json({ message: 'Failed to delete product.', error: error.message });
-    }
+                return res.status(500).json({
+                    message: 'Failed to delete product.',
+                    error: error.message
+                });
+            }
+        );
 });
 
 export default router;

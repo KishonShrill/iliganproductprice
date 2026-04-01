@@ -1,93 +1,112 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { Button } from '../../components/ui/button';
-import { Input } from '../../components/ui/input';
-import { Label } from '../../components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { ArrowLeft, Upload, Loader2 } from 'lucide-react';
-import useFetchCategories from '../../hooks/useFetchCategories';
-import { postData } from '../../helpers/utils';
-import { useAddCategory } from '../../hooks/useAddCategory';
+import { useState, useEffect, useMemo } from 'react';
+import { useNavigate, useSearchParams, useOutletContext } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ArrowLeft, Upload, Loader2, Store, Utensils } from 'lucide-react';
+import { ResultAsync } from 'neverthrow';
+import { useQueryClient } from 'react-query';
+import useFetchCategories from '@/hooks/useFetchCategories';
+import useFetchProduct from '@/hooks/useFetchProduct';
+import axios from 'axios';
+import Cookies from 'universal-cookie';
+
+
+const cookies = new Cookies();
+const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
+const LOCALHOST = import.meta.env.VITE_LOCALHOST;
+const API_VERSION = import.meta.env.VITE_API_VERSION;
 
 export default function ProductForm() {
     const navigate = useNavigate();
-    const { id } = useParams();
-    const isEdit = !!id;
+    const queryClient = useQueryClient();
+    const [searchParams, setSearchParams] = useSearchParams();
+    const productId = searchParams.get('productId');
+    const isEdit = !!productId;
+
+    const { addToast } = useOutletContext();
+    const { data: fetchedCategories = [], isLoading: categoriesLoading } = useFetchCategories();
+    const { data: fetchedProduct, isLoading: productLoading } = useFetchProduct(productId)
 
     const [formData, setFormData] = useState({
-        productId: id || '',
+        productId: productId || null,
         productName: '',
         categoryId: '',
-        updatedPrice: 0,
-        locationId: '',
-        productImage: '',
+        productImage: null,
         formType: isEdit ? 'edit' : 'add'
     });
 
+    let saveProductUrl = DEVELOPMENT
+        ? `http://${LOCALHOST}:5000/api/${API_VERSION}/products`
+        : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/products`;
+
     const [originalData, setOriginalData] = useState(null);
-    const [categories, setCategories] = useState([]);
-    const [locations, setLocations] = useState([]);
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(isEdit);
     const [imagePreview, setImagePreview] = useState('');
+    const [activeList, setActiveList] = useState('Groceries');
 
     // Check if form has changes
     const hasChanges = originalData ?
         JSON.stringify(formData) !== JSON.stringify(originalData) :
-        formData.productName || formData.categoryId || formData.locationId || formData.updatedPrice > 0;
+        formData.productName && formData.categoryId;
 
     useEffect(() => {
-        loadInitialData();
-    }, [id]);
+        if (!productId) {
+            setInitialLoading(false);
+            return;
+        }
 
-    const loadInitialData = async () => {
-        try {
-            // Load categories and locations
-            const [categoriesRes, locationsRes] = await Promise.all([
-                api.getCategories(),
-                api.getLocations()
-            ]);
+        // 2. If React Query is still fetching the product OR the categories, do nothing. Just wait.
+        if (productLoading || categoriesLoading) {
+            return;
+        }
 
-            setCategories(categoriesRes.data)
-            setLocations(locationsRes.data);
+        // 3. If loading is done, but there is no product data (e.g., 404 from server)
+        if (!fetchedProduct) {
+            addToast("Redirecting...", "Product not found or fetch failed");
+            navigate('/dev-mode/products');
+            return;
+        }
 
-            // Load product data if editing
-            if (isEdit && id) {
-                const productRes = await api.getProductById(id);
-                if (productRes.success && productRes.data) {
-                    const product = productRes.data;
-                    const initialFormData = {
-                        productId: product.id,
-                        productName: product.name,
-                        categoryId: product.categoryId,
-                        updatedPrice: product.price,
-                        locationId: product.locationId,
-                        productImage: product.productImage || '',
-                        formType: 'edit'
-                    };
-                    setFormData(initialFormData);
-                    setOriginalData(initialFormData);
-                    setImagePreview(product.productImage || '');
-                } else {
-                    //          toast({
-                    //            title: "Error",
-                    //            description: "Product not found",
-                    //            variant: "destructive",
-                    //          });
-                    navigate('/dev-mode/products');
-                }
+        if (fetchedProduct && fetchedCategories.length > 0) {
+
+            // Find the matching category to get the ID for the dropdown
+            const selectedCategory = fetchedCategories.find(c =>
+                c.category_name === fetchedProduct.category.name &&
+                c.category_catalog === fetchedProduct.category.catalog
+            );
+
+            const initialFormData = {
+                productId: fetchedProduct.product_id,
+                productName: fetchedProduct.product_name,
+                categoryId: selectedCategory ? selectedCategory._id : '',
+                productImage: fetchedProduct.imageUrl || null,
+                formType: 'edit'
+            };
+
+            // CRITICAL: Ensure the UI toggle matches the fetched product's inventory type (Groceries vs Cuisines)
+            if (fetchedProduct.category && fetchedProduct.category.list) {
+                setActiveList(fetchedProduct.category.list);
             }
-        } catch (error) {
-            //      toast({
-            //        title: "Error",
-            //        description: "Failed to load data",
-            //        variant: "destructive",
-            //      });
-        } finally {
+
+            setFormData(initialFormData);
+            setOriginalData(initialFormData);
+            setImagePreview(fetchedProduct.imageUrl || '');
+
+            // Finally, turn off the loading screen
             setInitialLoading(false);
         }
-    };
+    }, [productId, fetchedProduct, fetchedCategories, productLoading, categoriesLoading, navigate, addToast]);
+
+    useEffect(() => {
+        if (!initialLoading) {
+            setFormData(prev => ({ ...prev, categoryId: '' }));
+        }
+    }, [activeList]);
+
     const handleInputChange = (field, value) => {
         setFormData(prev => ({
             ...prev,
@@ -112,44 +131,120 @@ export default function ProductForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!formData.productName || !formData.categoryId || !formData.locationId || formData.updatedPrice <= 0) {
-            //      toast({
-            //        title: "Validation Error",
-            //        description: "Please fill in all required fields",
-            //        variant: "destructive",
-            //      });
-            return;
-        }
+        const selectedCategory = fetchedCategories.find(c => c._id === formData.categoryId);
+        const submitData = new FormData();
+
+        submitData.append('product_id', formData.productId);
+        submitData.append('product_name', formData.productName);
+        submitData.append('imageUrl', formData.productImage);
+        submitData.append('category', JSON.stringify({
+            list: selectedCategory.category_list,
+            name: selectedCategory.category_name,
+            catalog: selectedCategory.category_catalog,
+        }));
+        submitData.append('formType', formData.formType);
 
         setLoading(true);
-        try {
-            const response = await api.saveProduct(formData);
+        await ResultAsync
+            .fromPromise(
+                axios({
+                    method: isEdit ? 'put' : 'post',
+                    url: isEdit ? `${saveProductUrl}/${productId}` : `${saveProductUrl}`,
+                    data: submitData,
+                    headers: {
+                        Authorization: `Bearer ${cookies.get("budgetbuddy_token")}`
+                    }
+                }),
+                (error) => {
+                    return error.response?.data?.message || "Unable to connect to server. Please try again later.";
+                }
+            )
+            .match(
+                (axiosResponse) => {
+                    const data = axiosResponse.data;
+                    const savedProduct = data.product;
+                    console.log("Server responded with:", data);
 
-            if (response.success) {
-                //        toast({
-                //          title: "Success",
-                //          description: response.message,
-                //        });
-                navigate('/dev-mode/products');
-            } else {
-                throw new Error(response.message);
-            }
-        } catch (error) {
-            toast({
-                title: "Error",
-                description: error instanceof Error ? error.message : "Failed to save product",
-                variant: "destructive",
-            });
-        } finally {
-            setLoading(false);
-        }
+                    queryClient.setQueryData("fetchedProducts_Admin", (oldData) => {
+
+                        // Helper function to handle the array logic cleanly
+                        const updateArray = (currentArray) => {
+                            if (isEdit) {
+                                // EDIT: Map through and replace the matching item
+                                return currentArray.map(item =>
+                                    item._id === data.product_id ? savedProduct : item
+                                );
+                            } else {
+                                // ADD: Unshift the new item to the very top of the list
+                                return [savedProduct, ...currentArray];
+                            }
+                        };
+
+                        // Apply the helper to whichever format your Axios data is in
+                        if (oldData.data && Array.isArray(oldData.data)) {
+                            return {
+                                ...oldData,
+                                data: updateArray(oldData.data)
+                            };
+                        }
+
+                        if (Array.isArray(oldData)) {
+                            return updateArray(oldData);
+                        }
+
+                        return oldData;
+                    });
+
+                    addToast("Success", `Product ${data.product.product_id} successfully created!`)
+
+                    setLoading(false);
+                    navigate('/dev-mode/products');
+
+                },
+                (errorMessage) => {
+                    console.error("Submission failed:", errorMessage);
+
+                    addToast("Error", errorMessage)
+
+                    setLoading(false);
+                }
+            );
     };
 
-    if (initialLoading) {
+    // --- DATA PROCESSING FOR DROPDOWN ---
+    // useMemo ensures we only recalculate this when fetchedCategories or activeList changes
+    const processedCategories = useMemo(() => {
+        if (!fetchedCategories.length) return [];
+
+        // 1. Filter by active toggle
+        const filtered = fetchedCategories.filter(c => c.category_list === activeList);
+
+        // 2. Group by category_catalog
+        const grouped = filtered.reduce((acc, cat) => {
+            const catalog = cat.category_catalog;
+            if (!acc[catalog]) acc[catalog] = [];
+            acc[catalog].push(cat);
+            return acc;
+        }, {});
+
+        // 3. Sort catalogs alphabetically, then sort items within each catalog
+        const sortedCatalogs = Object.keys(grouped).sort();
+
+        console.log(sortedCatalogs)
+
+        return sortedCatalogs.map(catalog => ({
+            catalogName: catalog,
+            items: grouped[catalog].sort((a, b) =>
+                a.category_name.localeCompare(b.category_name)
+            )
+        }));
+    }, [fetchedCategories, activeList]);
+
+    if (initialLoading || categoriesLoading || productLoading) {
         return (
             <div className="flex-1 overflow-auto bg-gray-50 min-h-screen">
                 <div className="flex items-center justify-center h-64">
-                    <Loader2 className="h-8 w-8 animate-spin" />
+                    <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
                 </div>
             </div>
         );
@@ -184,11 +279,12 @@ export default function ProductForm() {
             <div className="p-4 md:p-8 pb-20 md:pb-8">
                 <div className="max-w-2xl mx-auto bg-white">
                     <Card>
-                        <CardHeader>
-                            <CardTitle>Product Information</CardTitle>
+                        <CardHeader className='flex-row!'>
+                            <CardTitle>Product Information {isEdit && ` - ${productId}`}</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleSubmit} className="space-y-6">
+
                                 {/* Product Name */}
                                 <div className="space-y-2">
                                     <Label htmlFor="productName">Product Name <span className='text-red-500'>*</span></Label>
@@ -201,7 +297,32 @@ export default function ProductForm() {
                                     />
                                 </div>
 
-                                {/* Category */}
+                                {/* Category Type Toggle */}
+                                <div className="space-y-2 pt-2 border-t">
+                                    <Label>Inventory Type</Label>
+                                    <div className="flex space-x-2">
+                                        <Button
+                                            type="button"
+                                            variant={activeList === 'Groceries' ? 'default' : 'outline'}
+                                            onClick={() => setActiveList('Groceries')}
+                                            className={`${activeList === 'Groceries' && 'bg-orange-500 text-white'} w-full flex items-center justify-center`}
+                                        >
+                                            <Store className="w-4 h-4 mr-2" />
+                                            Groceries
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant={activeList === 'Cuisines' ? 'default' : 'outline'}
+                                            onClick={() => setActiveList('Cuisines')}
+                                            className={`${activeList === 'Cuisines' && 'bg-orange-500 text-white'} w-full flex items-center justify-center`}
+                                        >
+                                            <Utensils className="w-4 h-4 mr-2" />
+                                            Cuisines
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {/* Grouped Category Dropdown */}
                                 <div className="space-y-2">
                                     <Label htmlFor="categoryId">Category <span className='text-red-500'>*</span></Label>
                                     <Select
@@ -209,19 +330,32 @@ export default function ProductForm() {
                                         onValueChange={(value) => handleInputChange('categoryId', value)}
                                     >
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Select a category" />
+                                            <SelectValue placeholder={`Select a ${activeList.toLowerCase()} category`} />
                                         </SelectTrigger>
-                                        <SelectContent>
-                                            {categories.map((category) => (
-                                                <SelectItem key={category.id} value={category.id}>
-                                                    {category.name}
-                                                </SelectItem>
-                                            ))}
+                                        <SelectContent className="bg-white">
+                                            {processedCategories.length > 0 ? (
+                                                processedCategories.map((group) => (
+                                                    <SelectGroup key={group.catalogName}>
+                                                        <SelectLabel className="font-bold text-gray-900 bg-gray-100 border-b border-gray-100 py-2 cursor-default">
+                                                            {group.catalogName}
+                                                        </SelectLabel>
+                                                        {group.items.map((category) => (
+                                                            <SelectItem key={category._id} value={category._id} className="ml-2 bg-white hover:bg-gray-200 cursor-pointer">
+                                                                {category.category_name}
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectGroup>
+                                                ))
+                                            ) : (
+                                                <div className="p-4 text-center text-sm text-gray-500">
+                                                    No categories found.
+                                                </div>
+                                            )}
                                         </SelectContent>
                                     </Select>
                                 </div>
 
-                                {/* Price */}
+                                {/* Price
                                 <div className="space-y-2">
                                     <Label htmlFor="updatedPrice">Price <span className='text-red-500'>*</span></Label>
                                     <Input
@@ -234,9 +368,9 @@ export default function ProductForm() {
                                         placeholder="0.00"
                                         required
                                     />
-                                </div>
+                                </div> */}
 
-                                {/* Location */}
+                                {/* Location
                                 <div className="space-y-2">
                                     <Label htmlFor="locationId">Location <span className='text-red-500'>*</span></Label>
                                     <Select
@@ -254,7 +388,7 @@ export default function ProductForm() {
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                </div>
+                                </div> */}
 
                                 {/* Product Image */}
                                 <div className="space-y-2">
@@ -295,7 +429,7 @@ export default function ProductForm() {
                                     <Button
                                         type="submit"
                                         disabled={!hasChanges || loading}
-                                        className="bg-blue-600 hover:bg-blue-700"
+                                        className={`${!hasChanges ? 'bg-gray-300' : 'bg-blue-600'} hover:bg-blue-700 text-white`}
                                     >
                                         {loading && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                                         {isEdit ? 'Update Product' : 'Create Product'}

@@ -2,11 +2,13 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 import { ResultAsync, ok, err, errAsync, okAsync } from 'neverthrow'
 import { user_verify, requireRole } from '../helpers/auth.js';
-import { User } from '../models/models.js'; // adjust this path if needed
+import { User } from '../models/models.js';
 
 const router = express.Router();
+const client = new OAuth2Client(process.env.VITE_CLIENT_ID);
 
 // free endpoint
 router.get("/free-endpoint", (req, res) => {
@@ -30,7 +32,22 @@ router.post("/me", user_verify, requireRole("regular"), (req, res) => {
 router.post("/register", async (req, res) => {
     // #swagger.tags = ['Authentication']
     // #swagger.description = 'Endpoint to register a new user.'
-    const { iss, email, password, picture, name, email_verified } = req.body;
+    const { token, email, password } = req.body;
+
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.VITE_CLIENT_ID,
+    });
+
+    // 2. Extract the safe, verified user payload
+    const payload = ticket.getPayload();
+
+    const {
+        iss,
+        googleEmail,
+        name,
+        picture,
+    } = payload;
 
     if (typeof email !== "string") {
         return res.status(400).send({ message: "Invalid email" });
@@ -46,7 +63,7 @@ router.post("/register", async (req, res) => {
     const prepareUser = () => {
         if (iss === "https://accounts.google.com") {
             return okAsync(new User({
-                email,
+                email: googleEmail,
                 role: "regular",
                 profile_picture: picture,
                 username: name
@@ -108,21 +125,28 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
     // #swagger.tags = ['Authentication']
     // #swagger.description = 'Endpoint to login as a user.'
-    const { iss, email, password } = req.body;
+    const { token, email, password } = req.body;
 
-    if (typeof email !== "string") {
+    const ticket = token ? await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.VITE_CLIENT_ID,
+    }) : null;
+
+    const payload = ticket ? ticket.getPayload() : null;
+
+    if (typeof email !== "string" && !token) {
         return res.status(400).send({ message: "Invalid email" });
     }
 
     await ResultAsync
-        .fromPromise(User.findOne({ email: email }).exec(),
+        .fromPromise(token ? User.findOne({ email: payload.email }) : User.findOne({ email: email }).exec(),
             () => ({ status: 500, message: "Database connection failed" })
         )
         .andThen((user) =>
             user ? okAsync(user) : errAsync({ status: 404, message: "User not found" })
         )
         .andThen((user) => {
-            if (iss === "https://accounts.google.com") {
+            if (payload?.iss === "https://accounts.google.com") {
                 return okAsync(user);
             }
 
@@ -140,7 +164,7 @@ router.post("/login", async (req, res) => {
                 username: user.username,
             };
 
-            if (iss === "https://accounts.google.com") {
+            if (payload?.iss === "https://accounts.google.com") {
                 payload.user_picture = user.profile_picture;
             }
 

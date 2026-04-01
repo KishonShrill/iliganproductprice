@@ -23,7 +23,6 @@ const staticPages = [
     { path: '/', priority: '1.0', changefreq: 'daily' },
     { path: '/locations', priority: '0.9', changefreq: 'weekly' },
     { path: '/receipt', priority: '0.5', changefreq: 'monthly' },
-    { path: '/authenticate', priority: '0.5', changefreq: 'monthly' },
 ];
 
 // 3. Mock function to get dynamic locations (Replace this with your actual DB/API call)

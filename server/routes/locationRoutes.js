@@ -38,7 +38,7 @@ router.get('/:locationId', async (req, res) => {
                     "location.id": locationObjectId
                 }
             },
-            { $sort: { "product_id": -1 } },
+            { $sort: { "product.product_id": -1 } },
             {
                 $project: {
                     "product.product_id": true,

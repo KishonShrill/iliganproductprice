@@ -1,10 +1,17 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+import { ResultAsync } from 'neverthrow';
+import { useQueryClient } from 'react-query';
 import Header from '../components/console/Header';
 import DataTable from '../components/DataTable';
-import useFetchProducts from '../hooks/useFetchProducts';
 import PropTypes from 'prop-types';
 import Cookies from 'universal-cookie';
-import { jwtDecode } from 'jwt-decode';
+import useFetchProducts from '../hooks/useFetchProducts';
+import axios from 'axios';
+
+const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
+const LOCALHOST = import.meta.env.VITE_LOCALHOST;
+const API_VERSION = import.meta.env.VITE_API_VERSION;
 
 const columns = [
     { key: 'product_id', label: 'Item ID', sortable: true },
@@ -19,6 +26,8 @@ const cookies = new Cookies();
 
 export default function Products({ debugMode }) {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
+    const { addToast } = useOutletContext();
     const { isLoading, data } = useFetchProducts()
 
     const token = cookies.get("budgetbuddy_token");
@@ -28,7 +37,7 @@ export default function Products({ debugMode }) {
         _id: item._id,
         product_id: item.product_id,
         product_name: item.product_name,
-        status: item.imageUrl ? "active" : "inactive",
+        status: item.imageUrl ? "yes" : "no",
         image: item.imageUrl,
         category_list: item.category.list,
         category_name: item.category.name
@@ -45,10 +54,49 @@ export default function Products({ debugMode }) {
 
     function edit_product(productId) {
         let location = debugMode
-            ? `http://localhost:5173/groceries/edit-item?productId=${productId}&type=edit`
-            : `https://productprice-iligan.vercel.app/groceries/edit-item?productId=${productId}&type=edit`;
-        window.location.href = location;
+            ? `http://localhost:5173/dev-mode/products/edit?productId=${productId}`
+            : `https://productprice-iligan.vercel.app/dev-mode/products/edit?productId=${productId}&type=edit`;
+        navigate(location);
     }
+
+    const delete_product = async (item) => {
+        if (!window.confirm("Are you sure you want to permanently delete this product?")) {
+            return;
+        }
+
+        const deleteUrl = DEVELOPMENT
+            ? `http://${LOCALHOST}:5000/api/${API_VERSION}/products/${item._id}`
+            : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/products/${item._id}`;
+
+        await ResultAsync
+            .fromPromise(
+                axios.delete(deleteUrl, {
+                    headers: {
+                        Authorization: `Bearer ${cookies.get("budgetbuddy_token")}`
+                    }
+                }),
+                (error) => error.response?.data?.message || "Failed to delete product."
+            )
+            .match(
+                (response) => {
+                    console.log("Success:", response.data.message);
+
+                    queryClient.setQueryData(["fetchedProducts_Admin"], (oldData) => {
+                        if (!oldData) return [];
+                        console.log(oldData.data)
+                        return {
+                            ...oldData,
+                            data: oldData.data.filter(product => product._id !== item._id) // Overwrite just the array
+                        };
+                    });
+                    addToast("Deleted", `Product ${item.product_name} removed.`)
+                },
+                (errorMessage) => {
+                    console.error("Delete failed:", errorMessage);
+                    addToast({ title: "Error", description: errorMessage, variant: "destructive" })
+                }
+            );
+    };
 
     return (
         <>
@@ -69,6 +117,7 @@ export default function Products({ debugMode }) {
                             data={normalizedData}
                             columns={columns}
                             onEdit={edit_product}
+                            onDelete={delete_product}
                         />
                     }
                 </div>

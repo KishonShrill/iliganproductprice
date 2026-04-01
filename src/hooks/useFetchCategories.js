@@ -7,8 +7,8 @@ const API_VERSION = import.meta.env.VITE_API_VERSION;
 
 const useFetchCategories = () => {
     const DATBASE_URL = DEVELOPMENT
-        ? `http://${LOCALHOST}:5000/api/${API_VERSION}/category`
-        : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/category`;
+        ? `http://${LOCALHOST}:5000/api/${API_VERSION}/categories`
+        : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/categories`;
 
     const fetchURL = () => {
         return axios.get(DATBASE_URL);

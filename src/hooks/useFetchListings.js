@@ -5,27 +5,30 @@ const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 const API_VERSION = import.meta.env.VITE_API_VERSION;
 
-const useFetchProduct = (productId) => {
+const useFetchListings = () => {
     const DATBASE_URL = DEVELOPMENT
-        ? `http://${LOCALHOST}:5000/api/${API_VERSION}/products/${productId}`
-        : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/products/${productId}`;
+        ? `http://${LOCALHOST}:5000/api/${API_VERSION}/listings`
+        : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/listings`;
 
     const fetchURL = () => {
         return axios.get(DATBASE_URL);
     }
 
     return useQuery(
-        `fetshedItemForEdit-${productId}`,
+        ['fetchedListings'],
         fetchURL,
         {
             cacheTime: 1000 * 60 * 5,// int - keeps the data longer
             staleTime: 1000 * 60 * 2, // staleTime: int - default is 0 sec
             // refetchOnMount: boolean or 'always' - data updater
-            refetchOnWindowFocus: false, //boolean or 'always' - self explanatory
+            refetchOnWindowFocus: false,//boolean or 'always' - self explanatory
             // refetshInterval: int millisec
-            enabled: !!productId, // - will control for automatic fetch
-            select: (res) => res.data,
+            // select: (data) => {
+            //   const student
+            //   return student
+            // }
         }
     )
 }
-export default useFetchProduct
+export default useFetchListings;
+
