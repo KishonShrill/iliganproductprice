@@ -15,7 +15,7 @@ const useFetchLocations = () => {
     }
 
     return useQuery(
-        'fetchedLocations',
+        ['fetchedLocations'],
         fetchURL,
         {
             cacheTime: 1000 * 60 * 5,// int - keeps the data longer

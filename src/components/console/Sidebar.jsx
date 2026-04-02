@@ -14,7 +14,7 @@ const navigation = [
     { name: 'Listings', href: '/dev-mode/listings', icon: FileText },
 ];
 const extras = [
-    { name: 'Settings', href: '#', icon: Settings },
+    { name: 'Settings', href: '/settings', icon: Settings },
     { name: 'Logout', href: '/', icon: LogOut },
 ];
 
@@ -98,7 +98,7 @@ function SideNavButton({ item, isCollapsed }) {
     const navigate = useNavigate()
 
     const logout = () => {
-        cookies.remove("TOKEN", { path: "/" });
+        cookies.remove("budgetbuddy_token", { path: "/" });
         navigate("/");
     };
 

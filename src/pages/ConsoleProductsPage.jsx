@@ -18,7 +18,7 @@ const columns = [
     { key: 'product_name', label: 'Product Name', sortable: true },
     { key: 'category_name', label: 'Category', sortable: true },
     { key: 'category_list', label: 'Section', sortable: true },
-    { key: 'status', label: 'hasImage' },
+    { key: 'has_image', label: 'Image' },
     { key: 'actions', label: "Actions" }
 ];
 
@@ -37,8 +37,7 @@ export default function Products({ debugMode }) {
         _id: item._id,
         product_id: item.product_id,
         product_name: item.product_name,
-        status: item.imageUrl ? "yes" : "no",
-        image: item.imageUrl,
+        has_image: item.imageUrl ? "yes" : "no",
         category_list: item.category.list,
         category_name: item.category.name
     }))
@@ -60,6 +59,7 @@ export default function Products({ debugMode }) {
     }
 
     const delete_product = async (item) => {
+        console.log(item)
         if (!window.confirm("Are you sure you want to permanently delete this product?")) {
             return;
         }
@@ -101,7 +101,7 @@ export default function Products({ debugMode }) {
     return (
         <>
             <title>BB:Console - Products</title>
-            <div className="flex-1 overflow-auto bg-gray-50 min-w-[320px]">
+            <div className="flex-1 overflow-auto bg-gray-50">
                 <Header
                     title="Products"
                     actionLabel="Add Product"
@@ -109,13 +109,14 @@ export default function Products({ debugMode }) {
                     onLogout={logout}
                     user={decodedUser}
                 />
-                <div className="p-4 sm:p-8">
+                <div className="p-4 sm:p-8 h-[calc(100vh-120px)] overflow-y-auto">
                     {isLoading
                         ? <h1>Loading...</h1>
                         : <DataTable
                             fetched={"products"}
                             data={normalizedData}
                             columns={columns}
+                            filterableColumns={['category_name', 'category_list', 'status']}
                             onEdit={edit_product}
                             onDelete={delete_product}
                         />

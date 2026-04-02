@@ -1,14 +1,15 @@
-import { useCallback, useEffect, useRef, useState, Suspense } from "react";
+import { useCallback, useEffect, useRef, useState, useMemo, Suspense } from "react";
 import { Link } from "react-router-dom";
+import { Package } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import PropTypes from "prop-types";
-import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
+
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import Searchbar from "../components/Searchbar";
-import useSettings from "../hooks/useSettings";
-import { Package } from "lucide-react";
-import SEO from "../components/SEO";
 
+import useSettings from "../hooks/useSettings";
+import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
 import '../styles/grocery.scss'
 
 
@@ -21,6 +22,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     const [active, setActive] = useState(false)
     const [search, setSearch] = useState('')
     const [animatingCards, setAnimatingCards] = useState([])
+    const [selectedCatalog, setSelectedCatalog] = useState('All')
     const [windowWidth] = useState(window.innerWidth);
 
     const cartButtonRef = useRef(null)
@@ -53,6 +55,18 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
         }
     }, [removeCartItem])
 
+    const catalogs = useMemo(() => {
+        if (!data?.data) return [];
+        const uniqueCatalogs = new Set();
+
+        data.data.forEach(item => {
+            if (item.category?.catalog) {
+                uniqueCatalogs.add(item.category.catalog);
+            }
+        });
+
+        return Array.from(uniqueCatalogs).sort();
+    }, [data]);
 
     // Add item on <Cart /> on Button Click on <ProductCard />
     const handleClick = useCallback((el) => {
@@ -96,17 +110,18 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
             setAnimatingCards(prev => prev.filter(card => card.count !== animatingCard.count));
         }, 800);
 
-        // console.log(`${productId} | ${productName} | ${productPrice} | ${productLocation} | ${productImage}`)
         addNewCartItem(productId, productName, productPrice, productLocation, productImage);
     }, [count]);
 
     const searchTerm = (search || "").toLowerCase();
     const filteredProducts = data?.data.filter(item => {
-        const matchesSearch =
-            searchTerm === '' ||
+        const matchesSearch = searchTerm === '' ||
             item.product.product_name?.toLowerCase().includes(searchTerm);
 
-        return matchesSearch;
+        const matchesCatalog = selectedCatalog === 'All' ||
+            item.category?.catalog === selectedCatalog;
+
+        return matchesSearch && matchesCatalog;
     }) || [];
 
     function openReciept() {
@@ -145,6 +160,30 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                 </Searchbar>
 
             </div>
+            {catalogs.length > 0 && (
+                <nav className="flex overflow-x-auto gap-2 px-5 pb-3 scrollbar-hide">
+                    <Button
+                        variant={selectedCatalog === 'All' ? 'default' : 'outline'}
+                        size="sm"
+                        className={`rounded-full whitespace-nowrap ${selectedCatalog === 'All' ? 'bg-[#ee4d2d] hover:bg-[#d63916]' : 'bg-white'}`}
+                        onClick={() => setSelectedCatalog('All')}
+                    >
+                        All Items
+                    </Button>
+
+                    {catalogs.map(catalog => (
+                        <Button
+                            key={catalog}
+                            variant={selectedCatalog === catalog ? 'default' : 'outline'}
+                            size="sm"
+                            className={`rounded-full whitespace-nowrap ${selectedCatalog === catalog ? 'bg-[#ee4d2d] hover:bg-[#d63916]' : 'bg-white text-gray-700 border-gray-200'}`}
+                            onClick={() => setSelectedCatalog(catalog)}
+                        >
+                            {catalog}
+                        </Button>
+                    ))}
+                </nav>
+            )}
             <section className="grocery px-5 max-md:pb-12 h-[calc(100%-72px)] bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
                 <main className={`mb-16 grid ${!settings.hidePhotos && 'max-sm:grid-cols-1'} grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 md:gap-6`} id="productContainer">
                     <Suspense fallback={(
@@ -163,8 +202,21 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                                 />
                             ))}
                         {filteredProducts.length === 0 && (
-                            <div className="col-span-full py-20 text-center text-gray-500">
-                                No products found for {search}
+                            <div className="col-span-full py-20 text-center">
+                                <div className="col-span-full text-center text-gray-500">
+                                    No products found for <b>{search}</b>
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        setSearch('');
+                                        searchbarRef.current.value = '';
+                                    }}
+                                    className="mt-6 bg-blue-500 hover:bg-blue-700 rounded-md text-white"
+                                >
+                                    Clear Filters
+                                </Button>
                             </div>
                         )}
                     </Suspense>

@@ -40,7 +40,7 @@ export default function CRUDInterface({ debugMode }) {
             <Sidebar />
 
             <div className="flex-1 flex flex-col overflow-hidden">
-                <main className="flex-1 overflow-auto">
+                <main className="flex-1">
                     <Suspense fallback={
                         <div className='errorDisplay'>
                             <h2>Loading<span className="animated-dots"></span></h2>

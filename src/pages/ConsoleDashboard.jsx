@@ -25,7 +25,7 @@ export default function Products() {
                     onLogout={logout}
                     user={decodedUser}
                 />
-                <div className="p-4 md:p-8">
+                <div className="p-4 md:p-8 h-[calc(100vh-120px)] overflow-y-auto">
 
                 </div>
             </div>

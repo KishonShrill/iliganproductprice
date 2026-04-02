@@ -9,7 +9,7 @@ const columns = [
     { key: 'name', label: 'Location Name', sortable: true },
     { key: 'address', label: 'Address' },
     { key: 'store_hours', label: 'Store Hours' },
-    { key: 'status', label: '24 Hours', sortable: true },
+    { key: 'open_24_hrs', label: '24 Hours', sortable: true },
     { key: 'type', label: 'Type', sortable: true },
     { key: 'actions', label: 'Actions' },
 ];
@@ -29,7 +29,7 @@ export default function Locations() {
         address: `${item.address.street}, ${item.address.barangay}, ${item.address.city}`,
         map: item.coordinates,
         store_hours: `${item.store_hours.open} - ${item.store_hours.close}`,
-        status: item.is_open_24hrs,
+        open_24_hrs: item.is_open_24hrs,
         type: item.type
     }))
 
@@ -52,13 +52,14 @@ export default function Locations() {
                     onLogout={logout}
                     user={decodedUser}
                 />
-                <div className="p-4 sm:p-8">
+                <div className="p-4 sm:p-8 h-[calc(100vh-120px)] overflow-y-auto">
                     {isLoading
                         ? <h1>Loading...</h1>
                         : <DataTable
                             fetched={"locations"}
                             data={normalizedData}
                             columns={columns}
+                            filterableColumns={['status', 'type']}
                             onView={handleView}
                         />
                     }
