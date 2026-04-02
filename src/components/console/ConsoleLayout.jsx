@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, Suspense } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import PropTypes from "prop-types";
 import Cookies from "universal-cookie";
@@ -40,8 +40,14 @@ export default function CRUDInterface({ debugMode }) {
             <Sidebar />
 
             <div className="flex-1 flex flex-col overflow-hidden">
-                <main className="flex-1 ">
-                    <Outlet context={{ toasts, removeToast, addToast }} />
+                <main className="flex-1">
+                    <Suspense fallback={
+                        <div className='errorDisplay'>
+                            <h2>Loading<span className="animated-dots"></span></h2>
+                        </div>
+                    }>
+                        <Outlet context={{ toasts, removeToast, addToast }} />
+                    </Suspense>
                 </main>
             </div>
 

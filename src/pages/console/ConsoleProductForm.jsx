@@ -172,7 +172,7 @@ export default function ProductForm() {
                             if (isEdit) {
                                 // EDIT: Map through and replace the matching item
                                 return currentArray.map(item =>
-                                    item._id === data.product_id ? savedProduct : item
+                                    item._id === data.product._id ? savedProduct : item
                                 );
                             } else {
                                 // ADD: Unshift the new item to the very top of the list

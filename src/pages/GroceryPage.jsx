@@ -1,14 +1,15 @@
 import { useCallback, useEffect, useRef, useState, Suspense } from "react";
 import { Link } from "react-router-dom";
+import { Package } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import PropTypes from "prop-types";
-import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
+
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import Searchbar from "../components/Searchbar";
-import useSettings from "../hooks/useSettings";
-import { Package } from "lucide-react";
-import SEO from "../components/SEO";
 
+import useSettings from "../hooks/useSettings";
+import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
 import '../styles/grocery.scss'
 
 
@@ -163,8 +164,21 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                                 />
                             ))}
                         {filteredProducts.length === 0 && (
-                            <div className="col-span-full py-20 text-center text-gray-500">
-                                No products found for {search}
+                            <div className="col-span-full py-20 text-center">
+                                <div className="col-span-full text-center text-gray-500">
+                                    No products found for <b>{search}</b>
+                                </div>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        setSearch('');
+                                        searchbarRef.current.value = '';
+                                    }}
+                                    className="mt-6 bg-blue-500 hover:bg-blue-700 rounded-md text-white"
+                                >
+                                    Clear Filters
+                                </Button>
                             </div>
                         )}
                     </Suspense>

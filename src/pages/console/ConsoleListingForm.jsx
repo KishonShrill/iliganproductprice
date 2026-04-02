@@ -29,68 +29,36 @@ export default function ListingForm() {
     // We need the product ID to know what we are listing!
     const baseProduct = location.state?.baseProduct;
 
-
     // If you are editing an existing listing, you'd pass listingId
     const isEdit = !!location.state?.isEdit;
     const listingId = location.state?.listingId;
 
-
     // Fetch all necessary reference data
-    const { data: fetchedCategories = [], isLoading: categoriesLoading } = useFetchCategories();
     const { data: fetchedLocations = [], isLoading: locationsLoading } = useFetchLocations();
-
 
     const [formData, setFormData] = useState({
         updated_price: '',
-        categoryId: '',
         locationId: ''
     });
 
     const [loading, setLoading] = useState(false);
     const [initialLoading, setInitialLoading] = useState(true);
-    const [activeList, setActiveList] = useState('Groceries');
 
     let saveListingUrl = DEVELOPMENT
         ? `http://${LOCALHOST}:5000/api/${API_VERSION}/listings`
         : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/listings`;
 
     useEffect(() => {
-        // 4. Safety Check: If someone manually types the URL and bypasses the selection screen
         if (!baseProduct) {
             addToast("Error", "Please select a product first.", "destructive");
-            navigate('/dev-mode/listings'); // Send them back to select one
+            navigate('/dev-mode/listings');
             return;
         }
 
-        if (categoriesLoading || locationsLoading) return;
-
-        // 5. Pre-fill the form based on the invisibly passed baseProduct!
-        if (!isEdit && fetchedCategories.length > 0) {
-            const defaultCategory = fetchedCategories.find(c =>
-                c.category_name === baseProduct.category?.name &&
-                c.category_catalog === baseProduct.category?.catalog
-            );
-
-            setFormData({
-                updated_price: '',
-                categoryId: defaultCategory ? defaultCategory._id : '',
-                locationId: ''
-            });
-
-            if (baseProduct.category?.list) {
-                setActiveList(baseProduct.category.list);
-            }
-        }
+        if (locationsLoading) return;
 
         setInitialLoading(false);
-
-    }, [baseProduct, fetchedCategories, categoriesLoading, locationsLoading, navigate, addToast, isEdit]);    // Clear category when switching lists
-
-    useEffect(() => {
-        if (!initialLoading) {
-            setFormData(prev => ({ ...prev, categoryId: '' }));
-        }
-    }, [activeList]);
+    }, [baseProduct, locationsLoading, navigate, addToast]);
 
     const handleInputChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -99,31 +67,32 @@ export default function ListingForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // 1. Look up the full objects from our fetched data
-        const selectedCategory = fetchedCategories.find(c => c._id === formData.categoryId);
+        if (!formData.locationId) {
+            addToast("Missing Information", "Please select a location before posting.", "destructive");
+            return;
+        }
+
         const selectedLocation = fetchedLocations.find(l => l._id === formData.locationId || l.id === formData.locationId);
 
-        // 2. Construct the exact JSON payload requested
         const payload = {
             updated_price: parseFloat(formData.updated_price),
             date_updated: new Date().toISOString().split('T')[0],
             category: {
-                list: selectedCategory?.category_list || null,
-                name: selectedCategory?.category_name || null,
-                catalog: selectedCategory?.category_catalog || null
+                list: baseProduct.category?.list || null,
+                name: baseProduct.category?.name || null,
+                catalog: baseProduct.category?.catalog || null
             },
             location: {
-                id: { "$oid": selectedLocation?._id || selectedLocation?.id }, // Ensure this matches Mongoose expectation
+                id: selectedLocation?._id || selectedLocation?.id,
                 name: selectedLocation?.location_name || null
             },
             product: {
                 product_id: baseProduct.product_id,
                 product_name: baseProduct.product_name,
                 imageUrl: baseProduct.imageUrl || null
-            }
+            },
+            shelf: 'published'
         };
-
-        return console.log(payload)
 
         setLoading(true);
         await ResultAsync
@@ -131,7 +100,7 @@ export default function ListingForm() {
                 axios({
                     method: isEdit ? 'put' : 'post',
                     url: isEdit ? `${saveListingUrl}/${listingId}` : saveListingUrl,
-                    data: payload, // Sending clean JSON directly!
+                    data: payload,
                     headers: {
                         'Content-Type': 'application/json',
                         Authorization: `Bearer ${cookies.get("budgetbuddy_token")}`
@@ -141,11 +110,7 @@ export default function ListingForm() {
             )
             .match(
                 (axiosResponse) => {
-                    const savedListing = axiosResponse.data.listing; // Assuming your API returns { listing: {...} }
-
-                    // Invalidate or update cache
                     queryClient.invalidateQueries('fetchedListings_Admin');
-
                     addToast("Success", `Listing successfully ${isEdit ? 'updated' : 'created'}!`);
                     navigate('/dev-mode/listings');
                 },
@@ -155,23 +120,6 @@ export default function ListingForm() {
             );
         setLoading(false);
     };
-
-    // Group Categories (Same as ProductForm)
-    const processedCategories = useMemo(() => {
-        if (!fetchedCategories.length) return [];
-        const filtered = fetchedCategories.filter(c => c.category_list === activeList);
-        const grouped = filtered.reduce((acc, cat) => {
-            const catalog = cat.category_catalog;
-            if (!acc[catalog]) acc[catalog] = [];
-            acc[catalog].push(cat);
-            return acc;
-        }, {});
-
-        return Object.keys(grouped).sort().map(catalog => ({
-            catalogName: catalog,
-            items: grouped[catalog].sort((a, b) => a.category_name.localeCompare(b.category_name))
-        }));
-    }, [fetchedCategories, activeList]);
 
     if (initialLoading) {
         return (
@@ -227,7 +175,7 @@ export default function ListingForm() {
                                 {/* Location Dropdown */}
                                 <div className="space-y-2">
                                     <Label htmlFor="locationId">Location <span className='text-red-500'>*</span></Label>
-                                    <Select value={formData.locationId} onValueChange={(value) => handleInputChange('locationId', value)} required>
+                                    <Select value={formData.locationId} onValueChange={(value) => handleInputChange('locationId', value)} disabled={isEdit} required>
                                         <SelectTrigger className="hover:bg-orange-100">
                                             <SelectValue placeholder="Select a location (e.g., 7-Eleven - MSUIIT)" />
                                         </SelectTrigger>
@@ -241,49 +189,35 @@ export default function ListingForm() {
                                     </Select>
                                 </div>
 
-                                {/* Category Toggle */}
-                                <div className="space-y-2 pt-4 border-t">
-                                    <Label>Category Type</Label>
-                                    <div className="flex space-x-2">
-                                        <Button
-                                            type="button"
-                                            variant={activeList === 'Groceries' ? 'default' : 'outline'}
-                                            onClick={() => setActiveList('Groceries')}
-                                            className={`${activeList === 'Groceries' ? 'bg-orange-500 text-white' : 'hover:bg-orange-100'} !flex-shrink w-full`}
-                                        >
-                                            <Store className="w-4 h-4 mr-2" /> Groceries
-                                        </Button>
-                                        <Button
-                                            type="button"
-                                            variant={activeList === 'Cuisines' ? 'default' : 'outline'}
-                                            onClick={() => setActiveList('Cuisines')}
-                                            className={`${activeList === 'Cuisines' ? 'bg-orange-500 text-white' : 'hover:bg-orange-100'} !flex-shrink w-full`}
-                                        >
-                                            <Utensils className="w-4 h-4 mr-2" /> Cuisines
-                                        </Button>
+                                {/* Read-Only Base Product Category Info */}
+                                <div className="space-y-4 pt-6 border-t">
+                                    <Label className="text-gray-500">Inherited Category Information</Label>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div className="space-y-1.5">
+                                            <Label className="text-xs text-gray-400">Inventory Type</Label>
+                                            <Input
+                                                value={baseProduct?.category?.list || 'N/A'}
+                                                disabled
+                                                className="bg-gray-50 border-gray-200 text-gray-500 cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <Label className="text-xs text-gray-400">Catalog</Label>
+                                            <Input
+                                                value={baseProduct?.category?.catalog || 'N/A'}
+                                                disabled
+                                                className="bg-gray-50 border-gray-200 text-gray-500 cursor-not-allowed"
+                                            />
+                                        </div>
+                                        <div className="space-y-1.5">
+                                            <Label className="text-xs text-gray-400">Category Name</Label>
+                                            <Input
+                                                value={baseProduct?.category?.name || 'N/A'}
+                                                disabled
+                                                className="bg-gray-50 border-gray-200 text-gray-500 cursor-not-allowed"
+                                            />
+                                        </div>
                                     </div>
-                                </div>
-
-                                {/* Category Dropdown */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="categoryId">Category <span className='text-red-500'>*</span></Label>
-                                    <Select value={formData.categoryId} onValueChange={(value) => handleInputChange('categoryId', value)} required>
-                                        <SelectTrigger className="hover:bg-orange-100">
-                                            <SelectValue placeholder={`Select a ${activeList.toLowerCase()} category`} />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-white max-h-64">
-                                            {processedCategories.map((group) => (
-                                                <SelectGroup key={group.catalogName}>
-                                                    <SelectLabel className="font-bold bg-gray-50">{group.catalogName}</SelectLabel>
-                                                    {group.items.map((cat) => (
-                                                        <SelectItem key={cat._id} value={cat._id} className="ml-2 cursor-pointer hover:bg-gray-100">
-                                                            {cat.category_name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectGroup>
-                                            ))}
-                                        </SelectContent>
-                                    </Select>
                                 </div>
 
                                 {/* Submit Actions */}

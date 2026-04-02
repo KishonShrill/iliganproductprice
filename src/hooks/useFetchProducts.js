@@ -15,7 +15,7 @@ const useFetchProducts = () => {
     }
 
     return useQuery(
-        'fetchedProducts_Admin',
+        ['fetchedProducts_Admin'],
         fetchURL,
         {
             cacheTime: 1000 * 60 * 5,// int - keeps the data longer

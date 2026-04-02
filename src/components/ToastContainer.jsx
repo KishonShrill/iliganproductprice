@@ -33,7 +33,7 @@ export default function ToastContainer({ toasts, removeToast }) {
                 </Toast.Root>
             ))}
 
-            <Toast.Viewport className="ToastViewport fixed z-[100] flex gap-3 w-full top-0 left-0 right-0 flex-col items-center sm:max-w-sm sm:left-1/2 sm:-translate-x-1/2 lg:left-auto lg:right-0 lg:translate-x-0 lg:flex-col lg:items-end lg:p-6 outline-none pointer-events-none" />
+            <Toast.Viewport className="ToastViewport fixed z-[100] flex gap-3 w-full top-0 left-0 right-0 lg:top-auto lg:bottom-0 flex-col lg:flex-col-reverse items-center sm:max-w-sm sm:left-1/2 sm:-translate-x-1/2 lg:left-auto lg:right-0 lg:translate-x-0 lg:items-end lg:p-6 outline-none pointer-events-none" />
         </Toast.Provider>
     );
 }

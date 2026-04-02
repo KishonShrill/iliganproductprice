@@ -1,8 +1,11 @@
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Cookies from 'universal-cookie';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import { useQueryClient } from 'react-query';
 import { Search, Package, ChevronRight, Loader2 } from 'lucide-react';
+import { ResultAsync } from 'neverthrow';
+import Cookies from 'universal-cookie';
+import axios from 'axios';
 
 import Header from '../components/console/Header';
 import DataTable from '../components/DataTable';
@@ -11,6 +14,10 @@ import { Input } from '@/components/ui/input';
 
 import useFetchListings from '@/hooks/useFetchListings';
 import useFetchProducts from '@/hooks/useFetchProducts';
+
+const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
+const LOCALHOST = import.meta.env.VITE_LOCALHOST;
+const API_VERSION = import.meta.env.VITE_API_VERSION;
 
 const columns = [
     { key: 'date', label: 'Updated', sortable: true },
@@ -25,9 +32,11 @@ const columns = [
 
 const cookies = new Cookies();
 
+
 export default function Listings() {
     const navigate = useNavigate();
-
+    const { addToast } = useOutletContext();
+    const queryClient = useQueryClient();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -37,20 +46,60 @@ export default function Listings() {
     const token = cookies.get("budgetbuddy_token");
     const decodedUser = token ? jwtDecode(token) : null;
 
-    const logout = () => {
-        cookies.remove("budgetbuddy_token", { path: "/" });
-        navigate("/");
-    };
-
     const normalizedData = data?.map(item => ({
+        _id: item._id,
         date: item.date_updated,
         name: item.product.product_name,
         category: `${item.category.list}`,
         location: item.location.name,
         price: item.updated_price,
         has_image: item.imageUrl ? "yes" : "no",
-        status: "published"//item?.shelf,
+        status: item.shelf,
     }) || [])
+
+    const logout = () => {
+        cookies.remove("budgetbuddy_token", { path: "/" });
+        navigate("/");
+    };
+
+    const delete_listing = async (item) => {
+        console.log(item)
+        if (!window.confirm("Are you sure you want to permanently delete this product?")) {
+            return;
+        }
+
+        const deleteUrl = DEVELOPMENT
+            ? `http://${LOCALHOST}:5000/api/${API_VERSION}/listings/${item._id}`
+            : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/listings/${item._id}`;
+
+        await ResultAsync
+            .fromPromise(
+                axios.delete(deleteUrl, {
+                    headers: {
+                        Authorization: `Bearer ${cookies.get("budgetbuddy_token")}`
+                    }
+                }),
+                (error) => error.response?.data?.message || "Failed to delete product."
+            )
+            .match(
+                (response) => {
+                    console.log("Success:", response.data.message);
+
+                    queryClient.setQueryData(["fetchedListings_Admin"], (oldData) => {
+                        if (!oldData) return [];
+                        return {
+                            ...oldData,
+                            data: oldData.data.filter(product => product._id !== item._id) // Overwrite just the array
+                        };
+                    });
+                    addToast("Deleted", `Listings ${item.product_product_name} from ${item.location.name} removed.`)
+                },
+                (errorMessage) => {
+                    console.error("Delete failed:", errorMessage);
+                    addToast({ title: "Error", description: errorMessage, variant: "destructive" })
+                }
+            );
+    };
 
     // Filter products based on search bar inside the modal
     const filteredProducts = useMemo(() => {
@@ -91,6 +140,7 @@ export default function Listings() {
                             data={normalizedData}
                             columns={columns}
                             filterableColumns={['category', 'location', 'status', 'has_image']}
+                            onDelete={delete_listing}
                         />
                     }
                 </div>
@@ -132,7 +182,7 @@ export default function Listings() {
                         ) : filteredProducts.length === 0 ? (
                             <div className="text-center py-12 text-gray-500">
                                 <Package className="h-12 w-12 mx-auto mb-3 text-gray-300" />
-                                <p>No products found matching "{searchTerm}"</p>
+                                <p>No products found matching &ldquo;{searchTerm}&rdquo;</p>
                             </div>
                         ) : (
                             <div className="grid gap-2">

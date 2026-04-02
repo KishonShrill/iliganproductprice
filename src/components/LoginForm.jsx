@@ -108,6 +108,7 @@ const LoginForm = ({ debugMode, onSwitch }) => {
             {/* Added w-full */}
             <div className='flex flex-col mt-4 w-full'>
                 <GoogleLogin
+                    width={"100%"}
                     onSuccess={async (credentialResponse) => {
 
                         setStatus("loading");

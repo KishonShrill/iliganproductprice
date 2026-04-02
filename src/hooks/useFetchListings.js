@@ -15,7 +15,7 @@ const useFetchListings = () => {
     }
 
     return useQuery(
-        ['fetchedListings'],
+        ['fetchedListings_Admin'],
         fetchURL,
         {
             cacheTime: 1000 * 60 * 5,// int - keeps the data longer

@@ -15,7 +15,7 @@ const useFetchProduct = (productId) => {
     }
 
     return useQuery(
-        `fetshedItemForEdit-${productId}`,
+        ["fetchedItemForEdit", productId],
         fetchURL,
         {
             cacheTime: 1000 * 60 * 5,// int - keeps the data longer

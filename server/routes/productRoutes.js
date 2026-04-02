@@ -20,7 +20,6 @@ router.get('/', async (req, res) => {
         const products = await Product.find(
             {},
             {
-                "category.catalog": 0,
                 "location.id": 0,
             }
         ).sort({ product_id: -1 });
