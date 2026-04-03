@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useEffect } from 'react';
 import { useNavigate, useLocation, useOutletContext } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,6 +25,15 @@ export default function ListingForm() {
     const location = useLocation();
     const queryClient = useQueryClient();
     const { addToast } = useOutletContext();
+    const populated = !!location.state?.populated;
+    useEffect(() => {
+        if (!populated) {
+            addToast("Forbidden!", `Please access this page through console products page.`);
+            navigate("/dev-mode/products");
+        }
+
+    }, [location, navigate]);
+    if (!populated) return null;
 
     // We need the product ID to know what we are listing!
     const baseProduct = location.state?.baseProduct;

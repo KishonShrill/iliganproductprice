@@ -99,7 +99,74 @@ router.get('/category/:categoryId', async (req, res) => {
 
 router.post('/', user_verify, requireRole("moderator"), upload.single('imageUrl'), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
-    // #swagger.description = 'Endpoint for posting new products with/without images to cloudinary'
+    // #swagger.description = 'Endpoint for posting new products (Single upload with image, or Bulk JSON array)'
+
+    // ==========================================
+    // 1. BULK IMPORT HANDLER
+    // ==========================================
+    if (req.query.bulk === 'true') {
+        const productsArray = req.body;
+
+        if (!Array.isArray(productsArray)) {
+            return res.status(400).json({ message: "Bulk import payload must be an array." });
+        }
+
+        await ResultAsync.fromPromise(
+            (async () => {
+                const startingIdString = await generateProductId();
+
+                // 2. Split it into the prefix ("2026") and the number (32)
+                const [prefix, sequenceStr] = startingIdString.split('-');
+                const startingSequence = parseInt(sequenceStr, 10);
+
+                // 3. Determine the padding length (e.g., "0032" is 4 characters)
+                const paddingLength = sequenceStr.length;
+
+                const productsToInsert = productsArray.map((item, index) => {
+                    const currentSeq = startingSequence + index;
+
+                    // Rebuild the string with the correct zero-padding (e.g., "2026-0033")
+                    const newId = `${prefix}-${String(currentSeq).padStart(paddingLength, '0')}`;
+
+                    return {
+                        product_id: newId,
+                        product_name: item.product_name,
+                        imageUrl: item.imageUrl || null,
+                        category: item.category,
+                    };
+                });
+
+                console.log(JSON.stringify(productsToInsert))
+
+                // insertMany is highly optimized in Mongoose for saving large arrays at once
+                return Product.insertMany(productsToInsert);
+            })(),
+            (error) => new Error(`Bulk database insert failed: ${error.message}`)
+        )
+            .match(
+                (savedProducts) => {
+                    // SUCCESS ARM
+                    return res.status(201).json({
+                        message: `Successfully bulk imported ${savedProducts.length} products!`,
+                        products: savedProducts,
+                    });
+                },
+                (error) => {
+                    // ERROR ARM
+                    console.error('Error processing bulk import:', error);
+                    return res.status(500).json({
+                        message: 'Failed to process bulk import.',
+                        error: error.message
+                    });
+                }
+            );
+
+        return;
+    }
+
+    // ==========================================
+    // 2. STANDARD SINGLE PRODUCT HANDLER
+    // ==========================================
     const { product_name, category: rawCategory } = req.body;
     const category = rawCategory ? JSON.parse(rawCategory) : null;
     const imageFile = req.file;
@@ -153,7 +220,6 @@ router.post('/', user_verify, requireRole("moderator"), upload.single('imageUrl'
             }
         );
 });
-
 
 router.put('/:id', user_verify, requireRole("moderator"), upload.single('productImage'), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
