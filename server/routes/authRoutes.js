@@ -44,12 +44,15 @@ router.post("/register", async (req, res) => {
 
     const {
         iss,
-        googleEmail,
+        email: googleEmail,
+        email_verified,
         name,
         picture,
     } = payload;
 
-    if (typeof email !== "string") {
+    console.log(payload)
+
+    if (iss !== "https://accounts.google.com" && typeof email !== "string") {
         return res.status(400).send({ message: "Invalid email" });
     }
 
@@ -87,7 +90,6 @@ router.post("/register", async (req, res) => {
                 user.save(),
                 (error) => {
                     // Catch MongoDB duplicate email error cleanly
-                    console.log(error)
                     if (error.code === 11000 || error.cause?.code === 11000) return { status: 409, message: "Email is already used" };
                     return { status: 500, message: "Error creating user", error: error.message };
                 }

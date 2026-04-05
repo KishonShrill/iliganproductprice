@@ -6,7 +6,7 @@ import Cookies from "universal-cookie";
 import axios from 'axios'
 import { ResultAsync } from 'neverthrow';
 import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode'
+//import { jwtDecode } from 'jwt-decode'
 
 const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 const cookies = new Cookies();
@@ -38,8 +38,7 @@ const LoginForm = ({ debugMode, onSwitch }) => {
             .map((response) => response.data)
             .match(
                 (data) => {
-                    console.log(jwtDecode(data.token))
-                    cookies.set("budgetbuddy_token", data.token, { path: "/" });
+                    cookies.set("budgetbuddy_token", data.result.token, { path: "/" });
                     setStatus("success")
                     startTransition(() => {
                         navigate("/locations");
@@ -121,7 +120,6 @@ const LoginForm = ({ debugMode, onSwitch }) => {
                             .map((response) => response.data)
                             .match(
                                 (data) => {
-                                    console.log(jwtDecode(data.token))
                                     cookies.set("budgetbuddy_token", data.token, { path: "/" });
                                     setStatus("success")
                                     startTransition(() => {
