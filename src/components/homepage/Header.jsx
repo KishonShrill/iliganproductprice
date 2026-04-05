@@ -58,11 +58,17 @@ const Header = () => {
             <Link to="/" className="header__name" style={{ fontWeight: 700 }}>Budget Buddy</Link>
 
             {/* Quick Mobile Auth Icon */}
-            {showAuthLinks && (
-                <Link to={token ? "/dev-mode" : "/authenticate"} className="md:hidden">
-                    <User className="dark:text-white" />
-                </Link>
-            )}
+            {isAdvancedUser ?
+                showAuthLinks && (
+                    <Link to={token ? "/dev-mode" : "/authenticate"} className="md:hidden">
+                        <User className="dark:text-white" />
+                    </Link>
+                ) : (
+                    <Link className="md:hidden" to="/profile" onClick={toggleMenu}>
+                        <CircleUserRound className="dark:text-white" />
+                    </Link>
+                )
+            }
 
             {/* Navigation Overlay */}
             <nav className={`fixed md:static top-0 left-0 h-full md:h-auto w-[300px] md:w-auto bg-slate-800 md:bg-transparent transition-transform duration-300 z-50 

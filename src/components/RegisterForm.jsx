@@ -5,8 +5,8 @@ import PropTypes from 'prop-types';
 import axios from 'axios';
 import { ResultAsync } from 'neverthrow';
 import { GoogleLogin } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
 import Cookies from 'universal-cookie';
+//import { jwtDecode } from 'jwt-decode';
 
 const LOCALHOST = import.meta.env.VITE_LOCALHOST || "localhost";
 const cookies = new Cookies();
@@ -139,8 +139,7 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
                             .map((response) => response.data)
                             .match(
                                 (data) => {
-                                    console.log(jwtDecode(data.token))
-                                    cookies.set("budgetbuddy_token", data.token, { path: "/" });
+                                    cookies.set("budgetbuddy_token", data.result.token, { path: "/" });
                                     setStatus("success")
                                     startTransition(() => {
                                         navigate("/locations");

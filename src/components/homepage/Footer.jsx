@@ -37,7 +37,6 @@ const Footer = () => {
             .match(
                 (data) => {
                     // Check if the payload explicitly says healthy === true
-                    console.log({ data })
                     if (data && data.healthy === true) {
                         setSystemStatus('operational');
                     } else {
