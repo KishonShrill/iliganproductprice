@@ -27,7 +27,7 @@ const About = () => {
     return (
         <section id="about" className="py-20 bg-gradient-to-br from-gray-50 to-orange-50 dark:from-gray-800 dark:to-gray-800">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid lg:grid-cols-2 gap-16 items-center">
+                <div className="grid lg:grid-cols-2 gap-16 max-md:gap-6 items-center">
                     {/* Left Content */}
                     <div>
                         <div className="inline-flex items-center bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 dark:from-white dark:to-orange-50 px-4 py-2 rounded-full text-[#ee4d2d] font-medium text-sm mb-6">
@@ -42,11 +42,11 @@ const About = () => {
                             </span>
                         </h2>
 
-                        <p className="text-lg text-gray-600 dark:text-slate-200 mb-8 leading-relaxed">
+                        <p className="text-lg max-md:text-base text-gray-600 dark:text-slate-200 mb-8 leading-relaxed">
                             Budget Buddy was born from a simple observation: too many people overspend while shopping online because they lose track of their cart total. We created a free, easy-to-use tool that helps you stay aware of your spending in real-time.
                         </p>
 
-                        <p className="text-lg text-gray-600 dark:text-slate-200 mb-8 leading-relaxed">
+                        <p className="text-lg max-md:text-base text-gray-600 dark:text-slate-200 mb-8 leading-relaxed">
                             As a non-profit initiative, we&apos;re committed to keeping Budget Buddy completely free and accessible to everyone. Our mission is to promote financial wellness and help people make more informed purchasing decisions.
                         </p>
 

@@ -118,7 +118,7 @@ export default function Listings() {
         setIsModalOpen(false);
         // Use Router State to pass the product invisibly as discussed!
         navigate('/dev-mode/listings/new', {
-            state: { baseProduct: selectedProduct }
+            state: { baseProduct: selectedProduct, populated: true }
         });
     };
 

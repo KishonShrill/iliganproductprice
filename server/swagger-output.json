@@ -152,8 +152,13 @@
         "tags": [
           "v1 | Product"
         ],
-        "description": "Endpoint for posting new products with/without images to cloudinary",
+        "description": "Endpoint for posting new products (Single upload with image, or Bulk JSON array)",
         "parameters": [
+          {
+            "name": "bulk",
+            "in": "query",
+            "type": "string"
+          },
           {
             "name": "authorization",
             "in": "header",
@@ -165,6 +170,9 @@
             "schema": {
               "type": "object",
               "properties": {
+                "map((item": {
+                  "example": "any"
+                },
                 "product_name": {
                   "example": "any"
                 },
@@ -178,6 +186,9 @@
         "responses": {
           "201": {
             "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"

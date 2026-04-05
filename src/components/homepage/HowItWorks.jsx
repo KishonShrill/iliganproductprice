@@ -5,12 +5,14 @@ const HowItWorks = () => {
     const steps = [
         {
             icon: Plus,
+            link: '/locations',
             title: 'Add Products',
             description: 'Simply add items to your Budget Buddy cart as you browse online stores.',
             details: 'Copy and paste product names and prices, or use our browser extension for automatic detection.'
         },
         {
             icon: Calculator,
+            link: 'receipt',
             title: 'Track Your Total',
             description: 'Watch your running total update in real-time with tax and shipping estimates.',
             details: 'Set your budget limit and get visual indicators when you\'re approaching your spending goal.'
@@ -77,9 +79,9 @@ const HowItWorks = () => {
 
                                     {/* Arrow for mobile */}
                                     {index < steps.length - 1 && (
-                                        <div className="lg:hidden flex justify-center mt-8">
+                                        <Link to={step.link} className="lg:hidden flex justify-center mt-4 p-2">
                                             <ArrowRight className="w-6 h-6 text-[#ee4d2d]" />
-                                        </div>
+                                        </Link>
                                     )}
                                 </div>
                             </div>

@@ -48,7 +48,7 @@ export default function Products({ debugMode }) {
     };
 
     function add_product() {
-        navigate('/dev-mode/products/new');
+        navigate('/dev-mode/products/new', { state: { populated: true } });
     }
 
     function edit_product(productId) {
@@ -79,11 +79,8 @@ export default function Products({ debugMode }) {
             )
             .match(
                 (response) => {
-                    console.log("Success:", response.data.message);
-
                     queryClient.setQueryData(["fetchedProducts_Admin"], (oldData) => {
                         if (!oldData) return [];
-                        console.log(oldData.data)
                         return {
                             ...oldData,
                             data: oldData.data.filter(product => product._id !== item._id) // Overwrite just the array
@@ -93,7 +90,7 @@ export default function Products({ debugMode }) {
                 },
                 (errorMessage) => {
                     console.error("Delete failed:", errorMessage);
-                    addToast({ title: "Error", description: errorMessage, variant: "destructive" })
+                    addToast("Error", errorMessage)
                 }
             );
     };
