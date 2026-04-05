@@ -7,6 +7,7 @@ import PropTypes from "prop-types";
 import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import Searchbar from "../components/Searchbar";
+import SimpleFooter from "@/components/SimpleFooter";
 
 import useSettings from "../hooks/useSettings";
 import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
@@ -184,106 +185,109 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                     ))}
                 </nav>
             )}
-            <section className="grocery px-5 max-md:pb-12 h-[calc(100%-72px)] bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-                <main className={`mb-16 grid ${!settings.hidePhotos && 'max-sm:grid-cols-1'} grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 md:gap-6`} id="productContainer">
-                    <Suspense fallback={(
-                        <main className='errorDisplay'>
-                            <h2>Loading<span className="animated-dots"></span></h2>
-                        </main>
-                    )}>
-                        {filteredProducts
-                            .sort((a, b) => a.product.product_name.localeCompare(b.product.product_name))
-                            .map((item) => (
-                                <ProductCard
-                                    key={item._id}
-                                    item={item}
-                                    onAdd={(event) => handleClick(event.currentTarget)}
-                                    settings={settings}
-                                />
-                            ))}
-                        {filteredProducts.length === 0 && (
-                            <div className="col-span-full py-20 text-center">
-                                <div className="col-span-full text-center text-gray-500">
-                                    No products found for <b>{search}</b>
-                                </div>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                    onClick={() => {
-                                        setSearch('');
-                                        searchbarRef.current.value = '';
-                                    }}
-                                    className="mt-6 bg-blue-500 hover:bg-blue-700 rounded-md text-white"
-                                >
-                                    Clear Filters
-                                </Button>
-                            </div>
-                        )}
-                    </Suspense>
-                </main>
-
-                {/* Animating Cards */}
-                {animatingCards.map((animatingCard) => (
-                    <div
-                        key={animatingCard.count}
-                        className="fixed z-50 pointer-events-none"
-                        style={{
-                            left: animatingCard.startX,
-                            top: animatingCard.startY,
-                            width: '160px',
-                            height: '200px',
-                            margin: '1rem',
-                            animation: `flyToCart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
-                            '--start-x': `${animatingCard.startX}px`,
-                            '--start-y': `${animatingCard.startY}px`,
-                            '--target-x': `${animatingCard.targetX}px`,
-                            '--target-y': `${animatingCard.targetY}px`,
-                        }}
-                    >
-                        <div className="flex h-full w-full flex-col overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5">
-                            {animatingCard.productImage ? (
-                                <div className="relative aspect-square h-[9.5rem] bg-gray-50">
-                                    <img src={animatingCard.productImage} alt={animatingCard.productName} className="h-full w-full object-cover" />
-                                </div>
-                            ) : (
-                                <div className="relative h-full">
-                                    <div className="product-image-placeholder" style={{ backgroundColor: "#ffccaa" }}>
-                                        <Package className="w-16 h-16 text-gray-400" />
+            <div className="min-h-[calc(100vh-141px-76px-59px-44px)]">
+                <section className="grocery px-5 max-md:pb-6 h-[calc(100%-72px)] bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+                    <main className={`grid ${!settings.hidePhotos && 'max-sm:grid-cols-1'} grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 md:gap-6`} id="productContainer">
+                        <Suspense fallback={(
+                            <main className='errorDisplay'>
+                                <h2>Loading<span className="animated-dots"></span></h2>
+                            </main>
+                        )}>
+                            {filteredProducts
+                                .sort((a, b) => a.product.product_name.localeCompare(b.product.product_name))
+                                .map((item) => (
+                                    <ProductCard
+                                        key={item._id}
+                                        item={item}
+                                        onAdd={(event) => handleClick(event.currentTarget)}
+                                        settings={settings}
+                                    />
+                                ))}
+                            {filteredProducts.length === 0 && (
+                                <div className="col-span-full py-20 text-center">
+                                    <div className="col-span-full text-center text-gray-500">
+                                        No products found for <b>{search}</b>
                                     </div>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => {
+                                            setSearch('');
+                                            searchbarRef.current.value = '';
+                                        }}
+                                        className="mt-6 bg-blue-500 hover:bg-blue-700 rounded-md text-white"
+                                    >
+                                        Clear Filters
+                                    </Button>
                                 </div>
                             )}
+                        </Suspense>
+                    </main>
 
-                            <div className="p-2">
-                                <h3 className="line-clamp-1 text-[10px] font-bold text-gray-800">{animatingCard.productName}</h3>
-                                <p className="text-xs font-black text-orange-500">₱{animatingCard.productPrice.toFixed(2)}</p>
+                    {/* Animating Cards */}
+                    {animatingCards.map((animatingCard) => (
+                        <div
+                            key={animatingCard.count}
+                            className="fixed z-50 pointer-events-none"
+                            style={{
+                                left: animatingCard.startX,
+                                top: animatingCard.startY,
+                                width: '160px',
+                                height: '200px',
+                                margin: '1rem',
+                                animation: `flyToCart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
+                                '--start-x': `${animatingCard.startX}px`,
+                                '--start-y': `${animatingCard.startY}px`,
+                                '--target-x': `${animatingCard.targetX}px`,
+                                '--target-y': `${animatingCard.targetY}px`,
+                            }}
+                        >
+                            <div className="flex h-full w-full flex-col overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5">
+                                {animatingCard.productImage ? (
+                                    <div className="relative aspect-square h-[9.5rem] bg-gray-50">
+                                        <img src={animatingCard.productImage} alt={animatingCard.productName} className="h-full w-full object-cover" />
+                                    </div>
+                                ) : (
+                                    <div className="relative h-full">
+                                        <div className="product-image-placeholder" style={{ backgroundColor: "#ffccaa" }}>
+                                            <Package className="w-16 h-16 text-gray-400" />
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="p-2">
+                                    <h3 className="line-clamp-1 text-[10px] font-bold text-gray-800">{animatingCard.productName}</h3>
+                                    <p className="text-xs font-black text-orange-500">₱{animatingCard.productPrice.toFixed(2)}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                ))}
-                <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept} />
-                <button ref={cartButtonRef} className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
-                    {active
-                        ? <img src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="My cart button" />
-                        : <img src="/UI/shopping-cart-02-stroke-rounded.svg" alt="My cart button" />
-                    }
-                    {cartItems && cartItems.cart && (
-                        (() => {
-                            const totalQty = Object.values(cartItems.cart).reduce(
-                                (sum, item) => sum + item.quantity,
-                                0
-                            );
+                    ))}
+                    <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept} />
+                    <button ref={cartButtonRef} className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
+                        {active
+                            ? <img src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="My cart button" />
+                            : <img src="/UI/shopping-cart-02-stroke-rounded.svg" alt="My cart button" />
+                        }
+                        {cartItems && cartItems.cart && (
+                            (() => {
+                                const totalQty = Object.values(cartItems.cart).reduce(
+                                    (sum, item) => sum + item.quantity,
+                                    0
+                                );
 
-                            if (totalQty == 0) return null;
+                                if (totalQty == 0) return null;
 
-                            return (
-                                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-[1.25rem] h-[1.25rem]">
-                                    {totalQty}
-                                </span>
-                            );
-                        })()
-                    )}
-                </button>
-            </section >
+                                return (
+                                    <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full flex items-center justify-center min-w-[1.25rem] h-[1.25rem]">
+                                        {totalQty}
+                                    </span>
+                                );
+                            })()
+                        )}
+                    </button>
+                </section >
+            </div>
+            <SimpleFooter className={"max-md:mb-[4.5rem] bg-gray-900"} />
         </>
     );
 }

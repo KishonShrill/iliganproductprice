@@ -170,6 +170,9 @@
             "schema": {
               "type": "object",
               "properties": {
+                "map((item": {
+                  "example": "any"
+                },
                 "product_name": {
                   "example": "any"
                 },

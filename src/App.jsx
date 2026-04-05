@@ -22,6 +22,8 @@ const GroceryPage = lazy(() => import("./containers/GroceryPageContainer.jsx"))
 const ReceiptPage = lazy(() => import("./pages/ReceiptPage.jsx"))
 const SettingsPage = lazy(() => import("./pages/Settings.jsx"))
 const LoginPage = lazy(() => import("./pages/LoginPage.jsx"))
+const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage.jsx"))
+const TermsOfServicePage = lazy(() => import("./pages/TermsOfService.jsx"))
 const NotFound = lazy(() => import("./pages/NotFound.jsx"))
 
 const ConsoleLayout = lazy(() => import("./components/console/ConsoleLayout.jsx"))
@@ -60,6 +62,8 @@ function App() {
                                         <Route path="location/*" element={<GroceryPage />} />
                                         <Route path="receipt" element={<ReceiptPage />} />
                                         <Route path="settings" element={<SettingsPage />} />
+                                        <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
+                                        <Route path="terms-of-service" element={<TermsOfServicePage />} />
 
                                         <Route
                                             path="authenticate"

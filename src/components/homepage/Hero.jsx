@@ -5,7 +5,7 @@ const Hero = () => {
     return (
         <section className="pt-12 pb-16 bg-gradient-to-br from-gray-50 via-white to-orange-50 dark:from-gray-800 dark:to-gray-800 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
+                <div className="grid lg:grid-cols-2 gap-12 max-md:gap-6 items-center">
                     {/* Left Content */}
                     <div className="text-center lg:text-left">
                         <div className="inline-flex items-center bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 dark:from-white dark:to-orange-100 px-4 py-2 rounded-full text-[#ee4d2d] font-medium text-sm mb-6 hover:scale-105 transition-transform duration-300">
@@ -20,12 +20,12 @@ const Hero = () => {
                             </span>
                         </h1>
 
-                        <p className="text-xl text-gray-600 dark:text-slate-100 mb-8 max-w-2xl mx-auto lg:mx-0">
+                        <p className="text-xl max-md:text-base text-gray-600 dark:text-slate-100 mb-8 max-w-2xl mx-auto lg:mx-0">
                             Track your shopping cart total in real-time before checkout. Budget Buddy helps you make informed decisions and stick to your budget effortlessly.
                         </p>
 
-                        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                            <Link to="/locations" className="bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 group">
+                        <div className="flex flex-col max-md:px-4 sm:flex-row gap-4 justify-center lg:justify-start">
+                            <Link to="/locations" className="bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 max-md:py-3 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 group">
                                 Start Budgeting Now
                                 <ShoppingCart className="w-5 h-5 ml-2 inline group-hover:translate-x-1 transition-transform duration-300" />
                             </Link>

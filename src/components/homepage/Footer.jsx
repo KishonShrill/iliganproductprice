@@ -1,16 +1,36 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { ResultAsync } from 'neverthrow';
 import { Heart, Github, Linkedin, Facebook } from 'lucide-react';
+import axios from 'axios';
+
+const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
+const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 
 const Footer = () => {
     // State to track the server health: 'checking' | 'operational' | 'offline'
     const [systemStatus, setSystemStatus] = useState('checking');
 
+    const handleScroll = (e, href) => {
+        // Only intercept if it's a hash link AND we are currently on the homepage
+        if (href.startsWith('/#') && window.location.pathname === '/') {
+            e.preventDefault();
+            const id = href.substring(2); // removes the '/#'
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+                // Optional: update the URL so the hash shows in the address bar
+                window.history.pushState(null, '', href);
+            }
+        }
+    };
+
     useEffect(() => {
         // Ping the backend root to check health
         ResultAsync.fromPromise(
-            axios.get("https://iliganproductprice-mauve.vercel.app/"),
+            axios.get(DEVELOPMENT
+                ? `http://${LOCALHOST}:5000/`
+                : "https://iliganproductprice-mauve.vercel.app/"),
             (error) => error // Catch network errors (e.g., server is completely down)
         )
             .map((response) => response.data)
@@ -34,21 +54,21 @@ const Footer = () => {
 
     const footerLinks = {
         product: [
-            { name: 'Features', href: '#features' },
-            { name: 'How It Works', href: '#how-it-works' },
+            { name: 'Features', href: '/#features' },
+            { name: 'How It Works', href: '/#how-it-works' },
         ],
         company: [
             { name: 'Developer', href: 'https://chriscent.is-a.dev/' },
         ],
         resources: [
-            { name: 'Help Center', href: 'https://github.com/KishonShrill/iliganproductprice/discussions' },
+            { name: 'Help Center', href: 'https://github.com/KishonShrill/BudgetBuddy-IliganCity/discussions' },
             { name: 'Budgeting Tips', href: '#' },
             { name: 'Community', href: '#' },
             { name: 'Blog', href: '#' }
         ],
         legal: [
-            { name: 'Privacy Policy', href: '#' },
-            { name: 'Terms of Service', href: '#' },
+            { name: 'Privacy Policy', href: '/privacy-policy' },
+            { name: 'Terms of Service', href: '/terms-of-service' },
             { name: 'Accessibility', href: '#' }
         ]
     };
@@ -83,15 +103,15 @@ const Footer = () => {
                         {/* Social Links */}
                         <div className="flex space-x-4">
                             {socialLinks.map((social, index) => (
-                                <a
+                                <Link
                                     key={index}
-                                    href={social.href}
+                                    to={social.href}
                                     target='_blank'
                                     className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-[#ee4d2d] transition-colors duration-300 group"
                                     aria-label={social.label}
                                 >
                                     <social.icon className="w-5 h-5 group-hover:scale-110 transition-transform duration-300" />
-                                </a>
+                                </Link>
                             ))}
                         </div>
                     </div>
@@ -103,12 +123,13 @@ const Footer = () => {
                             <ul className="space-y-3">
                                 {footerLinks.product.map((link, index) => (
                                     <li key={index}>
-                                        <a
-                                            href={link.href}
+                                        <Link
+                                            to={link.href}
+                                            onClick={(e) => handleScroll(e, link.href)}
                                             className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
                                         >
                                             {link.name}
-                                        </a>
+                                        </Link>
                                     </li>
                                 ))}
                             </ul>
@@ -119,12 +140,12 @@ const Footer = () => {
                             <ul className="space-y-3">
                                 {footerLinks.company.map((link, index) => (
                                     <li key={index}>
-                                        <a
-                                            href={link.href}
+                                        <Link
+                                            to={link.href}
                                             className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
                                         >
                                             {link.name}
-                                        </a>
+                                        </Link>
                                     </li>
                                 ))}
                             </ul>
@@ -135,12 +156,12 @@ const Footer = () => {
                             <ul className="space-y-3">
                                 {footerLinks.resources.map((link, index) => (
                                     <li key={index}>
-                                        <a
-                                            href={link.href}
+                                        <Link
+                                            to={link.href}
                                             className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
                                         >
                                             {link.name}
-                                        </a>
+                                        </Link>
                                     </li>
                                 ))}
                             </ul>
@@ -151,12 +172,12 @@ const Footer = () => {
                             <ul className="space-y-3">
                                 {footerLinks.legal.map((link, index) => (
                                     <li key={index}>
-                                        <a
-                                            href={link.href}
+                                        <Link
+                                            to={link.href}
                                             className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
                                         >
                                             {link.name}
-                                        </a>
+                                        </Link>
                                     </li>
                                 ))}
                             </ul>
@@ -194,10 +215,10 @@ const Footer = () => {
             <div className="border-t border-gray-800">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                     <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-                        <div className="text-gray-400 text-sm">
-                            © 2024 Budget Buddy. All rights reserved. Built with ❤️ for the community.
+                        <div className="text-gray-400 text-sm max-md:text-center">
+                            <p>© 2024 Budget Buddy. All rights reserved.</p><p>Built with ❤️ for the community.</p>
                         </div>
-                        <div className="flex items-center space-x-6 text-sm text-gray-400">
+                        <div className="flex md:flex-col items-center md:items-end max-md:space-x-3 text-sm text-gray-400">
                             <span className="flex items-center">
                                 {/* Dynamic Dot Color */}
                                 <div className={`w-2 h-2 rounded-full mr-2 ${systemStatus === 'operational' ? 'bg-green-500' :
