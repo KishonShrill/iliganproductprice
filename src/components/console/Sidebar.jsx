@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Package, MapPin, FileText, Home, Menu, Settings, LogOut, House } from 'lucide-react';
+import { Package, MapPin, FileText, Home, Menu, Settings, LogOut, House, UserCog } from 'lucide-react';
 import { cn } from '../../helpers/utils';
 import { Button } from '../ui/button';
 import PropTypes from 'prop-types';
@@ -14,6 +14,7 @@ const navigation = [
     { name: 'Listings', href: '/dev-mode/listings', icon: FileText },
 ];
 const extras = [
+    { name: 'Users', href: '/dev-mode/users', icon: UserCog },
     { name: 'Settings', href: '/settings', icon: Settings },
     { name: 'Logout', href: '/', icon: LogOut },
 ];

@@ -19,7 +19,7 @@ export const user_verify = (request, response, next) => {
 };
 
 // 2. The Hierarchical Authorizer (Are you allowed?)
-const ROLE_HIERARCHY = {
+export const ROLE_HIERARCHY = {
     regular: 1,
     moderator: 5,
     admin: 10

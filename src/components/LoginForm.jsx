@@ -38,7 +38,7 @@ const LoginForm = ({ debugMode, onSwitch }) => {
             .map((response) => response.data)
             .match(
                 (data) => {
-                    cookies.set("budgetbuddy_token", data.result.token, { path: "/" });
+                    cookies.set("budgetbuddy_token", data.token, { path: "/" });
                     setStatus("success")
                     startTransition(() => {
                         navigate("/locations");
