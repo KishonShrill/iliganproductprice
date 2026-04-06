@@ -11,6 +11,7 @@ import productRoutes from './routes/productRoutes.js';
 import locationRoutes from './routes/locationRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import listingRoutes from './routes/listingRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 config();
 
@@ -87,6 +88,7 @@ app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/locations', locationRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/listings', listingRoutes);
+app.use('/api/v1/users', userRoutes);
 
 // Root Endpoints
 app.get('/', (req, res) => { res.status(200).json({ message: 'Server is healthy...', healthy: true }); });
