@@ -130,7 +130,6 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
             {/* Added w-full */}
             <div className='flex flex-col mt-4 w-full'>
                 <GoogleLogin
-                    width={"100%"}
                     onSuccess={async (credentialResponse) => {
                         await ResultAsync
                             .fromPromise(axios.post(url, { token: credentialResponse.credential }), (error) => {
@@ -152,6 +151,8 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
                             );
                     }}
                     onError={() => console.log("Login Error")}
+                    locale="en"
+                    width={"100%"}
                 />
             </div>
 
