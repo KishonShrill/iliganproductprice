@@ -1,10 +1,10 @@
 import { Suspense } from "react";
 import PropTypes from "prop-types";
 import { Outlet } from "react-router-dom";
-import Header from "./homepage/Header";
-import BottomNavigation from "./BottomNavigation";
+import Header from "@/components/homepage/Header";
+import MainBottomNav from "@/components/MainBottomNav";
 
-import '../styles/main-header.scss'
+import '@/styles/main-header.scss'
 
 function HomepageLayout() {
 
@@ -18,7 +18,7 @@ function HomepageLayout() {
             }>
                 <Outlet />
             </Suspense>
-            <BottomNavigation />
+            <MainBottomNav />
         </>
     );
 }

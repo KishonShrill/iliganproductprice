@@ -28,7 +28,17 @@ const authenticationSchema = new mongoose.Schema({
         type: String,
         enum: ["admin", "moderator", "regular"],
     },
-    profile_picture: { type: String }
+    profile_picture: { type: String },
+    daily_votes: { type: Number, default: 0 },
+    daily_submissions: { type: Number, default: 0 },
+    last_vote_date: { type: Date, default: null },
+    last_submission_date: { type: Date, default: null },
+    stats: {
+        points: { type: Number, default: 0 },
+        approved: { type: Number, default: 0 },
+        pending: { type: Number, default: 0 },
+        rejected: { type: Number, default: 0 },
+    }
 });
 
 // Product Schema
@@ -97,11 +107,38 @@ const categorySchema = new mongoose.Schema({
     category_catalog: { type: String, required: true },
 });
 
+// Pending Listing Schema
+const pendingListingSchema = new mongoose.Schema({
+    productName: { type: String, required: true },
+    price: { type: Number, required: true },
+    location: { type: String, required: true },
+    category: { type: String, required: true },
+    submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+
+    // Instead of just a number, we track the actual voters!
+    voters: [{
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        voteType: { type: String, enum: ['up', 'down'] },
+    }],
+
+    upvoteCount: { type: Number, default: 0 },
+    downvoteCount: { type: Number, default: 0 },
+
+    status: { type: String, default: 'pending' }
+}, { timestamps: true });
+
 const User = mongoose.model('Authentication', authenticationSchema, 'users');
 const Product = mongoose.model('Product', productSchema, 'products');
 const Location = mongoose.model('Location', locationSchema, 'locations');
 const Listing = mongoose.model('Listing', listingSchema, 'listings');
+const PendingListing = mongoose.model('PendingListing', pendingListingSchema, 'pendingListings');
 const Category = mongoose.model('Category', categorySchema, 'category');
 
 // Export the models
-export { User, Product, Location, Listing, Category };
+export {
+    User,
+    Product,
+    Location,
+    Listing, PendingListing,
+    Category
+};

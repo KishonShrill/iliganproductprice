@@ -60,15 +60,15 @@ const Footer = () => {
             { name: 'Developer', href: 'https://chriscent.is-a.dev/' },
         ],
         resources: [
-            { name: 'Help Center', href: 'https://github.com/KishonShrill/BudgetBuddy-IliganCity/discussions' },
-            { name: 'Budgeting Tips', href: '#' },
-            { name: 'Community', href: '#' },
-            { name: 'Blog', href: '#' }
+            { name: 'Help Center', href: 'https://github.com/KishonShrill/BudgetBuddy-IliganCity/discussions', disabled: true },
+            { name: 'Budgeting Tips', href: '#', disabled: true },
+            { name: 'Community', href: '#', disabled: true },
+            { name: 'Blog', href: '#', disabled: true }
         ],
         legal: [
             { name: 'Privacy Policy', href: '/privacy-policy' },
             { name: 'Terms of Service', href: '/terms-of-service' },
-            { name: 'Accessibility', href: '#' }
+            { name: 'Accessibility', href: '#', disabled: true }
         ]
     };
 
@@ -86,7 +86,7 @@ const Footer = () => {
                     {/* Brand Section */}
                     <div className="lg:col-span-2">
                         <div className="flex items-center space-x-2 mb-6 group">
-                            <img src="/budgetbuddy.svg" />
+                            <img src="/budgetbuddy-logo.svg" className='w-[38px] h-[38px] rounded-full' />
                             <span className="text-xl font-bold">Budget Buddy</span>
                         </div>
 
@@ -157,7 +157,7 @@ const Footer = () => {
                                     <li key={index}>
                                         <Link
                                             to={link.href}
-                                            className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
+                                            className={`text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block ${link.disabled && 'pointer-events-none text-gray-600'}`}
                                         >
                                             {link.name}
                                         </Link>
@@ -173,7 +173,7 @@ const Footer = () => {
                                     <li key={index}>
                                         <Link
                                             to={link.href}
-                                            className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
+                                            className={`text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block ${link.disabled && 'pointer-events-none text-gray-600'}`}
                                         >
                                             {link.name}
                                         </Link>
@@ -235,7 +235,7 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
-        </footer>
+        </footer >
     );
 };
 

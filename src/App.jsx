@@ -14,7 +14,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import { Provider } from 'react-redux';
 import store from './redux/store/store.js';
 
-import MainLayout from "./components/MainLayout.jsx"
+import MainLayout from "@/components/layouts/MainLayout.jsx"
 import Homepage from "./pages/Homepage.jsx"
 
 const LocationPage = lazy(() => import("./pages/LocationPage.jsx"))
@@ -27,7 +27,12 @@ const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage.jsx"))
 const TermsOfServicePage = lazy(() => import("./pages/TermsOfService.jsx"))
 const NotFound = lazy(() => import("./pages/NotFound.jsx"))
 
-const ConsoleLayout = lazy(() => import("./components/console/ConsoleLayout.jsx"))
+const ContributionLayout = lazy(() => import('./components/layouts/ContributionLayout.jsx'));
+const ContributionGuidePage = lazy(() => import("./pages/contribution/ContributionGuide.jsx"))
+const CommunityHubPage = lazy(() => import("./pages/contribution/CommunityHub.jsx"))
+const SubmitContributionPage = lazy(() => import("./pages/contribution/SubmitContribution.jsx"))
+
+const ConsoleLayout = lazy(() => import("./components/layouts/ConsoleLayout.jsx"))
 const ConsoleDashboardPage = lazy(() => import("./pages/ConsoleDashboard.jsx"))
 const ConsoleProductsPage = lazy(() => import("./pages/ConsoleProductsPage.jsx"))
 const ConsoleListingsPage = lazy(() => import("./pages/ConsoleListingsPage.jsx"))
@@ -68,11 +73,21 @@ function App() {
                                         <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
                                         <Route path="terms-of-service" element={<TermsOfServicePage />} />
 
+
                                         <Route
                                             path="authenticate"
                                             element={<LoginPage debugMode={DEVELOPMENT} />}
                                         />
                                         <Route path="*" element={<NotFound />} />
+                                    </Route>
+
+                                    <Route
+                                        path="/contribution"
+                                        element={<ContributionLayout />}
+                                    >
+                                        <Route index element={<ContributionGuidePage />} />
+                                        <Route path="hub" element={<CommunityHubPage />} />
+                                        <Route path="submit" element={<SubmitContributionPage />} />
                                     </Route>
 
                                     <Route

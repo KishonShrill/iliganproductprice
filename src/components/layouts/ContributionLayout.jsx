@@ -1,14 +1,15 @@
 import { useState, useEffect, useCallback, Suspense } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
-import PropTypes from "prop-types";
-import Cookies from "universal-cookie";
-import '../../styles/admin_console.scss'
-
-import Sidebar from "./Sidebar";
+import { Outlet } from "react-router-dom";
+import Header from "@/components/homepage/Header";
 import ToastContainer from "@/components/ToastContainer";
+import Cookies from "universal-cookie";
+import { useNavigate } from "react-router-dom";
+
+import '@/styles/main-header.scss'
+
 const cookies = new Cookies();
 
-export default function CRUDInterface({ debugMode }) {
+function ContributionLayout() {
     const navigate = useNavigate()
     const token = cookies.get("budgetbuddy_token")
     const [toasts, setToasts] = useState([]);
@@ -36,30 +37,21 @@ export default function CRUDInterface({ debugMode }) {
     if (!token) return null;
 
     return (
-        <div className="flex h-screen bg-gray-100 overflow-auto">
-            <Sidebar />
-
-            <div className="flex-1 flex flex-col overflow-hidden">
-                <main className="flex-1">
-                    <Suspense fallback={
-                        <div className='errorDisplay'>
-                            <h2>Loading<span className="animated-dots"></span></h2>
-                        </div>
-                    }>
-                        <Outlet context={{ toasts, removeToast, addToast }} />
-                    </Suspense>
-                </main>
-            </div>
-
+        <>
+            <Header />
+            <Suspense fallback={
+                <div className='errorDisplay'>
+                    <h2 className="text-xl2">Loading<span className="animated-dots"></span></h2>
+                </div>
+            }>
+                <Outlet context={{ toasts, removeToast, addToast }} />
+            </Suspense>
             <ToastContainer toasts={toasts} removeToast={removeToast} />
-        </div>
+        </>
     );
 }
 
-// 👇 Give the component a name for debugging purposes
-CRUDInterface.displayName = "Console";
+ContributionLayout.displayName = "Contribution Layout"
 
-// 👇 Define PropTypes
-CRUDInterface.propTypes = {
-    debugMode: PropTypes.bool,
-}
+export default ContributionLayout
+

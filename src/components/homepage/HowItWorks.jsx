@@ -114,7 +114,7 @@ const HowItWorks = () => {
                                     { item: 'Ginger', price: 19.99 },
                                     { item: 'Eggplant', price: 34.99 }
                                 ].map((product, idx) => (
-                                    <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-600 rounded-lg">
+                                    <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg select-none">
                                         <span className="text-gray-700 dark:text-gray-50">{product.item}</span>
                                         <span className="font-semibold text-[#ee4d2d]">₱{product.price}</span>
                                     </div>

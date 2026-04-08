@@ -1,6 +1,6 @@
 import { useState, startTransition } from 'react'
-import { Form, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
+import { Form, Button } from "react-bootstrap";
 import PropTypes from 'prop-types';
 import Cookies from "universal-cookie";
 import axios from 'axios'
@@ -12,6 +12,7 @@ const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 const cookies = new Cookies();
 
 const LoginForm = ({ debugMode, onSwitch }) => {
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -38,6 +39,7 @@ const LoginForm = ({ debugMode, onSwitch }) => {
             .map((response) => response.data)
             .match(
                 (data) => {
+                    console.log(data)
                     cookies.set("budgetbuddy_token", data.token, { path: "/" });
                     setStatus("success")
                     startTransition(() => {

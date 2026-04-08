@@ -204,7 +204,7 @@ export default function ConsoleUsersPage() {
                                                 <SelectTrigger className={`w-full ${!isManageable ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'bg-white hover:border-orange-400 focus:ring-orange-500'}`}>
                                                     <SelectValue />
                                                 </SelectTrigger>
-                                                <SelectContent>
+                                                <SelectContent className='bg-white'>
                                                     <SelectItem value={user.role} className="capitalize font-medium">
                                                         {user.role}
                                                     </SelectItem>

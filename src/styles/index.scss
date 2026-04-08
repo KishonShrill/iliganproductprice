@@ -143,3 +143,33 @@
     background: #d63916;
   }
 }
+
+@property --x {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: -1%;
+}
+
+@property --y {
+  syntax: '<percentage>';
+  inherits: false;
+  initial-value: 49%;
+}
+
+.background-glow {
+  inset: -1;
+  background:
+    radial-gradient(circle at var(--x, 49%) var(--y, 50%),
+      rgba(254, 255, 255, 0.1),
+      transparent 59%),
+    radial-gradient(circle at 29% 70%,
+      rgba(121, 99, 255, 0.1),
+      transparent 69%),
+    radial-gradient(circle at 69% 30%,
+      rgba(121, 99, 255, 0.08),
+      transparent 69%);
+  animation:
+    pulse-glow 9s ease-in-out infinite,
+    move-light 9s ease-in-out infinite;
+  z-index: -1;
+}

@@ -30,19 +30,6 @@ export default function ProductForm() {
     const queryClient = useQueryClient();
     const { addToast } = useOutletContext();
     const [populated] = useState(!!location.state?.populated);
-    useEffect(() => {
-        if (!populated) {
-            addToast("Forbidden!", `Please access this page through console products page.`);
-            navigate("/dev-mode/products");
-        } else {
-            navigate(location.pathname + location.search, {
-                replace: true,
-                state: {}
-            });
-        }
-    }, [location, navigate]);
-    if (!populated) return null;
-
 
     const [searchParams, setSearchParams] = useSearchParams();
     const productId = searchParams.get('productId');
@@ -70,6 +57,16 @@ export default function ProductForm() {
     const [bulkProducts, setBulkProducts] = useState(null); // null = single mode, array = bulk mode
     const fileInputRef = useRef(null);
     const dragCounter = useRef(0);
+
+    useEffect(() => {
+        if (!populated) {
+            addToast("Forbidden!", `Please access this page through console products page.`);
+            navigate("/dev-mode/products");
+        } else {
+            window.history.replaceState({}, '');
+        }
+    }, [populated, location, navigate, addToast]);
+    if (!populated) return null;
 
     // --- BULK IMPORT LOGIC ---
     const processBulkFile = (file) => {
@@ -106,7 +103,7 @@ export default function ProductForm() {
                     if (!item.product_name || typeof item.product_name !== 'string') return false;
                     if (item.imageUrl && typeof item.imageUrl !== 'string') return false;
                     if (item.categoryId && typeof item.categoryId !== 'string') return false;
-                    if (existingNames.has(item.product_name.toLowerCase())) { addToast("Warning", `Product ${item.product_name} already exists...`); return false };
+                    if (existingNames.has(item.product_name.toLowerCase())) { addToast("Warning", `Product ${item.product_name} already exists...`); return false }
 
                     return true;
                 }).map((item, index) => {

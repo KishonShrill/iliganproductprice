@@ -55,7 +55,7 @@ export default function Products({ debugMode }) {
         let location = debugMode
             ? `http://localhost:5173/dev-mode/products/edit?productId=${productId}`
             : `https://productprice-iligan.vercel.app/dev-mode/products/edit?productId=${productId}&type=edit`;
-        navigate(location);
+        navigate(location, { state: { populated: true } });
     }
 
     const delete_product = async (item) => {

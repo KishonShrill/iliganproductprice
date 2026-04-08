@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Settings, LogIn, LogOut, Menu, X, LayoutDashboard, Package, Utensils, Info, ShoppingCart, User, Computer, CircleUserRound } from "lucide-react";
+import { Settings, LogIn, LogOut, Menu, X, LayoutDashboard, Package, Utensils, Info, ShoppingCart, User, Computer, CircleUserRound, Scroll } from "lucide-react";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 
@@ -42,9 +42,12 @@ const Header = () => {
     const navLinks = [
         { to: "/", label: "Home", icon: <LayoutDashboard size={20} /> },
         { to: "/locations", label: "Groceries", icon: <Package size={20} /> },
-        { to: "#", label: "Cuisines", icon: <Utensils size={20} /> },
-        { to: "#", label: "About", icon: <Info size={20} /> },
-        { to: "/receipt", label: "Cart", icon: <ShoppingCart size={20} /> },
+        { to: "#", label: "Cuisines", icon: <Utensils size={20} />, disabled: true },
+        { to: "/receipt", label: "Receipt", icon: <ShoppingCart size={20} /> },
+        ...(token
+            ? [{ to: "/contribution", label: "Contribute", icon: <Scroll size={20} /> }]
+            : []),
+        { to: "#", label: "About", icon: <Info size={20} />, disabled: true },
     ];
 
     return (
@@ -58,28 +61,41 @@ const Header = () => {
             <Link to="/" className="header__name" style={{ fontWeight: 700 }}>Budget Buddy</Link>
 
             {/* Quick Mobile Auth Icon */}
-            {isAdvancedUser ?
-                showAuthLinks && (
-                    <Link to={token ? "/dev-mode" : "/authenticate"} className="md:hidden">
-                        <User className="dark:text-white" />
-                    </Link>
+            <div className="flex gap-3">
+                {!token ? (
+                    <>
+                        <Link to="/settings" className="md:hidden">
+                            <Settings size={20} className="dark:text-white" />
+                        </Link>
+                        <Link to="/authenticate" className="md:hidden">
+                            <LogIn size={20} className="dark:text-white" />
+                        </Link>
+                    </>
                 ) : (
-                    <Link className="md:hidden" to="/profile" onClick={toggleMenu}>
-                        <CircleUserRound className="dark:text-white" />
-                    </Link>
-                )
-            }
+                    <>
+                        {isAdvancedUser ? (
+                            <Link to={token ? "/dev-mode" : "/authenticate"} className="md:hidden">
+                                <User className="dark:text-white" />
+                            </Link>
+                        ) : (
+                            <Link className="md:hidden" to="/profile">
+                                <CircleUserRound className="dark:text-white" />
+                            </Link>
+                        )}
+                    </>
+                )}
+            </div>
 
             {/* Navigation Overlay */}
             <nav className={`fixed md:static top-0 left-0 h-full md:h-auto w-[300px] md:w-auto bg-slate-800 md:bg-transparent transition-transform duration-300 z-50 
         ${isOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}`}>
 
-                <ul className="flex flex-col md:flex-row p-6 md:p-0 h-full md:items-center md:h-auto md:gap-6">
-                    <button className="md:hidden self-end mb-4" onClick={toggleMenu}><X color="white" /></button>
+                <ul className="flex flex-col md:flex-row py-6 md:p-0 h-full md:items-center md:h-auto md:gap-6">
+                    <button className="md:hidden self-end mb-4 mr-4" onClick={toggleMenu}><X color="white" /></button>
 
-                    {navLinks.map((link) => (
+                    {navLinks.map((link, index) => (
                         <li key={link.label}>
-                            <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500" to={link.to} onClick={toggleMenu}>
+                            <Link title={link.disabled && `Coming soon...`} className={`nav-link ${index !== 0 && 'max-md:border-t'} max-md:border-gray-500 text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 ${link.disabled && 'md:!text-gray-300 !text-gray-600'}`} to={link.to} onClick={toggleMenu}>
                                 <span className="md:hidden">{link.icon}</span>
                                 {link.label}
                             </Link>
@@ -90,10 +106,10 @@ const Header = () => {
                     <div className="flex flex-col mt-auto md:flex-row md:border-t-0 md:border-l border-gray-600 pt-4 md:pt-0 md:pl-4 md:mt-0 md:items-center md:gap-4">
                         {!token ? (
                             <>
-                                <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500" to="/settings" onClick={toggleMenu}>
+                                <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 max-md:border-t max-md:border-gray-500" to="/settings" onClick={toggleMenu}>
                                     <Settings size={20} /> <span className="md:hidden">Settings</span>
                                 </Link>
-                                <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500" to="/authenticate" onClick={toggleMenu}>
+                                <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 max-md:border-t max-md:border-gray-500" to="/authenticate" onClick={toggleMenu}>
                                     <LogIn size={20} /> <span className="md:hidden">Login</span>
                                 </Link>
                             </>

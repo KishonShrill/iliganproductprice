@@ -32,46 +32,43 @@ router.post("/me", user_verify, requireRole("regular"), (req, res) => {
 router.post("/register", async (req, res) => {
     // #swagger.tags = ['Authentication']
     // #swagger.description = 'Endpoint to register a new user.'
-    const { token, email, password } = req.body;
+    const { token, username, email, password } = req.body;
 
-    const ticket = await client.verifyIdToken({
+    const ticket = token ? await client.verifyIdToken({
         idToken: token,
         audience: process.env.VITE_CLIENT_ID,
-    });
+    }) : null;
 
     // 2. Extract the safe, verified user payload
-    const payload = ticket.getPayload();
-
-    const {
-        iss,
-        email: googleEmail,
-        email_verified,
-        name,
-        picture,
-    } = payload;
+    const payload = token ? ticket.getPayload() : null;
 
     console.log(payload)
 
-    if (iss !== "https://accounts.google.com" && typeof email !== "string") {
-        return res.status(400).send({ message: "Invalid email" });
-    }
-
-    if (iss === "https://accounts.google.com" && !email_verified) {
-        return res.status(400).send({ message: "Please verify your google account" });
-    }
-    if (iss !== "https://accounts.google.com" && (!email || !password)) {
-        return res.status(400).send({ message: "Email and password are required" });
-    }
-
     const prepareUser = () => {
-        if (iss === "https://accounts.google.com") {
+        if (payload?.iss === "https://accounts.google.com") {
+            const {
+                email: googleEmail,
+                email_verified,
+                name,
+                picture,
+            } = payload;
+
+            if (!email_verified) return res.status(400).send({ message: "Please verify your google account" });
+
             return okAsync(new User({
                 email: googleEmail,
                 role: "regular",
                 profile_picture: picture,
-                username: name
+                username: name,
+                daily_votes: 0,
+                daily_submissions: 0,
+                last_vote_date: null,
+                last_submission_date: null
             }));
         }
+
+        if (typeof email !== "string") return res.status(400).send({ message: "Invalid email" });
+        if (!email || !password) return res.status(400).send({ message: "Email and password are required" });
 
         return ResultAsync.fromPromise(
             bcrypt.hash(password, 10),
@@ -80,7 +77,17 @@ router.post("/register", async (req, res) => {
             email,
             password: hashedPassword,
             role: "regular",
-            username: name
+            username: username,
+            daily_votes: 0,
+            daily_submissions: 0,
+            last_vote_date: null,
+            last_submission_date: null,
+            stats: {
+                points: 0,
+                approved: 0,
+                pending: 0,
+                rejected: 0
+            }
         }));
     };
 
@@ -95,19 +102,19 @@ router.post("/register", async (req, res) => {
                 }
             )
         ).map((user) => {
-            const payload = {
+            const tokenInit = {
                 user_id: user._id,
                 user_email: user.email,
                 user_role: user.role,
                 username: user.username,
             };
 
-            if (iss === "https://accounts.google.com") {
+            if (payload?.iss === "https://accounts.google.com") {
                 payload.user_picture = user.profile_picture;
             }
 
             // BUG FIX: Replaced `const token` with standard return
-            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
+            const token = jwt.sign(tokenInit, process.env.JWT_SECRET, { expiresIn: "24h" });
 
             return {
                 message: "Login Successful",
@@ -115,7 +122,7 @@ router.post("/register", async (req, res) => {
             };
         })
         .match(
-            (successData) => res.status(201).send({ message: "User Created Successfully", result: successData }),
+            (successData) => res.status(201).send(successData),
             (errorData) => res.status(errorData.status).send({ message: errorData.message, error: errorData.error })
         );
 });

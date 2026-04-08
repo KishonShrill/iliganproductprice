@@ -170,6 +170,13 @@ export default function DataTable({
                                         {value}
                                     </SelectItem>
                                 ))}
+
+                                <SelectItem
+                                    className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold"
+                                    value={null}
+                                >
+                                    N/A
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     ))}

@@ -77,6 +77,9 @@
                 "token": {
                   "example": "any"
                 },
+                "username": {
+                  "example": "any"
+                },
                 "email": {
                   "example": "any"
                 },
@@ -690,6 +693,135 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/contributions/pending": {
+      "get": {
+        "tags": [
+          "v1 | Contribution"
+        ],
+        "description": ".",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/contributions/": {
+      "post": {
+        "tags": [
+          "v1 | Contribution"
+        ],
+        "description": "Submit a new product price for community review.",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productName": {
+                  "example": "any"
+                },
+                "price": {
+                  "example": "any"
+                },
+                "location": {
+                  "example": "any"
+                },
+                "category": {
+                  "example": "any"
+                },
+                "listType": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/v1/contributions/{id}/vote": {
+      "post": {
+        "tags": [
+          "v1 | Contribution"
+        ],
+        "description": "Vote a product up or down. Processes approval at 10 votes.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "voteType": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "429": {
+            "description": "Too Many Requests"
           },
           "500": {
             "description": "Internal Server Error"
