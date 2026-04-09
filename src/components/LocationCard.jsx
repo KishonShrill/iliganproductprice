@@ -57,7 +57,7 @@ const LocationCard = React.memo(({ item }) => {
             </a>
 
             {/* Logo Area */}
-            <div className="relative flex aspect-video w-full items-center justify-center bg-gray-50 dark:bg-gray-700 p-6 overflow-hidden">
+            <div className="relative flex aspect-video w-full items-center justify-center bg-gray-50 dark:bg-gray-700 p-2 overflow-hidden">
                 <img
                     src={storeImages[match]}
                     alt={`${match} logo`}
@@ -69,7 +69,7 @@ const LocationCard = React.memo(({ item }) => {
 
             {/* Text Area */}
             <div className="flex flex-1 flex-col items-center justify-center p-5 text-center">
-                <h3 className="text-lg font-bold text-gray-800 dark:text-gray-50">{shortName}</h3>
+                <h3 className="text-base md:text-lg font-bold text-gray-800 dark:text-gray-50">{shortName}</h3>
                 <span className="mt-2 inline-flex items-center gap-1.5 rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-600">
                     <Store size={14} />
                     {item.type}

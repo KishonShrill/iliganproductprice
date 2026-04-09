@@ -31,7 +31,7 @@ function ContributionLayout() {
 
     useEffect(() => {
         if (!token) {
-            navigate("/")
+            navigate("/authenticate")
         }
     }, [token, navigate])
     if (!token) return null;
@@ -41,7 +41,7 @@ function ContributionLayout() {
             <Header />
             <Suspense fallback={
                 <div className='errorDisplay'>
-                    <h2 className="text-xl2">Loading<span className="animated-dots"></span></h2>
+                    <h2 className="text-lg">Loading<span className="animated-dots"></span></h2>
                 </div>
             }>
                 <Outlet context={{ toasts, removeToast, addToast }} />

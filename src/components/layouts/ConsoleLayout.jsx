@@ -30,7 +30,7 @@ export default function CRUDInterface({ debugMode }) {
 
     useEffect(() => {
         if (!token) {
-            navigate("/")
+            navigate("/authenticate")
         }
     }, [token, navigate])
     if (!token) return null;
@@ -43,7 +43,7 @@ export default function CRUDInterface({ debugMode }) {
                 <main className="flex-1">
                     <Suspense fallback={
                         <div className='errorDisplay'>
-                            <h2>Loading<span className="animated-dots"></span></h2>
+                            <h2 className="text-lg">Loading<span className="animated-dots"></span></h2>
                         </div>
                     }>
                         <Outlet context={{ toasts, removeToast, addToast }} />

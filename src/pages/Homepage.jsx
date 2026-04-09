@@ -30,7 +30,7 @@ export default function HomePage() {
     return (
         <>
             <SEO title={"Budget Buddy"} />
-            <main id="homepage" className='relative'>
+            <main id="homepage" className='relative w-full h-[calc(100vh-3.75rem)] overflow-auto'>
                 <Hero />
                 <Features />
                 <About />

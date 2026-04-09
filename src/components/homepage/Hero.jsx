@@ -3,7 +3,7 @@ import { ShoppingCart, TrendingUp, Shield } from 'lucide-react';
 
 const Hero = () => {
     return (
-        <section className="flex items-center min-h-[calc(100vh-76px)] pt-12 pb-16 bg-gradient-to-br from-gray-50 via-white to-orange-50 dark:from-gray-800 dark:to-gray-800 overflow-hidden">
+        <section className="flex items-center min-h-[calc(100vh-3.75rem)] pt-12 pb-16 bg-gradient-to-br from-gray-50 via-white to-orange-50 dark:from-gray-800 dark:to-gray-800 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid lg:grid-cols-2 gap-12 max-md:gap-6 items-center">
                     {/* Left Content */}

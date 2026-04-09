@@ -13,7 +13,7 @@ function HomepageLayout() {
             <Header />
             <Suspense fallback={
                 <div className='errorDisplay'>
-                    <h2 className="text-xl2">Loading<span className="animated-dots"></span></h2>
+                    <h2 className="text-lg">Loading<span className="animated-dots"></span></h2>
                 </div>
             }>
                 <Outlet />

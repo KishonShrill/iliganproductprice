@@ -1,35 +1,20 @@
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
 import { ThumbsUp, ThumbsDown, Plus, Clock, Store, Tag, PackageOpen, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import axios from 'axios';
-import Cookies from 'universal-cookie';
 
-const cookies = new Cookies();
-const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
-const LOCALHOST = import.meta.env.VITE_LOCALHOST;
-const API_VERSION = import.meta.env.VITE_API_VERSION;
-const URL = DEVELOPMENT
-    ? `http://${LOCALHOST}:5000/api/${API_VERSION}/contributions`
-    : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/contributions`
+import useFetchPendingContributions from '@/hooks/useFetchPendingContributions';
+import useVoteContribution from '@/hooks/useVoteContribution';
 
 
 export default function CommunityHub() {
-    const queryClient = useQueryClient();
     const [activeTab, setActiveTab] = useState('to_review');
 
-    const { data = { pending: [], votesToday: 0, submissionsToday: 0 }, isLoading } = useQuery('pending_contributions', async () => {
-        const response = await axios.get(`${URL}/pending`,
-            {
-                headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` }
-            });
-        return response.data;
-    });
+    const { data = { pending: [], votesToday: 0, submissionsToday: 0 }, isLoading } = useFetchPendingContributions();
+    const voteMutation = useVoteContribution();
 
     const pendingItems = data.pending
 
-    // 2. The Magic Separation! 
     // If myVote is null, they haven't voted. If it has a value ('up'/'down'), they have.
     //console.log({ data })
     const toReviewList = pendingItems.filter(item => !item.myVote);
@@ -38,33 +23,17 @@ export default function CommunityHub() {
     // Track daily votes (you could also pass this from the backend!)
     const votesToday = data.votesToday;
     const submissionsToday = data.submissionsToday;
+    const activeList = activeTab === 'to_review' ? toReviewList : votedList;
     const MAX_VOTES = 5;
     const MAX_SUBMISSION = 1;
 
-    // 3. The Vote Mutation
-    const voteMutation = useMutation(
-        ({ id, voteType }) => axios.post(`${URL}/${id}/vote`,
-            { voteType },
-            { headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` } }
-        ),
-        {
-            onSuccess: () => {
-                // Instantly refresh the lists so the item moves to the "My Votes" tab
-                queryClient.invalidateQueries('pending_contributions');
-            },
-            onError: (error) => {
-                alert(error.response?.data?.message || "Failed to submit vote");
-            }
-        }
-    );
-
-    const handleVote = (id, type) => {
+    function handleVote(id, type) {
         if (votesToday >= MAX_VOTES) {
             alert("You've reached your 5 votes for today! Come back tomorrow.");
             return;
         }
         voteMutation.mutate({ id, voteType: type });
-    };
+    }
 
     if (isLoading) return (
         <div className='errorDisplay'>
@@ -72,7 +41,6 @@ export default function CommunityHub() {
         </div>
     );
 
-    const activeList = activeTab === 'to_review' ? toReviewList : votedList;
 
     const renderCard = (item, isVotedTab) => (
         <div key={item.id} className={`bg-white border rounded-xl p-5 shadow-sm relative overflow-hidden ${isVotedTab ? 'border-gray-200 opacity-80' : 'border-yellow-200'}`}>
@@ -192,8 +160,8 @@ export default function CommunityHub() {
                                 : "Your voting history will appear here. Switch to the 'To Review' tab to start earning points!"}
                         </p>
                         {activeTab === 'to_review' && (
-                            <Link to="/contribution/submit">
-                                <Button className="bg-gray-900 hover:bg-gray-800 text-white px-8">
+                            <Link to="/contribution/submit" className={`${MAX_SUBMISSION === submissionsToday && 'pointer-events-none'}`}>
+                                <Button className={`bg-gray-900 hover:bg-gray-800 text-white px-8 ${MAX_SUBMISSION === submissionsToday && 'bg-gray-400'}`}>
                                     <Plus className="w-4 h-4 mr-2" /> Make a Contribution
                                 </Button>
                             </Link>

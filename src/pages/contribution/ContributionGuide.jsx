@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { BookOpen, Award, ShieldAlert, ChevronRight, ChevronLeft, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,13 +34,20 @@ const guideSteps = [
 export default function ContributionGuide() {
     const [currentStep, setCurrentStep] = useState(0);
     const navigate = useNavigate();
+    const { addToast } = useOutletContext();
+    const hasSeen = localStorage.getItem("budgetbuddy_hasSeenGuide");
+
+    useEffect(() => {
+        if (hasSeen) return navigate('/contribution/hub');
+    }, [hasSeen, navigate])
+    if (hasSeen) return null;
 
     const nextStep = () => {
         if (currentStep < guideSteps.length - 1) {
             setCurrentStep(prev => prev + 1);
         } else {
             // Once finished, set a cookie/localstorage so they don't see this every time
-            localStorage.setItem('hasSeenGuide', 'true');
+            localStorage.setItem('budgetbuddy_hasSeenGuide', 'true');
             navigate('/contribution/hub');
         }
     };
@@ -52,8 +59,9 @@ export default function ContributionGuide() {
     const stepData = guideSteps[currentStep];
 
     return (
-        <div className="min-h-[calc(100vh-76px)] flex items-center justify-center p-4">
-            <Card className="w-full max-w-lg shadow-lg border-gray-100">
+        <div className="min-h-[calc(100vh-76px)] flex items-center justify-center p-4 bg-white relative">
+            <div className='bg-orange-500 blur-xl w-full h-full absolute z-0'></div>
+            <Card className="w-full max-w-lg shadow-lg border-gray-100 bg-white z-10">
                 <CardContent className="p-8 max-md:p-6 flex flex-col items-center text-center">
                     {/* Step Indicator */}
                     <div className="flex gap-2 mb-8">

@@ -51,7 +51,7 @@ const HowItWorks = () => {
                         </div>
                     </div>
 
-                    <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+                    <div className="grid max-sm:grid-cols-1 grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
                         {steps.map((step, index) => (
                             <div key={index} className="relative group">
                                 {/* Step Number */}
@@ -136,8 +136,8 @@ const HowItWorks = () => {
                         {/* Benefits */}
                         <div className="space-y-6">
                             {[
-                                { title: 'Never Overspend Again', desc: 'Always have a transparent look of your money' },
-                                { title: 'Smart Recommendations', desc: 'Get suggestions to optimize your cart' },
+                                { title: 'Never Overspend Again', desc: 'Always have a transparent look of your spending' },
+                                { title: 'Online Browsing', desc: 'Browse all options without stepping out of your house' },
                                 { title: 'Multiple Store Support', desc: 'Works with all major online retailers' }
                             ].map((benefit, idx) => (
                                 <div key={idx} className="flex items-start space-x-4 group cursor-default">

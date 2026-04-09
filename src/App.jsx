@@ -52,7 +52,7 @@ function App() {
         <>
             <HelmetProvider>
                 <QueryClientProvider client={queryClient}>
-                    <BrowserRouter>
+                    <BrowserRouter future={{ v7_startTransition: true }}>
                         <Provider store={store}>
                             <Suspense fallback={
                                 <div className='errorDisplay'>
