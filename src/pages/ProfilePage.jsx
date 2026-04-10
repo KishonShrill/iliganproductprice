@@ -54,7 +54,7 @@ const ProfilePage = () => {
                     )}
                 </div>
 
-                <h2 className="mt-4 sm:mt-5 text-2xl sm:text-3xl font-black text-gray-900 text-center">{user.username}</h2>
+                <h2 className="mt-4 sm:mt-5 text-2xl sm:text-3xl font-black text-gray-900 text-center capitalize">{user.username.toLowerCase()}</h2>
                 <p className="text-sm sm:text-base text-gray-500 text-center">{user.user_email}</p>
                 <span className="mt-3 inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-blue-600">
                     {user.user_role}
