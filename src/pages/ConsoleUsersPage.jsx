@@ -45,9 +45,12 @@ export default function ConsoleUsersPage() {
 
     // --- DATA FETCHING ---
     const { data: users = [], isLoading } = useQuery('console_users', async () => {
-        const response = await axios.get(`http://${LOCALHOST}:5000/api/${API_VERSION}/users`, {
-            headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` }
-        });
+        const response = await axios.get(DEVELOPMENT
+            ? `http://${LOCALHOST}:5000/api/${API_VERSION}/users`
+            : `https://productprice-iligan.vercel.app/api/${API_VERSION}/users`,
+            {
+                headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` }
+            });
         return response.data.users || response.data;
     });
 
@@ -156,7 +159,7 @@ export default function ConsoleUsersPage() {
                 />
             </div>
 
-            <Card className="border-gray-200 shadow-sm overflow-hidden">
+            <Card className="border-gray-200 shadow-sm overflow-hidden bg-white">
                 <CardHeader className="bg-gray-50 border-b border-gray-100 px-6 py-4">
                     <CardTitle className="text-lg text-gray-700 flex items-center gap-2">
                         <Users className="h-5 w-5 text-orange-500" />
@@ -181,7 +184,7 @@ export default function ConsoleUsersPage() {
                                                     <User className="text-gray-500 h-6 w-6" />}
                                         </div>
                                         <div>
-                                            <h3 className="font-bold text-gray-900">{user.username}</h3>
+                                            <h3 className="font-bold text-gray-900 capitalize">{user.username.toLowerCase()}</h3>
                                             <p className="text-sm text-gray-500 flex items-center gap-1.5 mt-0.5">
                                                 <Mail className="h-3 w-3" />
                                                 {user.email}
