@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Package, MapPin, FileText, Home, Menu, Settings, LogOut, House, UserCog } from 'lucide-react';
+import { Package, MapPin, FileText, Menu, Settings, LogOut, House, UserCog, LayoutList } from 'lucide-react';
 import { cn } from '../../helpers/utils';
 import { Button } from '../ui/button';
 import PropTypes from 'prop-types';
@@ -12,6 +12,7 @@ const navigation = [
     { name: 'Products', href: '/dev-mode/products', icon: Package },
     { name: 'Locations', href: '/dev-mode/locations', icon: MapPin },
     { name: 'Listings', href: '/dev-mode/listings', icon: FileText },
+    { name: 'Pendings', href: '/dev-mode/pendings', icon: LayoutList },
 ];
 const extras = [
     { name: 'Users', href: '/dev-mode/users', icon: UserCog },
@@ -29,7 +30,7 @@ export default function Sidebar() {
             {/* Desktop Sidebar */}
             <div className={cn(
                 "hidden md:flex h-screen flex-col bg-white border-r border-gray-200 transition-all duration-300",
-                isCollapsed ? "w-16" : "w-64"
+                isCollapsed ? "w-16" : "w-60"
             )}>
                 {/* Logo and Toggle */}
                 <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4">
@@ -37,7 +38,6 @@ export default function Sidebar() {
                         "flex items-center space-x-2 transition-opacity duration-300",
                         isCollapsed ? "hidden" : "flex"
                     )}>
-                        <Home className="h-8 w-8 text-blue-600 flex-shrink-0" />
                         <span className="text-xl font-bold text-gray-900 whitespace-nowrap">Admin Console</span>
                     </div>
                     <Button
@@ -107,10 +107,10 @@ function SideNavButton({ item, isCollapsed }) {
         return (
             <button
                 className={cn(
-                    "group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200",
+                    "group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200 w-full",
                     isActive
                         ? "bg-blue-50 text-blue-700"
-                        : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
+                        : "text-gray-700 hover:bg-red-500 hover:text-white",
                     isCollapsed ? "justify-center" : ""
                 )}
                 type="button"
@@ -122,7 +122,7 @@ function SideNavButton({ item, isCollapsed }) {
                         "h-5 w-5 flex-shrink-0 transition-colors",
                         isActive
                             ? "text-blue-500"
-                            : "text-gray-400 group-hover:text-gray-500",
+                            : "text-gray-400 group-hover:text-white",
                         isCollapsed ? "" : "mr-3"
                     )}
                     aria-hidden="true"
@@ -147,7 +147,7 @@ function SideNavButton({ item, isCollapsed }) {
                 "group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition-all duration-200",
                 isActive
                     ? "bg-blue-50 text-blue-700"
-                    : "text-gray-700 hover:bg-gray-50 hover:text-gray-900",
+                    : "text-gray-700 hover:bg-gray-200 hover:text-gray-900",
                 isCollapsed ? "justify-center" : ""
             )}
             title={isCollapsed ? item.name : undefined}

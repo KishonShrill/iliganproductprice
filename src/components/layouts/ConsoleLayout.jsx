@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import Cookies from "universal-cookie";
 import '../../styles/admin_console.scss'
 
-import Sidebar from "./Sidebar";
+import Sidebar from "@/components/console/Sidebar";
 import ToastContainer from "@/components/ToastContainer";
 const cookies = new Cookies();
 
@@ -30,7 +30,7 @@ export default function CRUDInterface({ debugMode }) {
 
     useEffect(() => {
         if (!token) {
-            navigate("/")
+            navigate("/authenticate")
         }
     }, [token, navigate])
     if (!token) return null;
@@ -39,18 +39,17 @@ export default function CRUDInterface({ debugMode }) {
         <div className="flex h-screen bg-gray-100 overflow-auto">
             <Sidebar />
 
-            <div className="flex-1 flex flex-col overflow-hidden">
+            <div className="flex-1 flex flex-col overflow-hidden z-40">
                 <main className="flex-1">
                     <Suspense fallback={
                         <div className='errorDisplay'>
-                            <h2>Loading<span className="animated-dots"></span></h2>
+                            <h2 className="text-lg">Loading<span className="animated-dots"></span></h2>
                         </div>
                     }>
                         <Outlet context={{ toasts, removeToast, addToast }} />
                     </Suspense>
                 </main>
             </div>
-
             <ToastContainer toasts={toasts} removeToast={removeToast} />
         </div>
     );

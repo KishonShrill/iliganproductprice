@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Clock } from "lucide-react";
+import PropTypes from "prop-types";
 import ReactMarkdown from 'react-markdown';
 
 // 5. Upgraded Legal Document Page
@@ -101,5 +102,10 @@ const DocumentPage = ({ title, content }) => {
         </Suspense>
     );
 };
+
+DocumentPage.propTypes = {
+    title: PropTypes.string.isRequired,
+    content: PropTypes.string.isRequired
+}
 
 export default DocumentPage;

@@ -10,7 +10,7 @@ import { Listing } from '../models/models.js'; // adjust path
 const router = express.Router();
 
 
-router.get('/', async (req, res) => {
+router.get('/', user_verify, requireRole('moderator'), async (req, res) => {
     // #swagger.tags = ['v1 | Listing']
     // #swagger.description = 'Fetch all listing products.'
     try {

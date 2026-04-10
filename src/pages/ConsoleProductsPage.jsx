@@ -27,10 +27,10 @@ const cookies = new Cookies();
 export default function Products({ debugMode }) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { addToast } = useOutletContext();
-    const { isLoading, data } = useFetchProducts()
-
     const token = cookies.get("budgetbuddy_token");
+    const { addToast } = useOutletContext();
+    const { isLoading, data } = useFetchProducts(token)
+
     const decodedUser = token ? jwtDecode(token) : null;
 
     const normalizedData = data?.map(item => ({
@@ -55,7 +55,7 @@ export default function Products({ debugMode }) {
         let location = debugMode
             ? `http://localhost:5173/dev-mode/products/edit?productId=${productId}`
             : `https://productprice-iligan.vercel.app/dev-mode/products/edit?productId=${productId}&type=edit`;
-        navigate(location);
+        navigate(location, { state: { populated: true } });
     }
 
     const delete_product = async (item) => {

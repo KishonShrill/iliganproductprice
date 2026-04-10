@@ -1,6 +1,6 @@
 import { useState, startTransition } from 'react'
-import { Form, Button } from "react-bootstrap";
 import { useNavigate } from 'react-router-dom';
+import { Form, Button } from "react-bootstrap";
 import PropTypes from 'prop-types';
 import Cookies from "universal-cookie";
 import axios from 'axios'
@@ -38,6 +38,7 @@ const LoginForm = ({ debugMode, onSwitch }) => {
             .map((response) => response.data)
             .match(
                 (data) => {
+                    console.log(data)
                     cookies.set("budgetbuddy_token", data.token, { path: "/" });
                     setStatus("success")
                     startTransition(() => {
@@ -107,7 +108,6 @@ const LoginForm = ({ debugMode, onSwitch }) => {
             {/* Added w-full */}
             <div className='flex flex-col mt-4 w-full'>
                 <GoogleLogin
-                    width={"100%"}
                     onSuccess={async (credentialResponse) => {
 
                         setStatus("loading");
@@ -133,6 +133,8 @@ const LoginForm = ({ debugMode, onSwitch }) => {
                             );
                     }}
                     onError={() => console.log("Login Error")}
+                    locale="en"
+                    width='100%'
                 />
             </div>
 

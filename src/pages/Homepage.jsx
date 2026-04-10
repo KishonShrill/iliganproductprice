@@ -6,7 +6,6 @@ const About = lazy(() => import("../components/homepage/About"));
 const HowItWorks = lazy(() => import("../components/homepage/HowItWorks"));
 const Footer = lazy(() => import("../components/homepage/Footer"));
 import SEO from '../components/SEO';
-import '../styles/homepage.scss'
 
 export default function HomePage() {
     const location = useLocation();
@@ -31,7 +30,7 @@ export default function HomePage() {
     return (
         <>
             <SEO title={"Budget Buddy"} />
-            <main className="homepage">
+            <main id="homepage" className='relative w-full h-[calc(100vh-3.75rem)] overflow-auto'>
                 <Hero />
                 <Features />
                 <About />

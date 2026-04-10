@@ -2,16 +2,17 @@ import { useState, startTransition } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Form, Button } from "react-bootstrap";
 import PropTypes from 'prop-types';
+import Cookies from 'universal-cookie';
 import axios from 'axios';
 import { ResultAsync } from 'neverthrow';
 import { GoogleLogin } from '@react-oauth/google';
-import Cookies from 'universal-cookie';
 //import { jwtDecode } from 'jwt-decode';
 
-const LOCALHOST = import.meta.env.VITE_LOCALHOST || "localhost";
+const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 const cookies = new Cookies();
 
 const RegisterForm = ({ debugMode, onSwitch }) => {
+    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -38,7 +39,7 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
         setErrorMessage("");
 
         await ResultAsync.fromPromise(
-            axios.post(url, { email, password }),
+            axios.post(url, { username, email, password }),
             (error) => {
                 // Your backend specifically returns a 409 for duplicate emails
                 if (error.response?.status === 409) {
@@ -49,14 +50,16 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
         )
             .map((response) => response.data)
             .match(
-                () => {
+                (data) => {
+                    console.log(data)
+                    cookies.set("budgetbuddy_token", data.token, { path: "/" });
                     setStatus("success");
-                    // Clear the form fields on success
                     setEmail("");
                     setPassword("");
                     setConfirmPassword("");
-
-                    navigate("/locations")
+                    startTransition(() => {
+                        navigate("/locations");
+                    });
                 },
                 (errorMsg) => {
                     setStatus("error");
@@ -71,10 +74,25 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
             onSubmit={handleSubmit}
         >
             <h2 className="text-center font-bold text-xl mb-2">CREATE ACCOUNT</h2>
-            <p className="text-center text-[0.8rem]">Register as a new developer</p>
+            <p className="text-center text-[0.8rem]">Register as a new user</p>
 
             {/* Added mt-6 (1.5rem) to match :first-of-type, plus w-full flex flex-col */}
-            <Form.Group controlId="formBasicEmail" className="mb-3 mt-6 w-full flex flex-col">
+            <Form.Group controlId="formBasicUsername" className="mb-3 mt-6 w-full flex flex-col">
+                <Form.Label className="mb-1 text-[0.8rem]">Username</Form.Label>
+                <Form.Control
+                    type="text"
+                    name="username"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="skengker777"
+                    isInvalid={status === "error"}
+                    isValid={status === "success"}
+                    required
+                    className="px-[0.8rem] py-[0.4rem] border border-black"
+                />
+            </Form.Group>
+
+            <Form.Group controlId="formBasicEmail" className="mb-3 w-full flex flex-col">
                 <Form.Label className="mb-1 text-[0.8rem]">Email</Form.Label>
                 <Form.Control
                     type="email"
@@ -130,7 +148,6 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
             {/* Added w-full */}
             <div className='flex flex-col mt-4 w-full'>
                 <GoogleLogin
-                    width={"100%"}
                     onSuccess={async (credentialResponse) => {
                         await ResultAsync
                             .fromPromise(axios.post(url, { token: credentialResponse.credential }), (error) => {
@@ -139,7 +156,7 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
                             .map((response) => response.data)
                             .match(
                                 (data) => {
-                                    cookies.set("budgetbuddy_token", data.result.token, { path: "/" });
+                                    cookies.set("budgetbuddy_token", data.token, { path: "/" });
                                     setStatus("success")
                                     startTransition(() => {
                                         navigate("/locations");
@@ -152,6 +169,8 @@ const RegisterForm = ({ debugMode, onSwitch }) => {
                             );
                     }}
                     onError={() => console.log("Login Error")}
+                    locale="en"
+                    width={"100%"}
                 />
             </div>
 

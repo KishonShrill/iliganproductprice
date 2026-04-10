@@ -60,15 +60,15 @@ const Footer = () => {
             { name: 'Developer', href: 'https://chriscent.is-a.dev/' },
         ],
         resources: [
-            { name: 'Help Center', href: 'https://github.com/KishonShrill/BudgetBuddy-IliganCity/discussions' },
-            { name: 'Budgeting Tips', href: '#' },
-            { name: 'Community', href: '#' },
-            { name: 'Blog', href: '#' }
+            { name: 'Help Center', href: 'https://github.com/KishonShrill/BudgetBuddy-IliganCity/discussions', disabled: true },
+            { name: 'Budgeting Tips', href: '#', disabled: true },
+            { name: 'Community', href: '#', disabled: true },
+            { name: 'Blog', href: '#', disabled: true }
         ],
         legal: [
             { name: 'Privacy Policy', href: '/privacy-policy' },
             { name: 'Terms of Service', href: '/terms-of-service' },
-            { name: 'Accessibility', href: '#' }
+            { name: 'Accessibility', href: '#', disabled: true }
         ]
     };
 
@@ -81,12 +81,12 @@ const Footer = () => {
     return (
         <footer className="bg-gray-900 text-white">
             {/* Main Footer */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div className="max-w-7xl mx-auto px-8 py-16">
                 <div className="grid lg:grid-cols-6 gap-8">
                     {/* Brand Section */}
                     <div className="lg:col-span-2">
                         <div className="flex items-center space-x-2 mb-6 group">
-                            <img src="/budgetbuddy.svg" />
+                            <img src="/budgetbuddy-logo.svg" className='w-[38px] h-[38px] rounded-full' />
                             <span className="text-xl font-bold">Budget Buddy</span>
                         </div>
 
@@ -100,7 +100,7 @@ const Footer = () => {
                         </div>
 
                         {/* Social Links */}
-                        <div className="flex space-x-4">
+                        <div className="flex space-x-4 justify-center lg:justify-start">
                             {socialLinks.map((social, index) => (
                                 <Link
                                     key={index}
@@ -116,8 +116,8 @@ const Footer = () => {
                     </div>
 
                     {/* Links Sections */}
-                    <div className="lg:col-span-4 grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
-                        <div>
+                    <div className="lg:col-span-4 grid max-sm:grid-cols-2 grid-cols-3 lg:grid-cols-4 gap-8">
+                        <div className=' text-center lg:text-left'>
                             <h3 className="font-semibold mb-4 text-white">Product</h3>
                             <ul className="space-y-3">
                                 {footerLinks.product.map((link, index) => (
@@ -134,7 +134,7 @@ const Footer = () => {
                             </ul>
                         </div>
 
-                        <div>
+                        <div className=' text-center lg:text-left'>
                             <h3 className="font-semibold mb-4 text-white">Author</h3>
                             <ul className="space-y-3">
                                 {footerLinks.company.map((link, index) => (
@@ -150,14 +150,14 @@ const Footer = () => {
                             </ul>
                         </div>
 
-                        <div>
+                        <div className=' text-center lg:text-left'>
                             <h3 className="font-semibold mb-4 text-white">Resources</h3>
                             <ul className="space-y-3">
                                 {footerLinks.resources.map((link, index) => (
                                     <li key={index}>
                                         <Link
                                             to={link.href}
-                                            className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
+                                            className={`text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block ${link.disabled && 'pointer-events-none text-gray-600'}`}
                                         >
                                             {link.name}
                                         </Link>
@@ -166,14 +166,14 @@ const Footer = () => {
                             </ul>
                         </div>
 
-                        <div>
+                        <div className=' text-center lg:text-left'>
                             <h3 className="font-semibold mb-4 text-white">Legal</h3>
                             <ul className="space-y-3">
                                 {footerLinks.legal.map((link, index) => (
                                     <li key={index}>
                                         <Link
                                             to={link.href}
-                                            className="text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block"
+                                            className={`text-gray-400 hover:text-[#ee4d2d] transition-colors duration-300 hover:translate-x-1 inline-block ${link.disabled && 'pointer-events-none text-gray-600'}`}
                                         >
                                             {link.name}
                                         </Link>
@@ -235,7 +235,7 @@ const Footer = () => {
                     </div>
                 </div>
             </div>
-        </footer>
+        </footer >
     );
 };
 

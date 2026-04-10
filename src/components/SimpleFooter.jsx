@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import PropTypes from "prop-types";
+
 const SimpleFooter = ({ className }) => {
     const navigate = useNavigate();
     return (
@@ -21,4 +23,9 @@ const SimpleFooter = ({ className }) => {
         </footer>
     );
 }
+
+SimpleFooter.propTypes = {
+    className: PropTypes.string
+}
+
 export default SimpleFooter;

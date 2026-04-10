@@ -6,8 +6,8 @@
     "scripts": {
         "dev": "vite --host",
         "build": "vite build",
-        "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-        "lint:fix": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0 --fix",
+        "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
+        "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix",
         "test": "vitest run",
         "preview": "vite preview",
         "prestart": "node server/swagger.js",

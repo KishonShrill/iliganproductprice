@@ -71,14 +71,16 @@ const About = () => {
                         {values.map((value, index) => (
                             <div
                                 key={index}
-                                className="bg-white dark:bg-slate-500 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group cursor-pointer"
+                                className="bg-white dark:bg-slate-500 p-6 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 group select-none"
                             >
-                                <div className={`w-12 h-12 bg-gradient-to-br from-[#ee4d2d] to-[#ff6b47] rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                                    <value.icon className="w-6 h-6 text-white" />
+                                <div className='max-sm:flex max-sm:gap-4 max-sm:mb-2'>
+                                    <div className={`w-12 h-12 max-sm:my-auto bg-gradient-to-br from-[#ee4d2d] to-[#ff6b47] rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                                        <value.icon className="w-6 h-6 text-white" />
+                                    </div>
+                                    <h3 className="max-sm:h-fit max-sm:my-auto text-lg font-bold text-gray-900 dark:text-white sm:mb-2 group-hover:text-[#ee4d2d] transition-colors duration-300">
+                                        {value.title}
+                                    </h3>
                                 </div>
-                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 group-hover:text-[#ee4d2d] transition-colors duration-300">
-                                    {value.title}
-                                </h3>
                                 <p className="text-gray-600 dark:text-slate-300 text-sm leading-relaxed">
                                     {value.description}
                                 </p>

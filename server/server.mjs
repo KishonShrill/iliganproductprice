@@ -12,6 +12,7 @@ import locationRoutes from './routes/locationRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
 import listingRoutes from './routes/listingRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import contributionRoutes from './routes/contributionRoutes.js';
 
 config();
 
@@ -89,6 +90,7 @@ app.use('/api/v1/locations', locationRoutes);
 app.use('/api/v1/categories', categoryRoutes);
 app.use('/api/v1/listings', listingRoutes);
 app.use('/api/v1/users', userRoutes);
+app.use('/api/v1/contributions', contributionRoutes);
 
 // Root Endpoints
 app.get('/', (req, res) => { res.status(200).json({ message: 'Server is healthy...', healthy: true }); });

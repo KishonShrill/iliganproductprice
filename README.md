@@ -1,127 +1,36 @@
 # Budget Buddy Iligan City
 
-![preview image of budget buddy groceries price list](./assets/image-preview.png)
+![preview image of budget buddy groceries price list](./assets/repo-banner.png)
 
-<h1 align=center style="display:flex; align-items: center; justify-content: center; gap: 1rem;">
-  <a align=center href="https://productprice-iligan.vercel.app/">
-    <picture>
-      <img src="./public/budgetbuddy.svg" width="100px" alt="nvm project logo" />
-    </picture>
-  </a>
-  Budget Buddy
-  <img src="https://img.shields.io/badge/license-MIT-green"></img>
-  <img src="https://img.shields.io/badge/hosted%20on-Vercel-black"></img>
-</h1>
 
 **Budget Buddy** is a simple and intuitive web app designed to help users manage their expenses, track their income, and stay on top of their budgets!  
 Built with love using **Express.js**, **React.js**, and hosted on **Vercel**. 🧡
 
 ---
 
-## ✨ Features
+## Why Did I Make This Project?
 
-- 📊 **Have an estimate of your total spending**
-- (more features to be added...)
-
----
-
-
-## 🚀 Tech Stack
-
-| Frontend         | Backend          | Hosting                   |
-| :--------------- | :--------------- | :------------------------ |
-| React.js         | Express.js       | Vercel (Frontend + API)   |
-| HTML5            | Node.js          |                           |
-| CSS3/SCSS        | MongoDB          |                           |
+With the fluctuating prices of everyday goods, planning a grocery run can be stressful. I built Budget Buddy to solve a simple problem: **knowing exactly what you'll spend before you reach the cashier.** Beyond that, this project serves as a way to give back to the local community in Iligan City while pushing my skills in full-stack web development, secure authentication, and modern UI/UX design.
 
 ---
 
-## 🛠️ Installation (Local Development)
+## My Mission
 
-If you want to run Budget Buddy locally, follow these steps:
+> To empower the local community of Iligan City with a free, accessible, and lightning-fast tool to make smart financial decisions, avoid overspending, and shop with absolute confidence.
 
-### 1. Clone the repository
+---
 
-```bash
-git clone https://github.com/KishonShrill/iliganproductprice.git
-cd iliganproductprice
-```
-### 2. Install frontend dependencies
-```bash
-npm install
-```
-### 3. Install backend dependencies - (Necessary only for testing)
-```bash
-cd ../server
-npm install
-```
-### 4. Set up environment variables
-Create a .env file on root folder and inquire repo owner for variables:
-```env
-# CONFIG VARIABLES
-VITE_SCAN=false
+## Features
 
-# CLOUDINARY
-CLOUDINARY_CLOUD_NAME=your_cloud_name_here
-CLOUDINARY_API_KEY=your_api_key_here
-CLOUDINARY_API_SECRET=your_api_secret_here
+**For Users:**
+- 🛒 **Real-Time Cart Estimation:** Add items to your digital cart and watch your total calculate instantly.
+- 🔍 **Fast Product Search:** Quickly look up local grocery items and compare prices.
+- 📱 **Mobile-First Design:** Fully responsive UI, perfect for checking prices on your phone while walking the store aisles.
 
-# MONGODB
-HIDDEN_URI=your_mongodb_uri_here
-```
-and replace the value of `const uri =` to `process.env.HIDDEN_URI`
+**For Contributors/Moderators:**
+- 🔐 **Role-Based Access Control:** Secure user tiers (Admin, Moderator, Regular) to safely manage platform data.
+- ⚡ **Bulk Import Tools:** (Admin) Drag-and-drop JSON file uploads for rapid database updates.
 
-### 5. Run the app
-To test the frontend:
-```bash
-npm run dev
-```
-To test the fullstack:
-```bash
-npm run start
-```
-
-## 🌍 Deployment
-We use Vercel for hosting. Both the frontend and API routes are handled by Vercel.
-
-## 📚 Project Structure
-### Code Structure
-```bash
-budget-buddy/
-├── public/     # Frontend public materials
-│   └── UI/         # UI Icons
-├── server/     # Express backend
-│   └── auth.js     # For adding and editing product items
-│   └── server.js   # Routes and everything backend in one place (will change this soon)
-├── src/
-│   └── assets/  
-│   └── components/ # Frontend Components
-│   └── contexts/  
-│   └── hooks/      # Fetch hooks for backend
-│   └── pages/      # Different file for different pages
-│   └── styles/
-│   └── App.jsx  
-│   └── main.jsx    
-├── README.md
-├── package.json
-└── vercel.json
-```
-### MongoDB Data
-- **product_id** = `<year>-<incrementing-product-number>`
-- **date_updated** = `<year>-<month>-<day>`
-- **location_id** = Location ID points to the `_id` of location table to get the location name.
-- **category_id** = Category ID points to the `_id` of category table to get the location name.
-```json
-{
-  "_id": "<id_is_automatically_added_by_mongodb>",
-  "product_id": "2024-0002",
-  "product_name": "Catsan Light Cat Litter 3L",
-  "category_id": "662a0a4fc8859ec225c0952c",
-  "updated_price": 159.8,
-  "date_updated": "2024-04-10",
-  "location_id": "662666570ef9865c6431dcb1"
-}
-```
 ## 🙋‍♂️ [Contributing](./CONTRIBUTING.md)
 Pull requests are welcome!
 

@@ -5,13 +5,15 @@ const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 const API_VERSION = import.meta.env.VITE_API_VERSION;
 
-const useFetchListings = () => {
+const useFetchListings = (token) => {
     const DATBASE_URL = DEVELOPMENT
         ? `http://${LOCALHOST}:5000/api/${API_VERSION}/listings`
         : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/listings`;
 
     const fetchURL = () => {
-        return axios.get(DATBASE_URL);
+        return axios.get(DATBASE_URL, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
     }
 
     return useQuery(

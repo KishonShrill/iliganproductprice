@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import LoginForm from "../components/LoginForm";
-import RegisterForm from "../components/RegisterForm"; // Make sure to import this!
+import LoginForm from "@/components/auth/LoginForm";
+import RegisterForm from "@/components/auth/RegisterForm"; // Make sure to import this!
 import PropTypes from "prop-types";
 import Cookies from 'universal-cookie';
 import SEO from '../components/SEO';

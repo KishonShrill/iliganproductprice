@@ -36,7 +36,7 @@ const HowItWorks = () => {
                             Works
                         </span>
                     </h2>
-                    <p className="text-xl text-gray-600 dark:text-slate-200 max-w-3xl mx-auto">
+                    <p className="text-lg text-gray-600 dark:text-slate-200 max-w-3xl mx-auto">
                         Get started in three simple steps and take control of your shopping budget today.
                     </p>
                 </div>
@@ -51,7 +51,7 @@ const HowItWorks = () => {
                         </div>
                     </div>
 
-                    <div className="grid lg:grid-cols-3 gap-8 lg:gap-12">
+                    <div className="grid max-sm:grid-cols-1 grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
                         {steps.map((step, index) => (
                             <div key={index} className="relative group">
                                 {/* Step Number */}
@@ -61,15 +61,17 @@ const HowItWorks = () => {
 
                                 {/* Card */}
                                 <div className="bg-white dark:bg-slate-500 p-8 rounded-2xl border border-gray-100 hover:border-[#ee4d2d]/20 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 h-full">
-                                    {/* Icon */}
-                                    <div className={`w-16 h-16 bg-gradient-to-br from-[#ee4d2d] to-[#ff6b47] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                                        <step.icon className="w-8 h-8 text-white" />
-                                    </div>
+                                    <div className='max-sm:flex max-sm:gap-4 max-sm:mb-2'>
+                                        {/* Icon */}
+                                        <div className={`w-16 h-16 max-sm:w-14 max-sm:h-14 max-sm:my-auto bg-gradient-to-br from-[#ee4d2d] to-[#ff6b47] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                                            <step.icon className="w-8 h-8 text-white" />
+                                        </div>
 
-                                    {/* Content */}
-                                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-[#ee4d2d] transition-colors duration-300">
-                                        {step.title}
-                                    </h3>
+                                        {/* Content */}
+                                        <h3 className="max-sm:h-fit max-sm:my-auto text-xl font-bold text-gray-900 dark:text-white sm:mb-3 group-hover:text-[#ee4d2d] transition-colors duration-300">
+                                            {step.title}
+                                        </h3>
+                                    </div>
                                     <p className="text-gray-600 dark:text-slate-300 mb-4 leading-relaxed">
                                         {step.description}
                                     </p>
@@ -90,7 +92,7 @@ const HowItWorks = () => {
                 </div>
 
                 {/* Demo Section */}
-                <div className="mt-20 bg-gradient-to-br from-[#ee4d2d]/5 to-orange-50 dark:from-gray-800 dark:to-gray-800 rounded-3xl p-8 md:p-12">
+                <div className="mt-20 max-sm:mt-15 bg-gradient-to-br from-[#ee4d2d]/5 to-orange-50 dark:from-gray-800 dark:to-gray-800 rounded-3xl p-8 md:p-12">
                     <div className="text-center mb-8">
                         <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-50 mb-4">
                             See It In Action
@@ -114,7 +116,7 @@ const HowItWorks = () => {
                                     { item: 'Ginger', price: 19.99 },
                                     { item: 'Eggplant', price: 34.99 }
                                 ].map((product, idx) => (
-                                    <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-600 rounded-lg">
+                                    <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg select-none">
                                         <span className="text-gray-700 dark:text-gray-50">{product.item}</span>
                                         <span className="font-semibold text-[#ee4d2d]">₱{product.price}</span>
                                     </div>
@@ -136,8 +138,8 @@ const HowItWorks = () => {
                         {/* Benefits */}
                         <div className="space-y-6">
                             {[
-                                { title: 'Never Overspend Again', desc: 'Always have a transparent look of your money' },
-                                { title: 'Smart Recommendations', desc: 'Get suggestions to optimize your cart' },
+                                { title: 'Never Overspend Again', desc: 'Always have a transparent look of your spending' },
+                                { title: 'Online Browsing', desc: 'Browse all options without stepping out of your house' },
                                 { title: 'Multiple Store Support', desc: 'Works with all major online retailers' }
                             ].map((benefit, idx) => (
                                 <div key={idx} className="flex items-start space-x-4 group cursor-default">

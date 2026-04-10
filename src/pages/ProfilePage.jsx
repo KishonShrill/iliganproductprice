@@ -1,4 +1,4 @@
-import { CheckCircle, XCircle, Award, User, ArrowLeft, Clock } from "lucide-react";
+import { CheckCircle, XCircle, Award, User, ArrowLeft, Clock, LogOut } from "lucide-react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
@@ -19,19 +19,32 @@ const ProfilePage = () => {
         }
     }
 
+    const logout = () => {
+        cookies.remove("budgetbuddy_token", { path: "/" });
+        navigate("/");
+        window.location.reload(); // Ensures state clears
+    };
+
+    console.log()
+
     return (
         < div className="mx-auto flex min-h-[calc(100vh-76px)] max-w-4xl flex-col p-4 sm:p-6 lg:p-10" >
-            <div className="flex justify-end">
+            <div className="flex justify-between">
+                <button
+                    onClick={logout}
+                    className="mb-6 flex items-center gap-2 rounded-full px-4 py-2 text-white text-sm font-semibold bg-red-700 hover:bg-red-400"
+                >
+                    <LogOut size={20} />Logout
+                </button>
                 <button
                     onClick={() => navigate(-1)}
                     className="mb-6 flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 shadow-sm transition-colors hover:bg-gray-50"
                 >
-                    <ArrowLeft size={16} />
-                    Back to Home
+                    <ArrowLeft size={16} />Back to Home
                 </button>
             </div>
 
-            <div className="flex flex-col items-center rounded-3xl border border-gray-100 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="flex flex-col items-center rounded-3xl border border-gray-100 bg-white p-6 sm:p-8 shadow-sm relative">
                 {/* Profile Header */}
                 <div className="relative flex h-24 w-24 sm:h-32 sm:w-32 items-center justify-center overflow-hidden rounded-full border-4 border-white bg-orange-100 shadow-xl">
                     {user.profile_picture ? (
@@ -42,7 +55,7 @@ const ProfilePage = () => {
                 </div>
 
                 <h2 className="mt-4 sm:mt-5 text-2xl sm:text-3xl font-black text-gray-900 text-center">{user.username}</h2>
-                <p className="text-sm sm:text-base text-gray-500 text-center">{user.email}</p>
+                <p className="text-sm sm:text-base text-gray-500 text-center">{user.user_email}</p>
                 <span className="mt-3 inline-flex items-center rounded-full bg-blue-50 px-3 py-1 text-[10px] sm:text-xs font-bold uppercase tracking-wider text-blue-600">
                     {user.user_role}
                 </span>

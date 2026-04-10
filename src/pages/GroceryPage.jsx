@@ -149,7 +149,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     }
 
     return (
-        <>
+        <div className="h-[calc(100vh-3.75rem)] overflow-y-auto">
             <div className="z-10 p-2 flex w-full gap-2 items-center justify-center">
                 {/* 🔊 Hidden audio element */}
                 <audio ref={audioRef} src="/sounds/click-pop.mp3" preload="auto" muted={!settings.soundEffects} />
@@ -161,31 +161,29 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                 </Searchbar>
 
             </div>
-            {catalogs.length > 0 && (
-                <nav className="flex overflow-x-auto gap-2 px-5 pb-3 scrollbar-hide">
-                    <Button
-                        variant={selectedCatalog === 'All' ? 'default' : 'outline'}
-                        size="sm"
-                        className={`rounded-full whitespace-nowrap ${selectedCatalog === 'All' ? 'bg-[#ee4d2d] hover:bg-[#d63916]' : 'bg-white'}`}
-                        onClick={() => setSelectedCatalog('All')}
-                    >
-                        All Items
-                    </Button>
+            <nav className="flex overflow-x-auto gap-2 px-5 pb-3 scrollbar-hide">
+                <Button
+                    variant={selectedCatalog === 'All' ? 'default' : 'outline'}
+                    size="sm"
+                    className={`rounded-full whitespace-nowrap ${selectedCatalog === 'All' ? 'bg-[#ee4d2d] hover:bg-[#d63916] text-white' : 'bg-white'}`}
+                    onClick={() => setSelectedCatalog('All')}
+                >
+                    All Items
+                </Button>
 
-                    {catalogs.map(catalog => (
-                        <Button
-                            key={catalog}
-                            variant={selectedCatalog === catalog ? 'default' : 'outline'}
-                            size="sm"
-                            className={`rounded-full whitespace-nowrap ${selectedCatalog === catalog ? 'bg-[#ee4d2d] hover:bg-[#d63916]' : 'bg-white text-gray-700 border-gray-200'}`}
-                            onClick={() => setSelectedCatalog(catalog)}
-                        >
-                            {catalog}
-                        </Button>
-                    ))}
-                </nav>
-            )}
-            <div className="min-h-[calc(100vh-141px-76px-59px-44px)]">
+                {catalogs.map(catalog => (
+                    <Button
+                        key={catalog}
+                        variant={selectedCatalog === catalog ? 'default' : 'outline'}
+                        size="sm"
+                        className={`rounded-full whitespace-nowrap ${selectedCatalog === catalog ? 'bg-[#ee4d2d] hover:bg-[#d63916] text-white' : 'bg-white text-gray-700 border-gray-200'}`}
+                        onClick={() => setSelectedCatalog(catalog)}
+                    >
+                        {catalog}
+                    </Button>
+                ))}
+            </nav>
+            <div className="min-h-[calc(100vh-141px-60px-59px-44px)]">
                 <section className="grocery px-5 max-md:pb-6 h-[calc(100%-72px)] bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
                     <main className={`grid ${!settings.hidePhotos && 'max-sm:grid-cols-1'} grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 md:gap-6`} id="productContainer">
                         <Suspense fallback={(
@@ -288,7 +286,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                 </section >
             </div>
             <SimpleFooter className={"max-md:mb-[4.5rem] bg-gray-900"} />
-        </>
+        </div>
     );
 }
 

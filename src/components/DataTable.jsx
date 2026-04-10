@@ -10,7 +10,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from './ui/select';
-import { Search, Eye, Edit, Trash2, Filter } from 'lucide-react';
+import { Search, Eye, Edit, Trash2, Filter, Send } from 'lucide-react';
 import { cn } from '../helpers/utils';
 
 export default function DataTable({
@@ -20,6 +20,7 @@ export default function DataTable({
     onEdit,
     onDelete,
     onView,
+    onPublish,
 }) {
     const [searchTerm, setSearchTerm] = useState('');
     const [filtersState, setFiltersState] = useState({ status: 'all' });
@@ -80,12 +81,22 @@ export default function DataTable({
         }
         if (key === 'status' || key === 'has_image' || key === 'open_24_hrs') {
             const statusColors = {
+                // POSITIVE
                 active: 'bg-green-100 text-green-800',
                 yes: 'bg-green-100 text-green-800',
+                approved: 'bg-green-100 text-green-800',
+                published: 'bg-green-100 text-green-800',
+
+                // NEGATIVE
                 inactive: 'bg-red-100 text-red-800',
                 no: 'bg-red-100 text-red-800',
+                rejected: 'bg-red-100 text-red-800',
+
+                // WARNING
                 draft: 'bg-yellow-100 text-yellow-800',
-                published: 'bg-green-100 text-green-800',
+                pending: 'bg-yellow-100 text-yellow-800',
+
+                // DEFAULT
                 archived: 'bg-gray-100 text-gray-800',
             };
             return (
@@ -110,7 +121,11 @@ export default function DataTable({
             <Icon className="h-4 w-4" />
         </Button>
     );
-
+    ActionButton.propTypes = {
+        icon: PropTypes.Icon,
+        onClick: PropTypes.func,
+        hoverColor: PropTypes.string
+    }
 
     return (
         <div className="space-y-6 max-md:mb-[4.5rem]">
@@ -170,6 +185,13 @@ export default function DataTable({
                                         {value}
                                     </SelectItem>
                                 ))}
+
+                                <SelectItem
+                                    className="cursor-pointer data-[highlighted]:bg-gray-100 data-[highlighted]:text-black data-[state=checked]:font-semibold"
+                                    value={null}
+                                >
+                                    N/A
+                                </SelectItem>
                             </SelectContent>
                         </Select>
                     ))}
@@ -411,6 +433,17 @@ export default function DataTable({
                                                 View
                                             </Button>
                                         )}
+                                        {onPublish && (
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => onPublish(item)}
+                                                className="h-9 text-green-600 hover:text-green-700 hover:bg-green-50/50"
+                                            >
+                                                <Send className="h-4 w-4 mr-2" />
+                                                Publish
+                                            </Button>
+                                        )}
                                         {onEdit && (
                                             <Button
                                                 variant="ghost"
@@ -526,4 +559,5 @@ DataTable.propTypes = {
     onEdit: PropTypes.func,
     onDelete: PropTypes.func,
     onView: PropTypes.func,
+    onPublish: PropTypes.func,
 }

@@ -26,8 +26,8 @@ export default function LocationPage() {
 
     return (
         <>
-            <div className="min-h-[calc(100vh-141px-76px)]">
-                <section className="mx-auto max-w-6xl p-6 lg:p-10">
+            <div className="min-h-[calc(100vh-141px-3.75rem)]">
+                <section className="mx-auto max-w-6xl py-6 px-4 lg:p-10">
                     <SEO
                         title={"Locations - Budget Buddy"}
                         specificUrl="locations"
@@ -41,7 +41,7 @@ export default function LocationPage() {
                         <p className="mt-3 text-gray-500">Choose a location to start building your budget.</p>
                     </div>
 
-                    <main className='grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4' id="productContainer">
+                    <main className='grid max-md:gap-2 gap-6 grid-cols-2 md:grid-cols-3 lg:grid-cols-4' id="productContainer">
                         <Suspense fallback={(
                             <main className='errorDisplay'>
                                 <h2>Loading<span className="animated-dots"></span></h2>

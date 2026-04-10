@@ -43,7 +43,7 @@ const Features = () => {
 
     return (
         <section id="features" className="py-20 bg-white dark:bg-gray-700">
-            <div className="max-w-7xl mx-auto px-8 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="text-center mb-16 max-md:mb-4">
                     <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -52,38 +52,32 @@ const Features = () => {
                             Smart Shopping
                         </span>
                     </h2>
-                    <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                    <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
                         Everything you need to take control of your shopping budget and make informed purchasing decisions.
                     </p>
                 </div>
 
                 {/* Features Grid */}
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-md:gap-2">
+                <div className="select-none grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {features.map((feature, index) => (
                         <div
                             key={index}
-                            className="group p-8 max-md:pb-4 bg-white dark:bg-slate-500 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-[#ee4d2d]/20 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 cursor-pointer"
+                            className="max-sm:h-fit shadow-2xl group p-8 max-sm:p-6 bg-white dark:bg-slate-500 rounded-2xl border border-gray-100 dark:border-gray-800 hover:border-[#ee4d2d]/20 hover:shadow-xl transition-all duration-500 hover:-translate-y-2"
                         >
-                            {/* Icon */}
-                            <div className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                                <feature.icon className="w-8 h-8 text-white" />
-                            </div>
+                            <div className='max-sm:flex max-sm:gap-4 max-sm:mb-2'>
+                                {/* Icon */}
+                                <div className={`w-16 h-16 max-sm:w-14 max-sm:h-14 max-sm:my-auto bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                                    <feature.icon className="w-8 h-8 text-white" />
+                                </div>
 
-                            {/* Content */}
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3 group-hover:text-[#ee4d2d] transition-colors duration-300">
-                                {feature.title}
-                            </h3>
-                            <p className="text-gray-600 leading-relaxed dark:text-gray-300">
+                                {/* Content */}
+                                <h3 className="max-sm:h-fit max-sm:my-auto text-xl font-bold text-gray-900 dark:text-white sm:mb-3 group-hover:text-[#ee4d2d] transition-colors duration-300">
+                                    {feature.title}
+                                </h3>
+                            </div>
+                            <p className="inter-regular text-sm text-gray-600 leading-relaxed dark:text-gray-300">
                                 {feature.description}
                             </p>
-
-                            {/* Hover Effect Arrow */}
-                            <div className="mt-6 flex items-center text-[#ee4d2d] opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-0 group-hover:translate-x-2">
-                                {/* <span className="text-sm font-medium mr-2">Learn more</span>
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg> */}
-                            </div>
                         </div>
                     ))}
                 </div>
@@ -91,7 +85,7 @@ const Features = () => {
                 {/* Bottom CTA */}
                 <div className="text-center mt-16 max-md:mt-4">
                     <div className="inline-flex items-center bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 dark:from-white dark:to-orange-50 px-6 py-3 rounded-full">
-                        <span className="text-[#ee4d2d] font-medium max-md:text-sm">Ready to start saving money?</span>
+                        <span className="text-[#ee4d2d] font-medium max-md:text-sm select-none">Ready to start saving money?</span>
                         <Link to="/locations" className="ml-4 bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-6 py-2 rounded-full font-semibold max-md:text-sm hover:shadow-lg hover:scale-105 transition-all duration-300">
                             Try Budget Buddy
                         </Link>
