@@ -13,7 +13,7 @@ import { Product } from '../models/models.js'; // adjust path
 const router = express.Router();
 
 
-router.get('/', async (req, res) => {
+router.get('/', user_verify, async (req, res) => {
     // #swagger.tags = ['v1 | Product']
     // #swagger.description = 'Fetch all products.'
     try {

@@ -5,16 +5,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap');
 
-// .inter-<uniquifier> {
-//   font-family: "Inter", sans-serif;
-//   font-optical-sizing: auto;
-//   font-weight: 500;
-//   font-style: normal;
-//   font-variation-settings:
-//     "slnt" 0;
-// }
 @layer base {
   :root {
     --font-s: 0.8rem;
@@ -93,6 +85,42 @@
     display: none;
   }
 
+  .inter-regular {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-variation-settings:
+      "slnt" 0;
+  }
+
+  .inter-semibold {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    font-variation-settings:
+      "slnt" 0;
+  }
+
+  .inter-bold {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-variation-settings:
+      "slnt" 0;
+  }
+
+  .inter-black {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 900;
+    font-style: normal;
+    font-variation-settings:
+      "slnt" 0;
+  }
+
   @media screen and (max-width: 700px) {
     .computer {
       display: none !important;
@@ -142,34 +170,4 @@
   ::-webkit-scrollbar-thumb:hover {
     background: #d63916;
   }
-}
-
-@property --x {
-  syntax: '<percentage>';
-  inherits: false;
-  initial-value: -1%;
-}
-
-@property --y {
-  syntax: '<percentage>';
-  inherits: false;
-  initial-value: 49%;
-}
-
-.background-glow {
-  inset: -1;
-  background:
-    radial-gradient(circle at var(--x, 49%) var(--y, 50%),
-      rgba(254, 255, 255, 0.1),
-      transparent 59%),
-    radial-gradient(circle at 29% 70%,
-      rgba(121, 99, 255, 0.1),
-      transparent 69%),
-    radial-gradient(circle at 69% 30%,
-      rgba(121, 99, 255, 0.08),
-      transparent 69%);
-  animation:
-    pulse-glow 9s ease-in-out infinite,
-    move-light 9s ease-in-out infinite;
-  z-index: -1;
 }

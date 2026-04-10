@@ -3,7 +3,7 @@ import { ShoppingCart, TrendingUp, Shield } from 'lucide-react';
 
 const Hero = () => {
     return (
-        <section className="flex items-center min-h-[calc(100vh-3.75rem)] pt-12 pb-16 bg-gradient-to-br from-gray-50 via-white to-orange-50 dark:from-gray-800 dark:to-gray-800 overflow-hidden">
+        <section className="flex items-center pt-12 pb-16 bg-orange-50 dark:from-gray-800 dark:to-gray-800 overflow-hidden">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid lg:grid-cols-2 gap-12 max-md:gap-6 items-center">
                     {/* Left Content */}
@@ -13,14 +13,14 @@ const Hero = () => {
                             100% Free • Non-Profit Initiative
                         </div>
 
-                        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-gray-50 mb-6 leading-tight">
+                        <h1 className="inter-black text-shadow-xl text-4xl md:text-5xl lg:text-6xl text-gray-900 dark:text-gray-50 mb-6 leading-tight">
                             Shop Smarter,{' '}
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47]">
+                            <span className="inter-black text-transparent bg-clip-text bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47]">
                                 Spend Less
                             </span>
                         </h1>
 
-                        <p className="text-xl max-md:text-base text-gray-600 dark:text-slate-100 mb-8 max-w-2xl mx-auto lg:mx-0">
+                        <p className="text-lg max-md:text-base text-gray-600 dark:text-slate-100 mb-8 max-w-2xl mx-auto lg:mx-0">
                             Track your shopping cart total in real-time before checkout. Budget Buddy helps you make informed decisions and stick to your budget effortlessly.
                         </p>
 
@@ -37,18 +37,18 @@ const Hero = () => {
 
                         {/* Stats */}
                         {/* <div className="grid grid-cols-3 gap-8 mt-12 pt-8 border-t border-gray-200">
-                          {[
-                            { number: '50K+', label: 'Happy Users' },
-                            { number: '$2M+', label: 'Money Saved' },
-                            { number: '4.9★', label: 'User Rating' }
-                          ].map((stat, index) => (
-                            <div key={index} className="text-center group cursor-pointer">
-                              <div className="text-2xl font-bold text-gray-900 group-hover:text-[#ee4d2d] transition-colors duration-300">
-                                {stat.number}
-                              </div>
-                              <div className="text-sm text-gray-600 mt-1">{stat.label}</div>
-                            </div>
-                          ))}
+                            {[
+                                { number: '50K+', label: 'Happy Users' },
+                                { number: '$2M+', label: 'Money Saved' },
+                                { number: '4.9★', label: 'User Rating' }
+                            ].map((stat, index) => (
+                                <div key={index} className="text-center group cursor-pointer">
+                                    <div className="text-2xl font-bold text-gray-900 group-hover:text-[#ee4d2d] transition-colors duration-300">
+                                        {stat.number}
+                                    </div>
+                                    <div className="text-sm text-gray-600 mt-1">{stat.label}</div>
+                                </div>
+                            ))}
                         </div> */}
                     </div>
 

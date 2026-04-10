@@ -1,12 +1,12 @@
 import express from 'express';
 import { ResultAsync, errAsync } from 'neverthrow';
 import { PendingListing, User } from '../models/models.js'; // adjust path
-import { user_verify } from '../helpers/auth.js';
+import { isOneWeekOld, user_verify } from '../helpers/auth.js';
 
 const router = express.Router();
 
 
-router.get('/pending', user_verify, async (req, res) => {
+router.get('/pending', user_verify, isOneWeekOld, async (req, res) => {
     // #swagger.tags = ['v1 | Contribution']
     // #swagger.description = '.'
 
@@ -15,10 +15,10 @@ router.get('/pending', user_verify, async (req, res) => {
         //console.log(currentUserId)
 
         // 1. Fetch the user to get their actual daily vote count
-        const user = await User.findById(currentUserId).select('daily_votes daily_submissions last_vote_date last_submission_date').lean();
+        const user = await User.findById(currentUserId).select('daily_votes daily_submissions last_vote_date last_submission_date max_daily_votes max_daily_submissions').lean();
 
-        console.log(`User: ${user.daily_votes} - ${user.last_vote_date}`)
-        console.log(`User: ${user.daily_submissions} - ${user.last_submission_date}`)
+        //console.log(`User: ${user.daily_votes} - ${user.last_vote_date}`)
+        //console.log(`User: ${user.daily_submissions} - ${user.last_submission_date}`)
         let realVotesToday = 0;
         let realSubmissionsToday = 0;
         if (user) {
@@ -33,18 +33,16 @@ router.get('/pending', user_verify, async (req, res) => {
             }
         }
 
-        // 1. Fetch only pending items. .lean() makes it plain JS objects (super fast)
         const pendingItems = await PendingListing.find({ status: 'pending' })
             .sort({ createdAt: -1 })
             .lean();
 
         //return console.log(pendingItems)
 
-        // 2. Format the data for the frontend
         const sanitizedItems = pendingItems.map(item => {
             // Check if the current user is inside this item's voters array
             const userVoteObj = item.voters.find(v => {
-                //console.log(item)
+                console.log(item)
                 console.log(`Boolean ${v.userId.toString() === currentUserId} `)
                 return v.userId.toString() === currentUserId
             });
@@ -58,6 +56,7 @@ router.get('/pending', user_verify, async (req, res) => {
                 category: item.category,
                 upvotes: item.upvoteCount,
                 downvotes: item.downvoteCount,
+                status: item.status,
                 // Add a simple 'myVote' flag! (Will be 'up', 'down', or null)
                 myVote: userVoteObj ? true : null
             };
@@ -65,13 +64,20 @@ router.get('/pending', user_verify, async (req, res) => {
             return cleanItem;
         });
 
-        res.status(200).json({ pending: sanitizedItems, votesToday: realVotesToday, submissionsToday: realSubmissionsToday });
+        res.status(200).json({
+            pending: sanitizedItems,
+            votesToday: realVotesToday,
+            submissionsToday: realSubmissionsToday,
+            maxVotes: user.max_daily_votes,
+            maxSubmissions: user.max_daily_submissions
+        });
     } catch (error) {
+        console.log(error)
         res.status(500).json({ message: "Error fetching contributions" });
     }
 });
 
-router.post('/', user_verify, async (req, res) => {
+router.post('/', user_verify, isOneWeekOld, async (req, res) => {
     // #swagger.tags = ['v1 | Contribution']
     // #swagger.description = 'Submit a new product price for community review.'
 
@@ -93,7 +99,7 @@ router.post('/', user_verify, async (req, res) => {
     }
 
     // 3. ENFORCE THE LIMIT
-    if (user.daily_submissions >= 1) {
+    if (user.daily_submissions >= user.max_daily_submissions) {
         return res.status(429).json({ message: "You have reached your limit of submissions for today. Come back tomorrow!" });
     }
 
@@ -114,7 +120,10 @@ router.post('/', user_verify, async (req, res) => {
                 location,
                 category,
                 listType: listType || 'Groceries',
-                submittedBy: currentUserId,
+                submittedBy: {
+                    user_id: currentUserId,
+                    user_name: user.username,
+                },
                 voters: [],
                 upvoteCount: 0,
                 downvoteCount: 0,
@@ -157,7 +166,7 @@ router.post('/', user_verify, async (req, res) => {
 // ==========================================
 // POST /api/v1/contributions/:id/vote - Cast a vote
 // ==========================================
-router.post('/:id/vote', user_verify, async (req, res) => {
+router.post('/:id/vote', user_verify, isOneWeekOld, async (req, res) => {
     // #swagger.tags = ['v1 | Contribution']
     // #swagger.description = 'Vote a product up or down. Processes approval at 10 votes.'
 
@@ -179,7 +188,7 @@ router.post('/:id/vote', user_verify, async (req, res) => {
     }
 
     // 3. ENFORCE THE LIMIT
-    if (user.daily_votes >= 5) {
+    if (user.daily_votes >= user.max_daily_votes) {
         return res.status(429).json({ message: "You have reached your limit of 5 votes for today. Come back tomorrow!" });
     }
 
@@ -193,7 +202,7 @@ router.post('/:id/vote', user_verify, async (req, res) => {
                 $push: { voters: { userId: currentUserId, voteType: voteType } },
                 $inc: { [voteField]: 1 }
             },
-            { new: true }
+            { returnDocument: 'after' }
         ).exec(),
         (error) => new Error(`DB_UPDATE_ERROR: ${error.message} `)
     )
@@ -210,20 +219,20 @@ router.post('/:id/vote', user_verify, async (req, res) => {
             if (totalVotes >= 10) {
                 const approvalRating = updatedItem.upvoteCount / totalVotes;
 
-                if (approvalRating >= 0.75) {
+                if (approvalRating >= 0.5) {
                     updatedItem.status = 'approved';
-                    // Move item to the official Product database
-                    const newOfficialProduct = new Product({
-                        product_name: updatedItem.productName,
-                        price: updatedItem.price,
-                        location: updatedItem.location,
-                        category: updatedItem.category,
-                        listType: updatedItem.listType
-                    });
+                    //TODO: Move item to the official Product database
+                    //const newOfficialProduct = new Product({
+                    //    product_name: updatedItem.productName,
+                    //    price: updatedItem.price,
+                    //    location: updatedItem.location,
+                    //    category: updatedItem.category,
+                    //    listType: updatedItem.listType
+                    //});
 
-                    // Save Item, New Product, AND the updated User quota
+                    //TODO: Save Item, New Product, AND the updated User quota
                     return ResultAsync.fromPromise(
-                        Promise.all([updatedItem.save(), newOfficialProduct.save(), user.save()]),
+                        Promise.all([updatedItem.save(), user.save()]),
                         (error) => new Error(`MIGRATION_ERROR: ${error.message} `)
                     ).map(() => "APPROVED_AND_MIGRATED");
 

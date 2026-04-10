@@ -26,20 +26,21 @@ const URL = DEVELOPMENT
 const cookies = new Cookies();
 
 export default function SubmitContribution() {
+    const token = cookies.get("budgetbuddy_token");
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { addToast } = useOutletContext();
 
     // Fetch data using your existing hooks
-    const { data: fetchedProducts = [], isLoading: productsLoading } = useFetchProducts()
-    const { data: fetchedLocations = [], isLoading: locationsLoading } = useFetchLocations();
-    const { data: fetchedCategories = [], isLoading: categoriesLoading } = useFetchCategories();
+    const { data: fetchedProducts = [], isLoading: productsLoading } = useFetchProducts(token)
+    const { data: fetchedLocations = [], isLoading: locationsLoading } = useFetchLocations(token);
+    const { data: fetchedCategories = [], isLoading: categoriesLoading } = useFetchCategories(token);
 
     const [formData, setFormData] = useState({
         name: '',
         price: '',
-        location: '',
-        category: ''
+        locationId: '',
+        categoryId: ''
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -51,8 +52,6 @@ export default function SubmitContribution() {
     }, [fetchedProducts, activeList]);
 
     // --- THE GROUPING LOGIC ---
-    // This takes your flat array of categories and groups them by "catalog"
-    // e.g., groups all "Milk" and "Cheese" under a "Dairy" header.
     const groupedCategories = useMemo(() => {
         if (!fetchedCategories.length) return { Groceries: [], Cuisines: [] };
 
@@ -105,23 +104,34 @@ export default function SubmitContribution() {
         e.preventDefault();
         setIsSubmitting(true);
 
-        if (formData.category === '') {
+        if (formData.categoryId === '') {
             addToast("Error", "Please pick a category...")
             setIsSubmitting(false)
             return;
         }
-        if (formData.location === '') {
+        if (formData.locationId === '') {
             addToast("Error", "Please pick a location...")
             setIsSubmitting(false)
             return;
         }
 
+        const selectedCategory = fetchedCategories.find(c => c._id === formData.categoryId);
+        const selectedLocation = fetchedLocations.find(c => c._id === formData.locationId);
+
         // Construct the payload matching your backend schema
         const payload = {
             productName: formData.name,
             price: Number(formData.price),
-            category: formData.category,
-            location: formData.location,
+            category: {
+                _id: selectedCategory._id,
+                catalog: selectedCategory.category_catalog,
+                list: selectedCategory.category_list,
+                name: selectedCategory.category_name,
+            },
+            location: {
+                _id: selectedLocation._id,
+                name: selectedLocation.location_name,
+            },
             listType: activeList // Distinguishes between Groceries vs Cuisines
         };
 
@@ -164,7 +174,7 @@ export default function SubmitContribution() {
                 <ArrowLeft className="w-4 h-4 mr-2" /> Back to Hub
             </Button>
 
-            <Card className="border-gray-200 shadow-sm overflow-hidden">
+            <Card className="border-gray-200 shadow-sm overflow-hidden bg-white">
                 <CardHeader className="bg-gradient-to-r from-orange-500 to-[#ff6b47] text-white">
                     <CardTitle className="text-xl">Submit a New Price</CardTitle>
                     <p className="text-orange-50 text-sm mt-1 opacity-90">
@@ -185,7 +195,7 @@ export default function SubmitContribution() {
                                 placeholder="e.g. Joy Dishwashing Liquid 250ml"
                                 value={formData.name}
                                 onChange={handleNameChange} // Using the smart handler!
-                                className="focus-visible:ring-orange-500"
+                                className="focus-visible:ring-orange-500 bg-white"
                             />
                             <CustomDatalist id="existingProducts" items={filteredProducts} inputValue={formData.name} />
                         </div>
@@ -196,7 +206,7 @@ export default function SubmitContribution() {
                                 type="button"
                                 variant={activeList === 'Groceries' ? 'default' : 'outline'}
                                 onClick={() => setActiveList('Groceries')}
-                                className={`${activeList === 'Groceries' ? 'bg-orange-500 text-white' : 'hover:bg-orange-100'} !flex-shrink w-full flex items-center justify-center`}
+                                className={`${activeList === 'Groceries' ? 'bg-orange-500 text-white' : 'hover:bg-orange-100 bg-white'} !flex-shrink w-full flex items-center justify-center`}
                             >
                                 <Store className="w-4 h-4 mr-2" />
                                 Groceries
@@ -205,7 +215,7 @@ export default function SubmitContribution() {
                                 type="button"
                                 variant={activeList === 'Cuisines' ? 'default' : 'outline'}
                                 onClick={() => setActiveList('Cuisines')}
-                                className={`${activeList === 'Cuisines' ? 'bg-orange-500 text-white' : 'hover:bg-orange-100'} !flex-shrink w-full flex items-center justify-center`}
+                                className={`${activeList === 'Cuisines' ? 'bg-orange-500 text-white' : 'hover:bg-orange-100 bg-white'} !flex-shrink w-full flex items-center justify-center`}
                             >
                                 <Utensils className="w-4 h-4 mr-2" />
                                 Cuisines
@@ -226,7 +236,7 @@ export default function SubmitContribution() {
                                     placeholder="0.00"
                                     value={formData.price}
                                     onChange={(e) => handleInputChange('price', e.target.value)}
-                                    className="focus-visible:ring-orange-500"
+                                    className="focus-visible:ring-orange-500 bg-white"
                                 />
                             </div>
 
@@ -234,8 +244,8 @@ export default function SubmitContribution() {
                                 <Label htmlFor="category">Category <span className="text-red-500">*</span></Label>
                                 <Select
                                     required
-                                    value={formData.category}
-                                    onValueChange={(val) => handleInputChange('category', val)}
+                                    value={formData.categoryId}
+                                    onValueChange={(val) => handleInputChange('categoryId', val)}
                                 >
                                     <SelectTrigger className="focus:ring-orange-500 bg-white">
                                         <SelectValue placeholder="Select category" />
@@ -253,7 +263,7 @@ export default function SubmitContribution() {
                                                     {group.items.map((cat, index) => (
                                                         <SelectItem
                                                             key={`${cat._id}${index}`}
-                                                            value={cat.category_name || cat.name} // Adjust this depending on what your DB requires
+                                                            value={cat._id} // Adjust this depending on what your DB requires
                                                             className="pl-4 bg-white hover:bg-gray-100 cursor-pointer"
                                                         >
                                                             {cat.category_name || cat.name}
@@ -276,8 +286,8 @@ export default function SubmitContribution() {
                             <Label htmlFor="location">Store Location <span className="text-red-500">*</span></Label>
                             <Select
                                 required
-                                value={formData.location}
-                                onValueChange={(val) => handleInputChange('location', val)}
+                                value={formData.locationId}
+                                onValueChange={(val) => handleInputChange('locationId', val)}
                             >
                                 <SelectTrigger className="focus:ring-orange-500 bg-white">
                                     <SelectValue placeholder="Select a store location" />
@@ -286,7 +296,7 @@ export default function SubmitContribution() {
                                     {fetchedLocations.map((loc) => (
                                         <SelectItem
                                             key={loc._id || loc.id}
-                                            value={loc.location_name}
+                                            value={loc._id}
                                             className="hover:bg-gray-100 cursor-pointer"
                                         >
                                             {loc.location_name}

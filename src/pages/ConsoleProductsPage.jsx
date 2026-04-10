@@ -27,10 +27,10 @@ const cookies = new Cookies();
 export default function Products({ debugMode }) {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
-    const { addToast } = useOutletContext();
-    const { isLoading, data } = useFetchProducts()
-
     const token = cookies.get("budgetbuddy_token");
+    const { addToast } = useOutletContext();
+    const { isLoading, data } = useFetchProducts(token)
+
     const decodedUser = token ? jwtDecode(token) : null;
 
     const normalizedData = data?.map(item => ({

@@ -60,10 +60,19 @@ router.post("/register", async (req, res) => {
                 role: "regular",
                 profile_picture: picture,
                 username: name,
+                account_created: new Date(),
                 daily_votes: 0,
                 daily_submissions: 0,
                 last_vote_date: null,
-                last_submission_date: null
+                last_submission_date: null,
+                max_daily_votes: 5,
+                max_daily_submissions: 1,
+                stats: {
+                    points: 0,
+                    approved: 0,
+                    pending: 0,
+                    rejected: 0
+                }
             }));
         }
 
@@ -78,10 +87,13 @@ router.post("/register", async (req, res) => {
             password: hashedPassword,
             role: "regular",
             username: username,
+            account_created: new Date(),
             daily_votes: 0,
             daily_submissions: 0,
             last_vote_date: null,
             last_submission_date: null,
+            max_daily_votes: 5,
+            max_daily_submissions: 1,
             stats: {
                 points: 0,
                 approved: 0,

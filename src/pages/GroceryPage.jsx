@@ -149,7 +149,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     }
 
     return (
-        <>
+        <div className="h-[calc(100vh-3.75rem)] overflow-y-auto">
             <div className="z-10 p-2 flex w-full gap-2 items-center justify-center">
                 {/* 🔊 Hidden audio element */}
                 <audio ref={audioRef} src="/sounds/click-pop.mp3" preload="auto" muted={!settings.soundEffects} />
@@ -286,7 +286,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                 </section >
             </div>
             <SimpleFooter className={"max-md:mb-[4.5rem] bg-gray-900"} />
-        </>
+        </div>
     );
 }
 

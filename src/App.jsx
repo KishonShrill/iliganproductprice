@@ -36,6 +36,7 @@ const ConsoleLayout = lazy(() => import("./components/layouts/ConsoleLayout.jsx"
 const ConsoleDashboardPage = lazy(() => import("./pages/ConsoleDashboard.jsx"))
 const ConsoleProductsPage = lazy(() => import("./pages/ConsoleProductsPage.jsx"))
 const ConsoleListingsPage = lazy(() => import("./pages/ConsoleListingsPage.jsx"))
+const ConsolePendingListingsPage = lazy(() => import("./pages/ConsolePendingListing.jsx"))
 const ConsoleLocationsPage = lazy(() => import("./pages/ConsoleLocationsPage.jsx"))
 const ConsoleUsersPage = lazy(() => import("./pages/ConsoleUsersPage.jsx"))
 const ProductForm = lazy(() => import('@/pages/console/ConsoleProductForm.jsx'));
@@ -98,6 +99,7 @@ function App() {
                                         <Route path="products" element={<ConsoleProductsPage debugMode={DEVELOPMENT} />} />
                                         <Route path="locations" element={<ConsoleLocationsPage debugMode={DEVELOPMENT} />} />
                                         <Route path="listings" element={<ConsoleListingsPage debugMode={DEVELOPMENT} />} />
+                                        <Route path="pendings" element={<ConsolePendingListingsPage debugMode={DEVELOPMENT} />} />
                                         <Route path="users" element={<ConsoleUsersPage debugMode={DEVELOPMENT} />} />
                                         <Route path="products/*" element={<ProductForm debugMode={DEVELOPMENT} />} />
                                         <Route path="listings/*" element={<ListingForm debugMode={DEVELOPMENT} />} />

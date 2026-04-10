@@ -29,10 +29,10 @@ const ROLE_WEIGHTS = {
 
 export default function ConsoleUsersPage() {
     const cookie = cookies.get("budgetbuddy_token")
-    const user = jwtDecode(cookie)
+    const currentUser = jwtDecode(cookie)
     const queryClient = useQueryClient();
     const { addToast } = useOutletContext();
-
+    console.log(currentUser)
     // --- NEW: SEARCH & PAGINATION STATE ---
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -107,14 +107,14 @@ export default function ConsoleUsersPage() {
 
     // --- STRICT RBAC LOGIC HELPERS ---
     const canManageUser = (targetRole, targetId) => {
-        if (targetId === user.user_id) return false; // Can't change your own role
-        return ROLE_WEIGHTS[user.user_role] > ROLE_WEIGHTS[targetRole];
+        if (targetId === currentUser.user_id) return false; // Can't change your own role
+        return ROLE_WEIGHTS[currentUser.user_role] > ROLE_WEIGHTS[targetRole];
     };
 
     const getAssignableRoles = () => {
         // You can only assign roles that have a strictly LOWER weight than your own
         return Object.keys(ROLE_WEIGHTS).filter(
-            (role) => ROLE_WEIGHTS[role] < ROLE_WEIGHTS[user.user_role]
+            (role) => ROLE_WEIGHTS[role] < ROLE_WEIGHTS[currentUser.user_role]
         );
     };
 
@@ -168,6 +168,7 @@ export default function ConsoleUsersPage() {
                     <div className="divide-y divide-gray-100">
                         {currentUsers.map((user) => {
                             const isManageable = canManageUser(user.role, user._id);
+                            console.log(user)
 
                             return (
                                 <div key={user._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-gray-50/50 transition-colors">
@@ -224,7 +225,7 @@ export default function ConsoleUsersPage() {
                                             variant="ghost"
                                             size="icon"
                                             className="text-gray-400 hover:text-red-600 hover:bg-red-50 flex-shrink-0 transition-colors"
-                                            disabled={deleteUserMutation.isLoading || user.role === 'admin' && user._id !== user.user_id}
+                                            disabled={deleteUserMutation.isLoading || ROLE_WEIGHTS[user.role] >= ROLE_WEIGHTS[currentUser.user_role]}
                                             onClick={() => {
                                                 if (window.confirm(`WARNING: Are you sure you want to permanently delete ${user.username}? This action cannot be undone.`)) {
                                                     deleteUserMutation.mutate(user._id);

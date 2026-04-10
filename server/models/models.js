@@ -4,13 +4,6 @@ import mongoose from 'mongoose';
 
 config();
 
-// MongoDB Atlas URI
-const uri = process.env.HIDDEN_URI;
-
-mongoose.connect(uri)
-    .then(() => { console.log('✅ Connected to MongoDB'); })
-    .catch(err => { console.error('❌ MongoDB connection error:', err.message); });
-
 
 // User Schema
 const authenticationSchema = new mongoose.Schema({
@@ -29,10 +22,13 @@ const authenticationSchema = new mongoose.Schema({
         enum: ["admin", "moderator", "regular"],
     },
     profile_picture: { type: String },
+    account_created: { type: Date },
     daily_votes: { type: Number, default: 0 },
     daily_submissions: { type: Number, default: 0 },
     last_vote_date: { type: Date, default: null },
     last_submission_date: { type: Date, default: null },
+    max_daily_votes: { type: Number, default: 5 },
+    max_daily_submissions: { type: Number, default: 1 },
     stats: {
         points: { type: Number, default: 0 },
         approved: { type: Number, default: 0 },
@@ -111,9 +107,20 @@ const categorySchema = new mongoose.Schema({
 const pendingListingSchema = new mongoose.Schema({
     productName: { type: String, required: true },
     price: { type: Number, required: true },
-    location: { type: String, required: true },
-    category: { type: String, required: true },
-    submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    location: {
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Location', required: true },
+        name: String,
+    },
+    category: {
+        _id: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
+        list: String,
+        name: String,
+        catalog: String,
+    },
+    submittedBy: [{
+        user_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+        user_name: { type: String, required: true },
+    }],
 
     // Instead of just a number, we track the actual voters!
     voters: [{

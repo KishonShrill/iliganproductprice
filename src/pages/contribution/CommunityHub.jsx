@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { ThumbsUp, ThumbsDown, Plus, Clock, Store, Tag, PackageOpen, CheckCircle2 } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { ThumbsUp, ThumbsDown, Plus, Clock, Store, Tag, PackageOpen, CheckCircle2, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 import useFetchPendingContributions from '@/hooks/useFetchPendingContributions';
@@ -8,10 +8,12 @@ import useVoteContribution from '@/hooks/useVoteContribution';
 
 
 export default function CommunityHub() {
+    const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('to_review');
+    const [voting, isVoting] = useState(false);
 
-    const { data = { pending: [], votesToday: 0, submissionsToday: 0 }, isLoading } = useFetchPendingContributions();
-    const voteMutation = useVoteContribution();
+    const { data = { pending: [], votesToday: 0, submissionsToday: 0 }, isLoading, isError, error } = useFetchPendingContributions();
+    const { isLoading: voteLoading, mutate: submitVote } = useVoteContribution();
 
     const pendingItems = data.pending
 
@@ -32,17 +34,25 @@ export default function CommunityHub() {
             alert("You've reached your 5 votes for today! Come back tomorrow.");
             return;
         }
-        voteMutation.mutate({ id, voteType: type });
+        submitVote({ id, voteType: type });
     }
 
-    if (isLoading) return (
+    if (isError) return (
+        <div className='errorDisplay px-4'>
+            <h2 className="text-lg inter-regular">Forbidden!</h2>
+            <p>{error.message}</p>
+            <button className='mx-auto mt-4 py-2 px-8 rounded-md bg-orange-500 text-white font-semibold' onClick={() => navigate('/')}>Go back?</button>
+        </div>
+    );
+
+    if (isLoading && !isError) return (
         <div className='errorDisplay'>
-            <h2 className="text-lg">Loading community hub...<span className="animated-dots"></span></h2>
+            <h2 className="text-lg inter-regular">Loading community hub<span className="animated-dots"></span></h2>
         </div>
     );
 
 
-    const renderCard = (item, isVotedTab) => (
+    const renderCard = (item, isVotedTab, isVoting) => (
         <div key={item.id} className={`bg-white border rounded-xl p-5 shadow-sm relative overflow-hidden ${isVotedTab ? 'border-gray-200 opacity-80' : 'border-yellow-200'}`}>
 
             <div className={`absolute top-0 right-0 text-xs font-bold px-3 py-1 rounded-bl-lg flex items-center ${isVotedTab ? 'bg-gray-100 text-gray-500' : 'bg-yellow-100 text-yellow-700'}`}>
@@ -53,8 +63,8 @@ export default function CommunityHub() {
             <h3 className="font-bold text-lg text-gray-900 pr-16 leading-tight">{item.name}</h3>
 
             <div className="flex flex-col gap-2 mt-4 text-sm text-gray-600">
-                <span className="flex items-center"><Store className="w-4 h-4 mr-2 text-gray-400" /> {item.location}</span>
-                <span className="flex items-center"><Tag className="w-4 h-4 mr-2 text-gray-400" /> {item.category}</span>
+                <span className="flex items-center"><Store className="w-4 h-4 mr-2 text-gray-400" /> {item.location.name}</span>
+                <span className="flex items-center"><Tag className="w-4 h-4 mr-2 text-gray-400" /> {`${item.category.list} - ${item.category.catalog}`}</span>
             </div>
 
             <div className="mt-4 pt-4 border-t border-gray-100 flex items-end justify-between">
@@ -66,17 +76,19 @@ export default function CommunityHub() {
                 <div className="flex gap-2">
                     <button
                         onClick={() => !isVotedTab && handleVote(item.id, 'up')}
-                        disabled={isVotedTab || voteMutation.isLoading}
+                        disabled={isVotedTab || isVoting} // Disable while loading
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${item.myVote === 'up' ? 'bg-green-500 text-white' : 'bg-green-50 text-green-700 hover:bg-green-100 disabled:opacity-50'}`}
                     >
-                        <ThumbsUp className="w-4 h-4" /> <span className="text-sm font-bold">{item.upvotes}</span>
+                        {isVoting && !isVotedTab ? <Loader2 className="w-4 h-4 animate-spin" /> : <ThumbsUp className="w-4 h-4" />}
+                        <span className="text-sm font-bold">{item.upvotes}</span>
                     </button>
                     <button
                         onClick={() => !isVotedTab && handleVote(item.id, 'down')}
-                        disabled={isVotedTab || voteMutation.isLoading}
+                        disabled={isVotedTab || isVoting} // Disable while loading
                         className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md transition-colors ${item.myVote === 'down' ? 'bg-red-500 text-white' : 'bg-red-50 text-red-700 hover:bg-red-100 disabled:opacity-50'}`}
                     >
-                        <ThumbsDown className="w-4 h-4" /> <span className="text-sm font-bold">{item.downvotes}</span>
+                        {isVoting && !isVotedTab ? <Loader2 className="w-4 h-4 animate-spin" /> : <ThumbsDown className="w-4 h-4" />}
+                        <span className="text-sm font-bold">{item.downvotes}</span>
                     </button>
                 </div>
             </div>
@@ -169,8 +181,8 @@ export default function CommunityHub() {
                     </div>
                 ) : (
                     /* --- GRID OF ITEMS (Using activeList and renderCard) --- */
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                        {activeList.map(item => renderCard(item, activeTab === 'voted'))}
+                    <div className={`grid gap-4 md:grid-cols-2 lg:grid-cols-3 transition-all duration-200 ${voteLoading ? 'opacity-60 pointer-events-none' : ''}`}>
+                        {activeList.map(item => renderCard(item, activeTab === 'voted', voteLoading))}
                     </div>
                 )
             }

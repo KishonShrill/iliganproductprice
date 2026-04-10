@@ -39,9 +39,25 @@ export const requireRole = (minimumRequiredRole) => {
         if (userLevel >= requiredLevel) {
             next(); // They have the power! Let them through.
         } else {
-            res.status(403).json({
+            return res.status(403).json({
                 message: `Forbidden: You need at least '${minimumRequiredRole}' privileges to do this.`
             });
         }
     };
 };
+
+export const isOneWeekOld = (request, response, next) => {
+    const createdDate = new Date(request.user.created_date) || 0;
+    const now = new Date();
+    const diffMs = now - createdDate; // difference in milliseconds
+    const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+
+    if (ROLE_HIERARCHY[request.user.user_role] > 1) return next();
+    if (~~diffMs < oneWeekMs) {
+        return response.status(403).json({
+            message: `Your account is NOT 1 week old. Please try again next time...`
+        })
+    } else {
+        next();
+    };
+}

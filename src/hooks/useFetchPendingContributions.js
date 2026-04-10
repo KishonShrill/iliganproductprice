@@ -26,6 +26,7 @@ const useFetchPendingContributions = () => {
             cacheTime: 1000 * 60 * 5, // int - keeps the data longer (5 mins)
             staleTime: 1000 * 60 * 2, // staleTime: int - default is 0 sec (2 mins)
             refetchOnWindowFocus: false, // boolean or 'always'
+            retry: false,
         }
     );
 };

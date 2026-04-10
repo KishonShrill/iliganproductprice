@@ -35,15 +35,15 @@ const cookies = new Cookies();
 
 export default function Listings() {
     const navigate = useNavigate();
-    const { addToast } = useOutletContext();
     const queryClient = useQueryClient();
+    const token = cookies.get("budgetbuddy_token");
+    const { addToast } = useOutletContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
-    const { isLoading, data } = useFetchListings()
-    const { data: productsData, isLoading: productsLoading } = useFetchProducts();
+    const { isLoading, data } = useFetchListings(token)
+    const { data: productsData, isLoading: productsLoading } = useFetchProducts(token);
 
-    const token = cookies.get("budgetbuddy_token");
     const decodedUser = token ? jwtDecode(token) : null;
 
     const normalizedData = data?.map(item => ({
