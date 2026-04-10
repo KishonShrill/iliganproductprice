@@ -18,13 +18,27 @@ const cookies = new Cookies();
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
 const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 const API_VERSION = import.meta.env.VITE_API_VERSION;
+const saveListingUrl = DEVELOPMENT
+    ? `http://${LOCALHOST}:5000/api/${API_VERSION}/listings`
+    : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/listings`;
 
 export default function ListingForm() {
     const navigate = useNavigate();
     const location = useLocation();
     const queryClient = useQueryClient();
     const { addToast } = useOutletContext();
+
     const populated = !!location.state?.populated;
+    const baseProduct = location.state?.baseProduct;
+    const isEdit = !!location.state?.isEdit;
+    const listingId = location.state?.listingId;
+    const [loading, setLoading] = useState(false);
+    const [initialLoading, setInitialLoading] = useState(true);
+    const [formData, setFormData] = useState({
+        updated_price: '',
+        locationId: ''
+    });
+
     useEffect(() => {
         if (!populated) {
             addToast("Forbidden!", `Please access this page through console products page.`);
@@ -32,41 +46,8 @@ export default function ListingForm() {
         }
 
     }, [location, navigate]);
-    if (!populated) return null;
 
-    // We need the product ID to know what we are listing!
-    const baseProduct = location.state?.baseProduct;
-
-    // If you are editing an existing listing, you'd pass listingId
-    const isEdit = !!location.state?.isEdit;
-    const listingId = location.state?.listingId;
-
-    // Fetch all necessary reference data
     const { data: fetchedLocations = [], isLoading: locationsLoading } = useFetchLocations();
-
-    const [formData, setFormData] = useState({
-        updated_price: '',
-        locationId: ''
-    });
-
-    const [loading, setLoading] = useState(false);
-    const [initialLoading, setInitialLoading] = useState(true);
-
-    let saveListingUrl = DEVELOPMENT
-        ? `http://${LOCALHOST}:5000/api/${API_VERSION}/listings`
-        : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/listings`;
-
-    useEffect(() => {
-        if (!baseProduct) {
-            addToast("Error", "Please select a product first.", "destructive");
-            navigate('/dev-mode/listings');
-            return;
-        }
-
-        if (locationsLoading) return;
-
-        setInitialLoading(false);
-    }, [baseProduct, locationsLoading, navigate, addToast]);
 
     const handleInputChange = (field, value) => {
         setFormData(prev => ({ ...prev, [field]: value }));
@@ -128,6 +109,20 @@ export default function ListingForm() {
             );
         setLoading(false);
     };
+
+    useEffect(() => {
+        if (!baseProduct) {
+            addToast("Error", "Please select a product first.", "destructive");
+            navigate('/dev-mode/listings');
+            return;
+        }
+
+        if (locationsLoading) return;
+
+        setInitialLoading(false);
+    }, [baseProduct, locationsLoading, navigate, addToast]);
+
+    if (!populated) return null;
 
     if (initialLoading) {
         return (

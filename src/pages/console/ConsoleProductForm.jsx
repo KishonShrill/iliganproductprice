@@ -66,7 +66,6 @@ export default function ProductForm() {
             window.history.replaceState({}, '');
         }
     }, [populated, location, navigate, addToast]);
-    if (!populated) return null;
 
     // --- BULK IMPORT LOGIC ---
     const processBulkFile = (file) => {
@@ -456,6 +455,8 @@ export default function ProductForm() {
             }
         }
     };
+
+    if (!populated) return null;
 
     if (initialLoading || categoriesLoading || productLoading) {
         return (

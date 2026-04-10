@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { BookOpen, Award, ShieldAlert, ChevronRight, ChevronLeft, CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,7 +34,6 @@ const guideSteps = [
 export default function ContributionGuide() {
     const [currentStep, setCurrentStep] = useState(0);
     const navigate = useNavigate();
-    const { addToast } = useOutletContext();
     const hasSeen = localStorage.getItem("budgetbuddy_hasSeenGuide");
 
     useEffect(() => {

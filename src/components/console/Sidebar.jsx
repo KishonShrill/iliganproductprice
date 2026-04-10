@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Package, MapPin, FileText, Home, Menu, Settings, LogOut, House, UserCog, LayoutList } from 'lucide-react';
+import { Package, MapPin, FileText, Menu, Settings, LogOut, House, UserCog, LayoutList } from 'lucide-react';
 import { cn } from '../../helpers/utils';
 import { Button } from '../ui/button';
 import PropTypes from 'prop-types';

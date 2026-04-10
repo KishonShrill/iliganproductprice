@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Settings, LogIn, LogOut, Menu, X, LayoutDashboard, Package, Utensils, Info, ShoppingCart, User, Computer, CircleUserRound, Scroll } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Settings, LogIn, Menu, X, LayoutDashboard, Package, Utensils, Info, ShoppingCart, User, Computer, CircleUserRound, Scroll } from "lucide-react";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
 
@@ -8,11 +8,26 @@ const cookies = new Cookies();
 
 
 const Header = () => {
-    const { pathname } = useLocation();
-    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const token = cookies.get("budgetbuddy_token")
+    const [token, setToken] = useState(cookies.get("budgetbuddy_token"));
     let isAdvancedUser = false;
+
+    useEffect(() => {
+        const handleCookieChange = (changeEvent) => {
+            // Check if the specific token cookie was the one that changed
+            if (changeEvent.name === "budgetbuddy_token") {
+                setToken(changeEvent.value); // This triggers the re-render!
+            }
+        };
+
+        // Attach the listener
+        cookies.addChangeListener(handleCookieChange);
+
+        // Cleanup the listener when the component unmounts
+        return () => {
+            cookies.removeChangeListener(handleCookieChange);
+        };
+    }, []);
 
     if (token) {
         try {
@@ -27,10 +42,6 @@ const Header = () => {
     }
 
     const toggleMenu = () => setIsOpen(!isOpen);
-
-    const showAuthLinks = useMemo(() =>
-        !["/authenticate", "/dev-mode"].includes(pathname),
-        [pathname]);
 
     const navLinks = [
         { to: "/", label: "Home", icon: <LayoutDashboard size={20} /> },
@@ -55,9 +66,6 @@ const Header = () => {
 
             {/* Quick Mobile Auth Icon */}
             <div className="flex gap-3">
-                <Link to="/settings" className="md:hidden">
-                    <Settings size={24} className="dark:text-white" />
-                </Link>
                 {!token ? (
                     <>
                         <Link to="/authenticate" className="md:hidden">

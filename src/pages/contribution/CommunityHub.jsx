@@ -10,7 +10,6 @@ import useVoteContribution from '@/hooks/useVoteContribution';
 export default function CommunityHub() {
     const navigate = useNavigate();
     const [activeTab, setActiveTab] = useState('to_review');
-    const [voting, isVoting] = useState(false);
 
     const { data = { pending: [], votesToday: 0, submissionsToday: 0 }, isLoading, isError, error } = useFetchPendingContributions();
     const { isLoading: voteLoading, mutate: submitVote } = useVoteContribution();

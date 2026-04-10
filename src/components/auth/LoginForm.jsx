@@ -12,7 +12,6 @@ const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 const cookies = new Cookies();
 
 const LoginForm = ({ debugMode, onSwitch }) => {
-    const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
