@@ -178,18 +178,19 @@ router.post("/login", async (req, res) => {
                 isMatch ? ok(user) : err({ status: 400, message: "Passwords do not match" })
             );
         }).map((user) => {
-            const payload = {
+            const initToken = {
                 user_id: user._id,
                 user_email: user.email,
                 user_role: user.role,
                 username: user.username,
             };
 
+            console.log(user.profile_picture)
             if (payload?.iss === "https://accounts.google.com") {
-                payload.user_picture = user.profile_picture;
+                initToken.profile_picture = user.profile_picture
             }
 
-            const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "24h" });
+            const token = jwt.sign(initToken, process.env.JWT_SECRET, { expiresIn: "24h" });
 
             return {
                 message: "Login Successful",
