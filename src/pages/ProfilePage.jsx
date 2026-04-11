@@ -43,7 +43,7 @@ const ProfilePage = () => {
                     onClick={() => navigate(-1)}
                     className="mb-6 flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2 text-sm font-semibold text-gray-600 shadow-sm transition-colors hover:bg-gray-50"
                 >
-                    <ArrowLeft size={16} />Back to Home
+                    <ArrowLeft size={16} />Go Back?
                 </button>
             </div>
 
