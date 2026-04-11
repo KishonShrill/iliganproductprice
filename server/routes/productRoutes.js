@@ -7,7 +7,7 @@ import { upload, streamUpload } from '../helpers/upload.js';
 import { user_verify, requireRole } from '../helpers/auth.js';
 import { ResultAsync, okAsync, errAsync } from 'neverthrow';
 
-import { Product } from '../models/models.js'; // adjust path
+import { Product, Listing } from '../models/models.js';
 
 const router = express.Router();
 
@@ -210,6 +210,8 @@ router.put('/:id', user_verify, requireRole("moderator"), upload.single('product
             // Explicitly handle the 404 case
             if (!product) return errAsync(new Error("Product not found."));
 
+            const oldProductId = product.product_id;
+
             // If an image was provided, upload it using the existing product_id for the naming convention
             return handleUpload(imageFile, product.product_id).map((uploadResult) => {
                 if (uploadResult) {
@@ -223,21 +225,49 @@ router.put('/:id', user_verify, requireRole("moderator"), upload.single('product
 
                 // product.date_updated = new Date().toISOString().split('T')[0];
 
-                return product;
+                return { product, oldProductId };
             });
         })
-        .andThen((readyProduct) => {
+        .andThen(({ product, oldProductId }) => {
             // Save the updated product to MongoDB
             return ResultAsync.fromPromise(
-                readyProduct.save(),
+                product.save(),
                 (error) => new Error(`Failed to save updated product: ${error.message}`)
-            );
+            ).map((savedProduct) => ({ savedProduct, oldProductId }));
+        })
+        .andThen(({ savedProduct, oldProductId }) => {
+            // Synchronize the changes to the Listing collection
+            // Use dot notation to strictly update nested fields without wiping out existing data 
+            // (like the location object) inside the Listing documents.
+            const listingUpdatePayload = {
+                $set: {
+                    "product.product_id": savedProduct.product_id,
+                    "product.product_name": savedProduct.product_name,
+                    "product.imageUrl": savedProduct.imageUrl || null,
+                    "date_updated": new Date(),
+                }
+            };
+
+            // If the category was updated, sync those nested fields as well
+            if (savedProduct.category) {
+                listingUpdatePayload.$set["category.list"] = savedProduct.category.list || null;
+                listingUpdatePayload.$set["category.name"] = savedProduct.category.name || null;
+                listingUpdatePayload.$set["category.catalog"] = savedProduct.category.catalog || null;
+            }
+
+            return ResultAsync.fromPromise(
+                Listing.updateMany(
+                    { "product.product_id": oldProductId },
+                    listingUpdatePayload
+                ).exec(),
+                (error) => new Error(`Failed to sync related listings: ${error.message}`)
+            ).map(() => savedProduct); // Pass the final saved product to the match block
         })
         .match(
             (savedProduct) => {
                 // Return 200 OK for updates instead of 201 Created
                 return res.status(200).json({
-                    message: 'Product updated successfully!',
+                    message: 'Product and related listings updated successfully!',
                     product: savedProduct,
                 });
             },
@@ -249,7 +279,7 @@ router.put('/:id', user_verify, requireRole("moderator"), upload.single('product
                 }
 
                 return res.status(500).json({
-                    message: 'Failed to update product.',
+                    message: 'Failed to complete the update process.',
                     error: error.message
                 });
             }

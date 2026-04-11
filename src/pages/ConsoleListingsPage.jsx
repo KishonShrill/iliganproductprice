@@ -48,7 +48,7 @@ export default function Listings() {
 
     const normalizedData = data?.map(item => ({
         _id: item._id,
-        date: item.date_updated,
+        date: item.date_updated.split('T')[0],
         name: item.product.product_name,
         category: `${item.category.list}`,
         location: item.location.name,

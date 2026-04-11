@@ -341,30 +341,6 @@
         }
       }
     },
-    "/api/v1/products/category/{categoryId}": {
-      "get": {
-        "tags": [
-          "v1 | Product"
-        ],
-        "description": "Fetch products according to category (paginated) ?page=1&limit=20",
-        "parameters": [
-          {
-            "name": "categoryId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
     "/api/v1/locations/": {
       "get": {
         "tags": [

@@ -92,7 +92,7 @@ const listingSchema = new mongoose.Schema({
         catalog: String,
     },
     updated_price: { type: Number, required: true },
-    date_updated: { type: Number, required: true },
+    date_updated: { type: Date, required: true },
     shelf: { type: String, required: true },
 });
 

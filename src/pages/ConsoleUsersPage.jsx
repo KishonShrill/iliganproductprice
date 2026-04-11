@@ -189,7 +189,7 @@ export default function ConsoleUsersPage() {
                         <div className="divide-y divide-gray-100">
                             {currentUsers.map((user) => {
                                 const isManageable = canManageUser(user.role, user._id);
-                                console.log(user)
+                                //console.log(user)
 
                                 return (
                                     <div key={user._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-gray-50/50 transition-colors">

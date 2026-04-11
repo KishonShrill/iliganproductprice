@@ -631,7 +631,7 @@ export default function ProductForm() {
                         <div className="max-w-2xl mx-auto bg-white">
                             <Card>
                                 <CardHeader className='flex-row!'>
-                                    <CardTitle>Product Information {isEdit && ` - ${productId}`}</CardTitle>
+                                    <CardTitle>Product Information {isEdit && ` - ${formData.productId}`}</CardTitle>
                                 </CardHeader>
                                 <CardContent>
                                     <form onSubmit={handleSubmit} className="space-y-6">
