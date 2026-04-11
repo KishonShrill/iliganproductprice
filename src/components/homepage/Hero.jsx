@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ShoppingCart, TrendingUp, Shield } from 'lucide-react';
+import { ShoppingCart, TrendingUp, Shield, Github } from 'lucide-react';
 
 const Hero = () => {
     return (
@@ -13,8 +13,8 @@ const Hero = () => {
                             100% Free • Non-Profit Initiative
                         </div>
 
-                        <h1 className="inter-black text-shadow-xl text-4xl md:text-5xl lg:text-6xl text-gray-900 dark:text-gray-50 mb-6 leading-tight">
-                            Shop Smarter,{' '}
+                        <h1 className="flex flex-wrap justify-center lg:justify-start gap-x-2 inter-black text-shadow-xl text-4xl md:text-5xl lg:text-6xl text-gray-900 dark:text-gray-50 mb-6 leading-tight">
+                            Shop Smarter,
                             <span className="inter-black text-transparent bg-clip-text bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47]">
                                 Spend Less
                             </span>
@@ -24,15 +24,16 @@ const Hero = () => {
                             Track your shopping cart total in real-time before checkout. Budget Buddy helps you make informed decisions and stick to your budget effortlessly.
                         </p>
 
-                        <div className="flex flex-col max-md:px-4 sm:flex-row gap-4 justify-center lg:justify-start">
-                            <Link to="/locations" className="bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 max-md:py-3 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 group">
+                        <div className="flex flex-col max-md:px-4 sm:flex-row gap-4 items-center justify-center lg:justify-start">
+                            <Link to="/locations" className="flex items-center w-fit bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 max-md:py-3 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 group">
                                 Start Budgeting Now
                                 <ShoppingCart className="w-5 h-5 ml-2 inline group-hover:translate-x-1 transition-transform duration-300" />
                             </Link>
 
-                            {/* <button className="border-2 border-[#ee4d2d] text-[#ee4d2d] px-8 py-4 rounded-full font-semibold text-lg hover:bg-[#ee4d2d] hover:text-white transition-all duration-300 hover:scale-105">
-                                Watch Demo
-                            </button> */}
+                            <a href="https://github.com/KishonShrill/BudgetBuddy-IliganCity" target='_blank' className="flex items-center w-fit border-2 border-[#ee4d2d] text-[#ee4d2d] px-8 py-4 max-md:py-3 rounded-full font-semibold text-lg hover:bg-[#ee4d2d] hover:text-white transition-all duration-300 hover:scale-105">
+                                Visit Github
+                                <Github className='w-5 h-5 ml-2 inline group-hover:translate-x-1 transition-transform duration-300' />
+                            </a>
                         </div>
 
                         {/* Stats */}

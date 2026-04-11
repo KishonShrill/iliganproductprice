@@ -2,11 +2,13 @@ import { CheckCircle, XCircle, Award, User, ArrowLeft, Clock, LogOut } from "luc
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import Cookies from "universal-cookie";
+import { useQueryClient } from "react-query";
 
 const cookies = new Cookies();
 
 const ProfilePage = () => {
     const navigate = useNavigate();
+    const queryClient = useQueryClient();
     const cookie = cookies.get("budgetbuddy_token");
     const user = jwtDecode(cookie);
 
@@ -21,6 +23,7 @@ const ProfilePage = () => {
 
     const logout = () => {
         cookies.remove("budgetbuddy_token", { path: "/" });
+        queryClient.invalidateQueries('pendingContributions_User');
         navigate("/");
         window.location.reload(); // Ensures state clears
     };

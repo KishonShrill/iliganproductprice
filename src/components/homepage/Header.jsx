@@ -73,17 +73,9 @@ const Header = () => {
                         </Link>
                     </>
                 ) : (
-                    <>
-                        {isAdvancedUser ? (
-                            <Link to={token ? "/dev-mode" : "/authenticate"} className="md:hidden">
-                                <User size={24} className="dark:text-white" />
-                            </Link>
-                        ) : (
-                            <Link className="md:hidden" to="/profile">
-                                <CircleUserRound size={24} className="dark:text-white" />
-                            </Link>
-                        )}
-                    </>
+                    <Link to="/profile" className="md:hidden">
+                        <CircleUserRound size={24} className="dark:text-white" />
+                    </Link>
                 )}
             </div>
 
@@ -117,13 +109,9 @@ const Header = () => {
                         ) : (
                             <>
                                 {/* Toggle between Dev Mode and Profile based on role */}
-                                {isAdvancedUser ? (
+                                {isAdvancedUser && (
                                     <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 max-md:border-t max-md:border-gray-500 font-medium" to="/dev-mode" onClick={toggleMenu}>
                                         <Computer size={20} /> <span className="md:hidden">Dev Mode</span>
-                                    </Link>
-                                ) : (
-                                    <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 max-md:border-t max-md:border-gray-500 font-medium" to="/profile" onClick={toggleMenu}>
-                                        <CircleUserRound size={20} /> <span className="md:hidden">Profile</span>
                                     </Link>
                                 )}
                             </>

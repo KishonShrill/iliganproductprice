@@ -2,13 +2,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cloudinary from '../cloudinary.js'; // adjust if separate
-import getPaginationParams from '../helpers/getPaginationParams.js'; // adjust if separate
 import generateProductId from '../helpers/generateProductId.js';
 import { upload, streamUpload } from '../helpers/upload.js';
 import { user_verify, requireRole } from '../helpers/auth.js';
 import { ResultAsync, okAsync, errAsync } from 'neverthrow';
 
-import { Product } from '../models/models.js'; // adjust path
+import { Product, Listing } from '../models/models.js';
 
 const router = express.Router();
 
@@ -53,46 +52,6 @@ router.get('/:id', async (req, res) => {
     } catch (error) {
         console.error('Error fetching product by ID:', error);
         res.status(500).json({ message: error.message });
-    }
-});
-
-
-//! [ ] CHECK IF THIS WORKS
-// 2. Fetch items according to category with pagination
-// GET /api/products/category/:categoryId?page=1&limit=20
-router.get('/category/:categoryId', async (req, res) => {
-    // #swagger.tags = ['v1 | Product']
-    // #swagger.description = 'Fetch products according to category (paginated) ?page=1&limit=20'
-    const id = req.params.id; // This is the MongoDB _id
-
-    const categoryId = req.params.categoryId;
-    const { page, limit, skip } = getPaginationParams(req);
-
-    try {
-        // Build the filter by category_id
-        const filter = { category_id: categoryId };
-
-        // Get total count of products in this category
-        const totalProducts = await Product.countDocuments(filter);
-
-        // Get the paginated products in this category
-        const products = await Product.find(filter)
-            .skip(skip)
-            .limit(limit);
-
-        const totalPages = Math.ceil(totalProducts / limit);
-
-        res.json({
-            message: `Products for category ${categoryId} fetched successfully`,
-            products,
-            totalProducts,
-            totalPages,
-            currentPage: page
-        });
-
-    } catch (error) {
-        console.error(`Error fetching products for category ${categoryId}:`, error);
-        res.status(500).json({ message: 'Failed to fetch products by category.', error: error.message });
     }
 });
 
@@ -221,6 +180,7 @@ router.post('/', user_verify, requireRole("moderator"), upload.single('imageUrl'
         );
 });
 
+
 router.put('/:id', user_verify, requireRole("moderator"), upload.single('productImage'), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
     // #swagger.description = 'Update a product information by MongoDB _id'
@@ -250,6 +210,8 @@ router.put('/:id', user_verify, requireRole("moderator"), upload.single('product
             // Explicitly handle the 404 case
             if (!product) return errAsync(new Error("Product not found."));
 
+            const oldProductId = product.product_id;
+
             // If an image was provided, upload it using the existing product_id for the naming convention
             return handleUpload(imageFile, product.product_id).map((uploadResult) => {
                 if (uploadResult) {
@@ -263,21 +225,49 @@ router.put('/:id', user_verify, requireRole("moderator"), upload.single('product
 
                 // product.date_updated = new Date().toISOString().split('T')[0];
 
-                return product;
+                return { product, oldProductId };
             });
         })
-        .andThen((readyProduct) => {
+        .andThen(({ product, oldProductId }) => {
             // Save the updated product to MongoDB
             return ResultAsync.fromPromise(
-                readyProduct.save(),
+                product.save(),
                 (error) => new Error(`Failed to save updated product: ${error.message}`)
-            );
+            ).map((savedProduct) => ({ savedProduct, oldProductId }));
+        })
+        .andThen(({ savedProduct, oldProductId }) => {
+            // Synchronize the changes to the Listing collection
+            // Use dot notation to strictly update nested fields without wiping out existing data 
+            // (like the location object) inside the Listing documents.
+            const listingUpdatePayload = {
+                $set: {
+                    "product.product_id": savedProduct.product_id,
+                    "product.product_name": savedProduct.product_name,
+                    "product.imageUrl": savedProduct.imageUrl || null,
+                    "date_updated": new Date(),
+                }
+            };
+
+            // If the category was updated, sync those nested fields as well
+            if (savedProduct.category) {
+                listingUpdatePayload.$set["category.list"] = savedProduct.category.list || null;
+                listingUpdatePayload.$set["category.name"] = savedProduct.category.name || null;
+                listingUpdatePayload.$set["category.catalog"] = savedProduct.category.catalog || null;
+            }
+
+            return ResultAsync.fromPromise(
+                Listing.updateMany(
+                    { "product.product_id": oldProductId },
+                    listingUpdatePayload
+                ).exec(),
+                (error) => new Error(`Failed to sync related listings: ${error.message}`)
+            ).map(() => savedProduct); // Pass the final saved product to the match block
         })
         .match(
             (savedProduct) => {
                 // Return 200 OK for updates instead of 201 Created
                 return res.status(200).json({
-                    message: 'Product updated successfully!',
+                    message: 'Product and related listings updated successfully!',
                     product: savedProduct,
                 });
             },
@@ -289,15 +279,14 @@ router.put('/:id', user_verify, requireRole("moderator"), upload.single('product
                 }
 
                 return res.status(500).json({
-                    message: 'Failed to update product.',
+                    message: 'Failed to complete the update process.',
                     error: error.message
                 });
             }
         );
 });
 
-//! [ ] CHECK IF THIS WORKS
-// DELETE endpoint to delete a product by _id
+
 router.delete('/:id', user_verify, requireRole("admin"), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
     // #swagger.description = 'Delete a product by MongoDB _id'

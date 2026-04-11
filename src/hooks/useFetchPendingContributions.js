@@ -20,7 +20,7 @@ const useFetchPendingContributions = () => {
     };
 
     return useQuery(
-        ['pending_contributions'],
+        ['pendingContributions_User'],
         fetchURL,
         {
             cacheTime: 1000 * 60 * 5, // int - keeps the data longer (5 mins)

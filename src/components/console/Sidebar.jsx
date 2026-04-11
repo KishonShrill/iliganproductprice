@@ -5,6 +5,7 @@ import { cn } from '../../helpers/utils';
 import { Button } from '../ui/button';
 import PropTypes from 'prop-types';
 import Cookies from "universal-cookie";
+import { useQueryClient } from 'react-query';
 
 const cookies = new Cookies();
 const navigation = [
@@ -95,11 +96,13 @@ export default function Sidebar() {
 }
 
 function SideNavButton({ item, isCollapsed }) {
+    const queryClient = useQueryClient();
     const isActive = location.pathname === item.href;
     const navigate = useNavigate()
 
     const logout = () => {
         cookies.remove("budgetbuddy_token", { path: "/" });
+        queryClient.invalidateQueries('pendingContributions_User');
         navigate("/");
     };
 

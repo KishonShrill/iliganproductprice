@@ -3,12 +3,27 @@ import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button } from '../ui/button';
 import { Plus, LogOut, ChevronDown, Settings, House } from 'lucide-react';
+import Cookies from 'universal-cookie';
+import { jwtDecode } from 'jwt-decode';
+
+const cookies = new Cookies();
 
 export default function Header({ title, actionLabel, onAction, onLogout, user }) {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    const token = cookies.get('budgetbuddy_token');
     const navigate = useNavigate();
-
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const currentUser = user || { username: 'Admin', user_email: 'Loading...' };
+    let isAdmin = false;
+
+    if (token) {
+        try {
+            const decoded = jwtDecode(token);
+            const role = decoded.user_role;
+            isAdmin = role === "admin";
+        } catch (error) {
+            console.error("Failed to decode token", error);
+        }
+    }
 
     return (
         <div className="flex flex-col items-start justify-between border-b border-gray-200 bg-white px-8 py-6 relative">
@@ -73,13 +88,15 @@ export default function Header({ title, actionLabel, onAction, onLogout, user })
                                             <House className="h-4 w-4 text-gray-400" />
                                             Go Home
                                         </button>
-                                        <button
-                                            onClick={() => navigate('/profile')}
-                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
-                                        >
-                                            <Settings className="h-4 w-4 text-gray-400" />
-                                            Account Stats
-                                        </button>
+                                        {isAdmin && (
+                                            <button
+                                                onClick={() => navigate('/dev-mode/users')}
+                                                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                                            >
+                                                <Settings className="h-4 w-4 text-gray-400" />
+                                                Manage Users
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => {
                                                 setIsDropdownOpen(false);

@@ -44,6 +44,7 @@ export default function Products({ debugMode }) {
 
     const logout = () => {
         cookies.remove("budgetbuddy_token", { path: "/" });
+        queryClient.invalidateQueries('pendingContributions_User');
         navigate("/");
     };
 

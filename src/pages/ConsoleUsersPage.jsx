@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { ResultAsync } from 'neverthrow';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Shield, ShieldAlert, User, Loader2, Mail, Search, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 
+import Header from '../components/console/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
@@ -28,11 +29,13 @@ const ROLE_WEIGHTS = {
 };
 
 export default function ConsoleUsersPage() {
+    const navigate = useNavigate();
     const cookie = cookies.get("budgetbuddy_token")
     const currentUser = jwtDecode(cookie)
     const queryClient = useQueryClient();
     const { addToast } = useOutletContext();
-    console.log(currentUser)
+
+    // console.log(currentUser)
     // --- NEW: SEARCH & PAGINATION STATE ---
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -42,6 +45,12 @@ export default function ConsoleUsersPage() {
     useEffect(() => {
         setCurrentPage(1);
     }, [searchQuery, itemsPerPage]);
+
+    const logout = () => {
+        cookies.remove("budgetbuddy_token", { path: "/" });
+        queryClient.invalidateQueries('pendingContributions_User');
+        navigate("/");
+    };
 
     // --- DATA FETCHING ---
     const { data: users = [], isLoading } = useQuery('console_users', async () => {
@@ -123,10 +132,16 @@ export default function ConsoleUsersPage() {
 
     const assignableRoles = getAssignableRoles();
 
-    const filteredUsers = users.filter(user =>
-        user.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email?.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const filteredUsers = users
+        .filter(user =>
+            user.username?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            user.email?.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+        .sort((a, b) => {
+            if (a._id === currentUser.user_id) return -1; // Move 'a' up if it's you
+            if (b._id === currentUser.user_id) return 1;  // Move 'b' up if it's you
+            return 0; // Keep everyone else in their original order
+        });
 
     // 2. Calculate pagination slices
     const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
@@ -142,173 +157,177 @@ export default function ConsoleUsersPage() {
     }
 
     return (
-        <div className="p-4 md:p-8 max-w-6xl mx-auto">
-            <div className="mb-8">
-                <h1 className="text-3xl font-black text-gray-900">User Management</h1>
-                <p className="text-gray-500 mt-2">Manage clearance levels and platform access.</p>
-            </div>
+        <>
+            <Header
+                title="User Management"
+                subtitle="Manage clearance levels and platform access."
+                onLogout={logout}
+                user={currentUser}
+            />
+            <div className="p-4 md:p-8 max-w-6xl mx-auto">
 
-            {/* SEARCH BAR */}
-            <div className="relative w-full md:w-80 mb-6">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                    placeholder="Search username or email..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-9 bg-white focus-visible:ring-orange-500"
-                />
-            </div>
+                {/* SEARCH BAR */}
+                <div className="relative w-full md:w-80 mb-6">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Input
+                        placeholder="Search username or email..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="pl-9 bg-white focus-visible:ring-orange-500"
+                    />
+                </div>
 
-            <Card className="border-gray-200 shadow-sm overflow-hidden bg-white">
-                <CardHeader className="bg-gray-50 border-b border-gray-100 px-6 py-4">
-                    <CardTitle className="text-lg text-gray-700 flex items-center gap-2">
-                        <Users className="h-5 w-5 text-orange-500" />
-                        Registered Users ({users.length})
-                    </CardTitle>
-                </CardHeader>
+                <Card className="border-gray-200 shadow-sm overflow-hidden bg-white">
+                    <CardHeader className="bg-gray-50 border-b border-gray-100 px-6 py-4">
+                        <CardTitle className="text-lg text-gray-700 flex items-center gap-2">
+                            <Users className="h-5 w-5 text-orange-500" />
+                            Registered Users ({users.length})
+                        </CardTitle>
+                    </CardHeader>
 
-                <CardContent className="p-0">
-                    <div className="divide-y divide-gray-100">
-                        {currentUsers.map((user) => {
-                            const isManageable = canManageUser(user.role, user._id);
-                            console.log(user)
+                    <CardContent className="p-0">
+                        <div className="divide-y divide-gray-100">
+                            {currentUsers.map((user) => {
+                                const isManageable = canManageUser(user.role, user._id);
+                                //console.log(user)
 
-                            return (
-                                <div key={user._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-gray-50/50 transition-colors">
+                                return (
+                                    <div key={user._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-gray-50/50 transition-colors">
 
-                                    {/* User Info */}
-                                    <div className="flex items-center gap-4 mb-4 sm:mb-0">
-                                        <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
-                                            {user.role === 'admin' ? <ShieldAlert className="text-orange-600 h-6 w-6" /> :
-                                                user.role === 'moderator' ? <Shield className="text-orange-500 h-6 w-6" /> :
-                                                    <User className="text-gray-500 h-6 w-6" />}
+                                        {/* User Info */}
+                                        <div className="flex items-center gap-4 mb-4 sm:mb-0">
+                                            <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                                                {user.role === 'admin' ? <ShieldAlert className="text-orange-600 h-6 w-6" /> :
+                                                    user.role === 'moderator' ? <Shield className="text-orange-500 h-6 w-6" /> :
+                                                        <User className="text-gray-500 h-6 w-6" />}
+                                            </div>
+                                            <div>
+                                                <h3 className="font-bold text-gray-900 capitalize">{user.username.toLowerCase()}</h3>
+                                                <p className="text-sm text-gray-500 flex items-center gap-1.5 mt-0.5">
+                                                    <Mail className="h-3 w-3" />
+                                                    {user.email}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <h3 className="font-bold text-gray-900 capitalize">{user.username.toLowerCase()}</h3>
-                                            <p className="text-sm text-gray-500 flex items-center gap-1.5 mt-0.5">
-                                                <Mail className="h-3 w-3" />
-                                                {user.email}
-                                            </p>
-                                        </div>
-                                    </div>
 
-                                    {/* Actions Container */}
-                                    <div className="flex items-center gap-3">
-                                        {/* Role Dropdown */}
-                                        <div className="w-40 sm:w-48">
-                                            <Select
-                                                disabled={!isManageable || updateRoleMutation.isLoading}
-                                                value={user.role}
-                                                onValueChange={(newRole) => {
-                                                    if (newRole !== user.role) {
-                                                        updateRoleMutation.mutate({ userId: user._id, newRole });
+                                        {/* Actions Container */}
+                                        <div className="flex items-center gap-3">
+                                            {/* Role Dropdown */}
+                                            <div className="w-40 sm:w-48">
+                                                <Select
+                                                    disabled={!isManageable || updateRoleMutation.isLoading}
+                                                    value={user.role}
+                                                    onValueChange={(newRole) => {
+                                                        if (newRole !== user.role) {
+                                                            updateRoleMutation.mutate({ userId: user._id, newRole });
+                                                        }
+                                                    }}
+                                                >
+                                                    <SelectTrigger className={`w-full ${!isManageable ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'bg-white hover:border-orange-400 focus:ring-orange-500'}`}>
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent className='bg-white'>
+                                                        <SelectItem value={user.role} className="capitalize font-medium">
+                                                            {user.role}
+                                                        </SelectItem>
+                                                        {isManageable && assignableRoles.map((role) => (
+                                                            role !== user.role && (
+                                                                <SelectItem key={role} value={role} className="capitalize bg-white hover:bg-gray-100 cursor-pointer">
+                                                                    {role}
+                                                                </SelectItem>
+                                                            )
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            {/* Delete Button (Admins Only) */}
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className="text-gray-400 hover:text-red-600 hover:bg-red-50 flex-shrink-0 transition-colors"
+                                                disabled={deleteUserMutation.isLoading || ROLE_WEIGHTS[user.role] >= ROLE_WEIGHTS[currentUser.user_role]}
+                                                onClick={() => {
+                                                    if (window.confirm(`WARNING: Are you sure you want to permanently delete ${user.username}? This action cannot be undone.`)) {
+                                                        deleteUserMutation.mutate(user._id);
                                                     }
                                                 }}
+                                                title="Delete User"
                                             >
-                                                <SelectTrigger className={`w-full ${!isManageable ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'bg-white hover:border-orange-400 focus:ring-orange-500'}`}>
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent className='bg-white'>
-                                                    <SelectItem value={user.role} className="capitalize font-medium">
-                                                        {user.role}
-                                                    </SelectItem>
-                                                    {isManageable && assignableRoles.map((role) => (
-                                                        role !== user.role && (
-                                                            <SelectItem key={role} value={role} className="capitalize bg-white hover:bg-gray-100 cursor-pointer">
-                                                                {role}
-                                                            </SelectItem>
-                                                        )
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                                {deleteUserMutation.isLoading && deleteUserMutation.variables === user._id ? (
+                                                    <Loader2 className="h-5 w-5 animate-spin" />
+                                                ) : (
+                                                    <Trash2 className="h-5 w-5" />
+                                                )}
+                                            </Button>
                                         </div>
+                                    </div>
+                                );
+                            })}
 
-                                        {/* Delete Button (Admins Only) */}
+                            {filteredUsers.length === 0 && (
+                                <div className="p-8 text-center text-gray-500">
+                                    {searchQuery ? `No users found matching "${searchQuery}"` : "No users found in the database."}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* PAGINATION FOOTER - Only renders if there are more than 10 users */}
+                        {filteredUsers.length > 10 && (
+                            <div className="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-gray-100 bg-gray-50/80 gap-4 sm:gap-0">
+
+                                {/* Items Per Page */}
+                                <div className="flex items-center gap-2 text-sm text-gray-600">
+                                    <span>Show</span>
+                                    <Select
+                                        value={itemsPerPage.toString()}
+                                        onValueChange={(v) => setItemsPerPage(Number(v))}
+                                    >
+                                        <SelectTrigger className="w-[70px] h-8 bg-white focus:ring-orange-500">
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="10">10</SelectItem>
+                                            <SelectItem value="25">25</SelectItem>
+                                            <SelectItem value="50">50</SelectItem>
+                                            <SelectItem value="100">100</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    <span>entries</span>
+                                </div>
+
+                                {/* Page Controls */}
+                                <div className="flex items-center gap-4">
+                                    <span className="text-sm text-gray-600 font-medium">
+                                        Page {currentPage} of {totalPages}
+                                    </span>
+                                    <div className="flex items-center gap-1.5">
                                         <Button
-                                            variant="ghost"
-                                            size="icon"
-                                            className="text-gray-400 hover:text-red-600 hover:bg-red-50 flex-shrink-0 transition-colors"
-                                            disabled={deleteUserMutation.isLoading || ROLE_WEIGHTS[user.role] >= ROLE_WEIGHTS[currentUser.user_role]}
-                                            onClick={() => {
-                                                if (window.confirm(`WARNING: Are you sure you want to permanently delete ${user.username}? This action cannot be undone.`)) {
-                                                    deleteUserMutation.mutate(user._id);
-                                                }
-                                            }}
-                                            title="Delete User"
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                                            disabled={currentPage === 1}
+                                            className="h-8 w-8 p-0"
                                         >
-                                            {deleteUserMutation.isLoading && deleteUserMutation.variables === user._id ? (
-                                                <Loader2 className="h-5 w-5 animate-spin" />
-                                            ) : (
-                                                <Trash2 className="h-5 w-5" />
-                                            )}
+                                            <ChevronLeft className="h-4 w-4" />
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                                            disabled={currentPage === totalPages}
+                                            className="h-8 w-8 p-0"
+                                        >
+                                            <ChevronRight className="h-4 w-4" />
                                         </Button>
                                     </div>
                                 </div>
-                            );
-                        })}
-
-                        {filteredUsers.length === 0 && (
-                            <div className="p-8 text-center text-gray-500">
-                                {searchQuery ? `No users found matching "${searchQuery}"` : "No users found in the database."}
                             </div>
                         )}
-                    </div>
-
-                    {/* PAGINATION FOOTER - Only renders if there are more than 10 users */}
-                    {filteredUsers.length > 10 && (
-                        <div className="flex flex-col sm:flex-row items-center justify-between p-4 border-t border-gray-100 bg-gray-50/80 gap-4 sm:gap-0">
-
-                            {/* Items Per Page */}
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                                <span>Show</span>
-                                <Select
-                                    value={itemsPerPage.toString()}
-                                    onValueChange={(v) => setItemsPerPage(Number(v))}
-                                >
-                                    <SelectTrigger className="w-[70px] h-8 bg-white focus:ring-orange-500">
-                                        <SelectValue />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="10">10</SelectItem>
-                                        <SelectItem value="25">25</SelectItem>
-                                        <SelectItem value="50">50</SelectItem>
-                                        <SelectItem value="100">100</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <span>entries</span>
-                            </div>
-
-                            {/* Page Controls */}
-                            <div className="flex items-center gap-4">
-                                <span className="text-sm text-gray-600 font-medium">
-                                    Page {currentPage} of {totalPages}
-                                </span>
-                                <div className="flex items-center gap-1.5">
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
-                                        disabled={currentPage === 1}
-                                        className="h-8 w-8 p-0"
-                                    >
-                                        <ChevronLeft className="h-4 w-4" />
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
-                                        disabled={currentPage === totalPages}
-                                        className="h-8 w-8 p-0"
-                                    >
-                                        <ChevronRight className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                </CardContent>
-            </Card>
-        </div >
+                    </CardContent>
+                </Card>
+            </div >
+        </>
     );
 }
 
