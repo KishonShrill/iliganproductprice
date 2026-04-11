@@ -2,7 +2,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cloudinary from '../cloudinary.js'; // adjust if separate
-import getPaginationParams from '../helpers/getPaginationParams.js'; // adjust if separate
 import generateProductId from '../helpers/generateProductId.js';
 import { upload, streamUpload } from '../helpers/upload.js';
 import { user_verify, requireRole } from '../helpers/auth.js';
@@ -53,46 +52,6 @@ router.get('/:id', async (req, res) => {
     } catch (error) {
         console.error('Error fetching product by ID:', error);
         res.status(500).json({ message: error.message });
-    }
-});
-
-
-//! [ ] CHECK IF THIS WORKS
-// 2. Fetch items according to category with pagination
-// GET /api/products/category/:categoryId?page=1&limit=20
-router.get('/category/:categoryId', async (req, res) => {
-    // #swagger.tags = ['v1 | Product']
-    // #swagger.description = 'Fetch products according to category (paginated) ?page=1&limit=20'
-    const id = req.params.id; // This is the MongoDB _id
-
-    const categoryId = req.params.categoryId;
-    const { page, limit, skip } = getPaginationParams(req);
-
-    try {
-        // Build the filter by category_id
-        const filter = { category_id: categoryId };
-
-        // Get total count of products in this category
-        const totalProducts = await Product.countDocuments(filter);
-
-        // Get the paginated products in this category
-        const products = await Product.find(filter)
-            .skip(skip)
-            .limit(limit);
-
-        const totalPages = Math.ceil(totalProducts / limit);
-
-        res.json({
-            message: `Products for category ${categoryId} fetched successfully`,
-            products,
-            totalProducts,
-            totalPages,
-            currentPage: page
-        });
-
-    } catch (error) {
-        console.error(`Error fetching products for category ${categoryId}:`, error);
-        res.status(500).json({ message: 'Failed to fetch products by category.', error: error.message });
     }
 });
 
@@ -221,6 +180,7 @@ router.post('/', user_verify, requireRole("moderator"), upload.single('imageUrl'
         );
 });
 
+
 router.put('/:id', user_verify, requireRole("moderator"), upload.single('productImage'), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
     // #swagger.description = 'Update a product information by MongoDB _id'
@@ -296,8 +256,7 @@ router.put('/:id', user_verify, requireRole("moderator"), upload.single('product
         );
 });
 
-//! [ ] CHECK IF THIS WORKS
-// DELETE endpoint to delete a product by _id
+
 router.delete('/:id', user_verify, requireRole("admin"), async (req, res) => {
     // #swagger.tags = ['v1 | Product']
     // #swagger.description = 'Delete a product by MongoDB _id'

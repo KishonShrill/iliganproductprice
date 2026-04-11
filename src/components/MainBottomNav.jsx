@@ -12,7 +12,8 @@ const navigation = [
 const BottomNavigation = () => {
     const webLocation = useLocation()
     if ('/' === webLocation.pathname
-        || '/authenticate' === webLocation.pathname) return null
+        || '/authenticate' === webLocation.pathname
+        || '/profile' === webLocation.pathname) return null
 
     return (
         <>

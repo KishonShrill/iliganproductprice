@@ -10,71 +10,82 @@ router.get('/pending', user_verify, isOneWeekOld, async (req, res) => {
     // #swagger.tags = ['v1 | Contribution']
     // #swagger.description = '.'
 
-    try {
-        const currentUserId = req.user.user_id.toString();
-        //console.log(currentUserId)
+    const currentUserId = req.user.user_id.toString();
 
-        // 1. Fetch the user to get their actual daily vote count
-        const user = await User.findById(currentUserId).select('daily_votes daily_submissions last_vote_date last_submission_date max_daily_votes max_daily_submissions').lean();
+    await ResultAsync
+        .fromPromise(
+            User.findById(currentUserId)
+                .select('daily_votes daily_submissions last_vote_date last_submission_date max_daily_votes max_daily_submissions')
+                .lean()
+                .exec(),
+            (error) => new Error(`User Fetch Error: ${error.message}`)
+        )
+        .andThen((user) => {
+            // 2. Validate user exists before fetching listings
+            if (!user) return errAsync(new Error("USER_NOT_FOUND"));
 
-        //console.log(`User: ${user.daily_votes} - ${user.last_vote_date}`)
-        //console.log(`User: ${user.daily_submissions} - ${user.last_submission_date}`)
-        let realVotesToday = 0;
-        let realSubmissionsToday = 0;
-        if (user) {
+            // 3. Fetch pending listings and combine them with the user object for the next step
+            return ResultAsync.fromPromise(
+                PendingListing.find({ status: 'pending' })
+                    .sort({ createdAt: -1 })
+                    .lean()
+                    .exec(),
+                (error) => new Error(`LISTINGS_FETCH_ERROR: ${error.message}`)
+            ).map((pendingItems) => ({ user, pendingItems }));
+        })
+        .map(({ user, pendingItems }) => {
+            // 4. Synchronous logic: Calculate quotas and sanitize the payload
+            let realVotesToday = 0;
+            let realSubmissionsToday = 0;
+
             const today = new Date();
             today.setHours(0, 0, 0, 0);
-            // If they voted today, use their count. Otherwise, it's 0.
+
             if (user.last_vote_date && user.last_vote_date >= today) {
                 realVotesToday = user.daily_votes;
             }
             if (user.last_submission_date && user.last_submission_date >= today) {
-                realSubmissionsToday = user.daily_submissions
+                realSubmissionsToday = user.daily_submissions;
             }
-        }
 
-        const pendingItems = await PendingListing.find({ status: 'pending' })
-            .sort({ createdAt: -1 })
-            .lean();
+            const sanitizedItems = pendingItems.map(item => {
+                const userVoteObj = item.voters.find(v => v.userId.toString() === currentUserId);
 
-        //return console.log(pendingItems)
-
-        const sanitizedItems = pendingItems.map(item => {
-            // Check if the current user is inside this item's voters array
-            const userVoteObj = item.voters.find(v => {
-                console.log(item)
-                console.log(`Boolean ${v.userId.toString() === currentUserId} `)
-                return v.userId.toString() === currentUserId
+                return {
+                    id: item._id,
+                    name: item.productName,
+                    price: item.price,
+                    location: item.location,
+                    category: item.category,
+                    upvotes: item.upvoteCount,
+                    downvotes: item.downvoteCount,
+                    status: item.status,
+                    myVote: userVoteObj ? true : null
+                };
             });
 
-            // Create a clean object to send to the frontend
-            const cleanItem = {
-                id: item._id,
-                name: item.productName,
-                price: item.price,
-                location: item.location,
-                category: item.category,
-                upvotes: item.upvoteCount,
-                downvotes: item.downvoteCount,
-                status: item.status,
-                // Add a simple 'myVote' flag! (Will be 'up', 'down', or null)
-                myVote: userVoteObj ? true : null
+            // Return the perfectly formatted data payload
+            return {
+                pending: sanitizedItems,
+                votesToday: realVotesToday,
+                submissionsToday: realSubmissionsToday,
+                maxVotes: user.max_daily_votes,
+                maxSubmissions: user.max_daily_submissions
             };
+        })
+        .match(
+            // 5. Success Path
+            (payload) => res.status(200).json(payload),
 
-            return cleanItem;
-        });
-
-        res.status(200).json({
-            pending: sanitizedItems,
-            votesToday: realVotesToday,
-            submissionsToday: realSubmissionsToday,
-            maxVotes: user.max_daily_votes,
-            maxSubmissions: user.max_daily_submissions
-        });
-    } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Error fetching contributions" });
-    }
+            // 6. Error Path
+            (error) => {
+                console.error(error);
+                if (error.message === "USER_NOT_FOUND") {
+                    return res.status(404).json({ message: "User profile not found." });
+                }
+                return res.status(500).json({ message: "Error fetching contributions" });
+            }
+        );
 });
 
 router.post('/', user_verify, isOneWeekOld, async (req, res) => {
