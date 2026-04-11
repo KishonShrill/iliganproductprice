@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button } from '../ui/button';
-import { Plus, LogOut, ChevronDown, Settings, House } from 'lucide-react';
+import { Plus, LogOut, ChevronDown, CircleUserRound, House, UserCog } from 'lucide-react';
 import Cookies from 'universal-cookie';
 import { jwtDecode } from 'jwt-decode';
 
@@ -88,15 +88,20 @@ export default function Header({ title, actionLabel, onAction, onLogout, user })
                                             <House className="h-4 w-4 text-gray-400" />
                                             Go Home
                                         </button>
-                                        {isAdmin && (
-                                            <button
-                                                onClick={() => navigate('/dev-mode/users')}
-                                                className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
-                                            >
-                                                <Settings className="h-4 w-4 text-gray-400" />
-                                                Manage Users
-                                            </button>
-                                        )}
+                                        <button
+                                            onClick={() => navigate('/profile')}
+                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                                        >
+                                            <CircleUserRound className="h-4 w-4 text-gray-400" />
+                                            Profile
+                                        </button>
+                                        <button
+                                            onClick={() => navigate('/dev-mode/users')}
+                                            className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
+                                        >
+                                            <UserCog className="h-4 w-4 text-gray-400" />
+                                            Manage Users
+                                        </button>
                                         <button
                                             onClick={() => {
                                                 setIsDropdownOpen(false);

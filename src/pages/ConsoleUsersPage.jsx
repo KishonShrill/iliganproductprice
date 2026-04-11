@@ -69,7 +69,7 @@ export default function ConsoleUsersPage() {
             return ResultAsync.fromPromise(
                 axios.put(DEVELOPMENT
                     ? `http://${LOCALHOST}:5000/api/${API_VERSION}/users/${userId}/role`
-                    : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/users${userId}/role`
+                    : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/users/${userId}/role`
                     , { role: newRole }, {
                     headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` }
                 }),

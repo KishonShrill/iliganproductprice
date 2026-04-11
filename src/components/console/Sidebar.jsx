@@ -16,8 +16,7 @@ const navigation = [
     { name: 'Pendings', href: '/dev-mode/pendings', icon: LayoutList },
 ];
 const extras = [
-    { name: 'Users', href: '/dev-mode/users', icon: UserCog },
-    { name: 'Settings', href: '/settings', icon: Settings },
+    { name: 'Manager Users', href: '/dev-mode/users', icon: UserCog },
     { name: 'Logout', href: '/', icon: LogOut },
 ];
 
@@ -34,7 +33,7 @@ export default function Sidebar() {
                 isCollapsed ? "w-16" : "w-60"
             )}>
                 {/* Logo and Toggle */}
-                <div className="flex h-16 items-center justify-between border-b border-gray-200 px-4">
+                <div className="flex bg-blue-50 h-16 items-center justify-between border-b border-gray-200 px-4">
                     <div className={cn(
                         "flex items-center space-x-2 transition-opacity duration-300",
                         isCollapsed ? "hidden" : "flex"
