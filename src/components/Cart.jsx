@@ -2,13 +2,12 @@ import React, { forwardRef, useState } from "react";
 import PropTypes from "prop-types";
 import {
     ShoppingCart,
-    TrendingUp,
     Trash2,
     Package,
-    AlertTriangle
+    AlertTriangle,
 } from "lucide-react";
 
-const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, reciept }, ref) => {
+const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRemoveAll, reciept }, ref) => {
     const [locationToClear, setLocationToClear] = useState(null);
 
     const cartItemQuantity = Object.keys(storage.cart).length;
@@ -24,29 +23,42 @@ const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, recie
     const total = Object.values(storage.cart).reduce((acc, item) => acc + item.price * item.quantity, 0);
 
     const confirmClearLocation = () => {
-        if (locationToClear && onRemoveLocation) {
+        console.log(locationToClear)
+        if (locationToClear && locationToClear !== 'The Cart' && onRemoveLocation) {
             onRemoveLocation(locationToClear);
+        } else {
+            onRemoveAll();
         }
         setLocationToClear(null);
     };
 
     return (
         <>
-            <div ref={ref} className="cart-summary dark:bg-gray-500 z-10" style={{ left: reciept }}>
+            <div ref={ref} className="cart-summary h-[calc(100vh-60px)] min-[700px]:h-[60vh] dark:bg-gray-500 z-10" style={{ left: reciept }}>
                 <div className="flex h-full flex-col">
                     {/* Cart Header */}
-                    <div className="flex items-center justify-between border-b border-gray-100 px-6 py-4">
-                        <div className="flex items-center gap-2">
-                            <ShoppingCart className="text-orange-500" />
-                            <h2 className="text-lg font-bold text-gray-800">Shopping Cart</h2>
+                    <div className="flex flex-col items-start justify-between rounded-2xl border-b border-gray-100 px-6 py-4 bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47]">
+                        <div className="w-full flex flex-row justify-between">
+                            <div className="flex items-center gap-2">
+                                <ShoppingCart className="text-white" />
+                                <h2 className="text-lg font-bold text-white">Shopping Cart</h2>
+                            </div>
+                            {cartItemQuantity !== 0 && (
+                                <button className="rounded-full text-white" onClick={() => setLocationToClear('The Cart')}>
+                                    <Trash2 size={20} />
+                                </button>
+                            )}
                         </div>
-                        <button className="rounded-full p-2 text-gray-400 hover:bg-gray-100 lg:hidden">
-                            <TrendingUp size={20} />
-                        </button>
+
+                        {/* Cart Footer / Total */}
+                        <div className="flex flex-col mt-4">
+                            <span className="text-3xl font-bold text-white">₱{total.toFixed(2)}</span>
+                            <span className="text-sm text-orange-100">Budget: ₱{total.toFixed(2)}</span>
+                        </div>
                     </div>
 
                     {/* Cart Items */}
-                    <div className="flex-1 overflow-y-auto max-md:p-4">
+                    <div className="flex-1 overflow-y-auto max-md:px-4">
                         {cartItemQuantity === 0 ? (
                             <div className="flex h-full flex-col items-center justify-center text-gray-400">
                                 <ShoppingCart size={48} className="mb-4 opacity-20" />
@@ -96,16 +108,7 @@ const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, recie
                                         ))}
                                     </ul >
                                 </div>))
-
                         )}
-                    </div>
-
-                    {/* Cart Footer / Total */}
-                    <div className="border-t border-gray-100 bg-gray-50 max-lg:px-6">
-                        <div className="flex items-center justify-between my-4">
-                            <span className="text-gray-600 font-medium">Estimated Total</span>
-                            <span className="max-lg:text-2xl text-xl font-black text-gray-900">₱{total.toFixed(2)}</span>
-                        </div>
                     </div>
                 </div>
             </div >
@@ -159,6 +162,7 @@ Cart.propTypes = {
     }).isRequired,
     onRemove: PropTypes.func.isRequired,
     onRemoveLocation: PropTypes.func.isRequired,
+    onRemoveAll: PropTypes.func.isRequired,
     reciept: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 

@@ -1,4 +1,4 @@
-import { ADD, REMOVE, CLEAR_LOCATION } from "../actions/cartActions";
+import { ADD, REMOVE, CLEAR_LOCATION, CLEAR_ALL } from "../actions/cartActions";
 
 const initialState = (() => {
     try {
@@ -59,6 +59,9 @@ const cartReducer = (state = initialState, action) => {
             }
             return newState;
         }
+
+        case CLEAR_ALL:
+            return {}
 
         default:
             return state;

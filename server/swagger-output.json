@@ -77,6 +77,9 @@
                 "token": {
                   "example": "any"
                 },
+                "iss": {
+                  "example": "any"
+                },
                 "username": {
                   "example": "any"
                 },
@@ -114,6 +117,9 @@
               "type": "object",
               "properties": {
                 "token": {
+                  "example": "any"
+                },
+                "iss": {
                   "example": "any"
                 },
                 "email": {

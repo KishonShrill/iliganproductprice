@@ -14,7 +14,7 @@ import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
 import '../styles/grocery.scss'
 
 
-function GroceryPage({ cartItems, addNewCartItem, removeCartItem, removeCartLocation }) {
+function GroceryPage({ cartItems, addNewCartItem, removeCartItem, removeCartLocation, removeCartAll }) {
     document.title = "Grocery List - Budget Buddy"
     const { settings } = useSettings()
 
@@ -47,20 +47,12 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem, removeCartLoca
         }
     }, [cartItems]);
 
-    // Remove Item from <Cart /> on Element Click
-    useEffect(() => {
-        if (cartRef.current) {
-            cartRef.current.onItemClick = (productId) => {
-                removeCartItem(productId);
-            };
-        }
-    }, [removeCartItem])
-
     const catalogs = useMemo(() => {
-        if (!data?.data) return [];
+        console.log(data)
+        if (!data?.products) return [];
         const uniqueCatalogs = new Set();
 
-        data.data.forEach(item => {
+        data.products.forEach(item => {
             if (item.category?.catalog) {
                 uniqueCatalogs.add(item.category.catalog);
             }
@@ -115,7 +107,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem, removeCartLoca
     }, [count]);
 
     const searchTerm = (search || "").toLowerCase();
-    const filteredProducts = data?.data.filter(item => {
+    const filteredProducts = data?.products.filter(item => {
         const matchesSearch = searchTerm === '' ||
             item.product.product_name?.toLowerCase().includes(searchTerm);
 
@@ -149,7 +141,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem, removeCartLoca
     }
 
     return (
-        <div className="h-[calc(100vh-3.75rem)] overflow-y-auto">
+        <div className="h-[calc(100vh-62px)] overflow-y-auto">
             <div className="z-10 p-2 flex w-full gap-2 items-center justify-center">
                 {/* 🔊 Hidden audio element */}
                 <audio ref={audioRef} src="/sounds/click-pop.mp3" preload="auto" muted={!settings.soundEffects} />
@@ -260,7 +252,14 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem, removeCartLoca
                             </div>
                         </div>
                     ))}
-                    <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} onRemoveLocation={removeCartLocation} reciept={reciept} />
+                    <Cart
+                        ref={cartRef}
+                        storage={cartItems}
+                        onRemove={removeCartItem}
+                        onRemoveLocation={removeCartLocation}
+                        onRemoveAll={removeCartAll}
+                        reciept={reciept}
+                    />
                     <button ref={cartButtonRef} className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
                         {active
                             ? <img src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="My cart button" />
@@ -307,6 +306,7 @@ GroceryPage.propTypes = {
     }).isRequired,
     addNewCartItem: PropTypes.func.isRequired,
     removeCartItem: PropTypes.func.isRequired,
+    removeCartAll: PropTypes.func.isRequired,
     removeCartLocation: PropTypes.func.isRequired,
 };
 

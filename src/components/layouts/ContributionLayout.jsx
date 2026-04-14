@@ -5,8 +5,6 @@ import ToastContainer from "@/components/ToastContainer";
 import Cookies from "universal-cookie";
 import { useNavigate } from "react-router-dom";
 
-import '@/styles/main-header.scss'
-
 const cookies = new Cookies();
 
 function ContributionLayout() {

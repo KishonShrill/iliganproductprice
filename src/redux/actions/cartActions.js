@@ -1,6 +1,7 @@
 export const ADD = 'ADD';
 export const REMOVE = 'REMOVE';
 export const CLEAR_LOCATION = "CLEAR_LOCATION";
+export const CLEAR_ALL = "CLEAR_ALL";
 
 export const addToCart = (id, name, price, location, image) => {
     return {
@@ -27,4 +28,8 @@ export const removeFromCart = (id) => {
 export const clearLocationCart = (locationName) => ({
     type: CLEAR_LOCATION,
     payload: locationName
+});
+
+export const clearAllCart = () => ({
+    type: CLEAR_ALL
 });

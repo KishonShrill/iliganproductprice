@@ -42,7 +42,7 @@ const ProductCard = ({ item, onAdd, settings }) => {
                 </div>
             )}
 
-            <div className="mt-4 flex flex-1 flex-col">
+            <div className="sm:mt-4 flex flex-1 flex-col">
                 <h3 className="line-clamp-2 text-sm font-bold leading-tight text-gray-800">
                     {item.product.product_name}
                 </h3>
@@ -56,7 +56,7 @@ const ProductCard = ({ item, onAdd, settings }) => {
                     </span>
                 </div>
 
-                <div className="mt-auto pt-4 flex items-end justify-between">
+                <div className="mt-auto flex items-end justify-between">
                     <div className="flex flex-col">
                         <span className="text-[10px] font-medium text-gray-400 uppercase tracking-wider">Price</span>
                         <span className="text-lg font-black text-orange-500">

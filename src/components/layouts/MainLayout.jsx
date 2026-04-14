@@ -5,8 +5,6 @@ import Header from "@/components/homepage/Header";
 import MainBottomNav from "@/components/MainBottomNav";
 import ToastContainer from "@/components/ToastContainer";
 
-import '@/styles/main-header.scss'
-
 function HomepageLayout() {
     const [toasts, setToasts] = useState([]);
 
@@ -33,7 +31,7 @@ function HomepageLayout() {
                     <h2 className="text-lg">Loading<span className="animated-dots"></span></h2>
                 </div>
             }>
-                <div className="h-[calc(100vh-60px)] overflow-y-auto">
+                <div className="h-[calc(100vh-62px)] overflow-y-auto">
                     <Outlet context={{ toasts, removeToast, addToast }} />
                 </div>
             </Suspense>

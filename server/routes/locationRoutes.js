@@ -30,6 +30,7 @@ router.get('/:locationId', async (req, res) => {
 
     const locationId = req.params.locationId;
     const locationObjectId = new mongoose.Types.ObjectId(locationId);
+    const result = await Location.findOne({ _id: locationId }, { location_name: 1, _id: 0 }).lean()
 
     try {
         const products = await Listing.aggregate([
@@ -54,7 +55,7 @@ router.get('/:locationId', async (req, res) => {
             },
         ]);
 
-        res.json(products);
+        res.json({ products, location_name: result.location_name });
 
     } catch (error) {
         console.error(`Error fetching products for location ${locationId}:`, error);
