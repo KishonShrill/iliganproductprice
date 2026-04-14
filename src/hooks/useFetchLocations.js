@@ -23,7 +23,7 @@ const useFetchLocations = () => {
             // refetchOnMount: boolean or 'always' - data updater
             refetchOnWindowFocus: false,//boolean or 'always' - self explanatory
             // refetshInterval: int millisec
-            enabled: true, // - will control for automatic fetch
+            retry: false,
             select: (res) => res.data,
         }
     )

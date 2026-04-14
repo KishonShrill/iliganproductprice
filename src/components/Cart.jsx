@@ -1,17 +1,24 @@
-import React, { forwardRef, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
     ShoppingCart,
     Trash2,
     Package,
     AlertTriangle,
+    Wallet
 } from "lucide-react";
 
-const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRemoveAll, reciept }, ref) => {
+const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRemoveAll, addToast, reciept }, ref) => {
     const [locationToClear, setLocationToClear] = useState(null);
 
+    const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
+    const [budget, setBudget] = useState(() => {
+        const saved = localStorage.getItem('budgetbuddy_budget');
+        return saved ? parseFloat(saved) : 0;
+    });
+    const [tempBudget, setTempBudget] = useState("");
+
     const cartItemQuantity = Object.keys(storage.cart).length;
-    console.log(cartItemQuantity)
     const groupedEntries = Object.entries(storage.cart).reduce((acc, [id, item]) => {
         // console.log(id)
         if (!acc[item.location]) acc[item.location] = []
@@ -22,40 +29,94 @@ const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRem
     const cartItemEntries = Object.entries(groupedEntries);
     const total = Object.values(storage.cart).reduce((acc, item) => acc + item.price * item.quantity, 0);
 
+    const remaining = budget - total;
+    const isOverBudget = remaining < 0;
+
+    const openBudgetModal = () => {
+        setTempBudget(budget > 0 ? budget.toString() : "");
+        setIsBudgetModalOpen(true);
+    };
+
+    const handleSaveBudget = (e) => {
+        e.preventDefault();
+        const val = parseFloat(tempBudget);
+        if (!isNaN(val) && val >= 0) {
+            setBudget(val);
+            localStorage.setItem('budgetbuddy_budget', val.toString());
+        } else {
+            setBudget(0);
+            localStorage.setItem('budgetbuddy_budget', "0");
+        }
+        setIsBudgetModalOpen(false);
+    };
+
     const confirmClearLocation = () => {
-        console.log(locationToClear)
         if (locationToClear && locationToClear !== 'The Cart' && onRemoveLocation) {
             onRemoveLocation(locationToClear);
         } else {
             onRemoveAll();
+            setBudget(0)
         }
         setLocationToClear(null);
     };
+
+    useEffect(() => {
+        if (isOverBudget) {
+            addToast("Budget Warning", "You have gone beyond your limit. Becareful with your spending.", "destructive")
+        }
+    }, [isOverBudget])
 
     return (
         <>
             <div ref={ref} className="cart-summary h-[calc(100vh-60px)] min-[700px]:h-[60vh] dark:bg-gray-500 z-10" style={{ left: reciept }}>
                 <div className="flex h-full flex-col">
                     {/* Cart Header */}
-                    <div className="flex flex-col items-start justify-between rounded-2xl border-b border-gray-100 px-6 py-4 bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47]">
+                    <button
+                        className="flex flex-col items-start justify-between rounded-2xl border-b border-gray-100 px-6 py-4 bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] hover:from-gray-300 hover:to-gray-50 group hover:cursor-pointer"
+                        onClick={openBudgetModal}
+                    >
                         <div className="w-full flex flex-row justify-between">
                             <div className="flex items-center gap-2">
-                                <ShoppingCart className="text-white" />
-                                <h2 className="text-lg font-bold text-white">Shopping Cart</h2>
+                                <ShoppingCart className="text-white group-hover:text-black" />
+                                <h2 className="text-lg font-bold text-white group-hover:text-black">Shopping Cart</h2>
                             </div>
                             {cartItemQuantity !== 0 && (
-                                <button className="rounded-full text-white" onClick={() => setLocationToClear('The Cart')}>
+                                <button className="rounded-full text-white group-hover:text-red-500" onClick={(e) => { e.stopPropagation(); setLocationToClear('The Cart'); }}>
                                     <Trash2 size={20} />
                                 </button>
                             )}
                         </div>
 
-                        {/* Cart Footer / Total */}
-                        <div className="flex flex-col mt-4">
-                            <span className="text-3xl font-bold text-white">₱{total.toFixed(2)}</span>
-                            <span className="text-sm text-orange-100">Budget: ₱{total.toFixed(2)}</span>
+                        {/* Cart Footer / Total & Budget Display */}
+                        <div className="flex md:flex-col justify-between items-end md:items-start w-full mt-4">
+                            <div className="flex flex-col md:items-start">
+                                <span className="text-xs text-orange-200 group-hover:text-gray-500 font-medium mb-1">Estimated Total</span>
+                                <span className="text-3xl font-bold text-white group-hover:text-black transition-colors leading-none">
+                                    ₱{total.toFixed(2)}
+                                </span>
+                            </div>
+
+                            {/* Solid background pill ensures perfect contrast on orange AND gray backgrounds */}
+                            <div className="flex flex-col items-center md:items-end self-end">
+                                <span className="text-xs text-orange-200 group-hover:text-gray-500 font-medium max-md:mb-1 md:mt-2">
+                                    {budget > 0 ? `Budget: ₱${budget.toFixed(2)}` : 'Set Budget'}
+                                </span>
+                                {budget > 0 ? (
+                                    <span className={`text-sm font-bold md:font-normal max-md:px-2.5 md:px-1 max-md:py-1 rounded-md max-md:shadow-sm transition-colors group-hover:text-black md:border-none ${isOverBudget
+                                        ? 'bg-red-100 text-red-700 border border-red-200'
+                                        : 'bg-emerald-100 text-emerald-700 border border-emerald-200'
+                                        }`}>
+                                        {isOverBudget ? 'Over by ' : 'Left: '}
+                                        ₱{Math.abs(remaining).toFixed(2)}
+                                    </span>
+                                ) : (
+                                    <span className="text-sm font-bold px-2.5 py-1 rounded-md bg-white/20 text-white group-hover:bg-gray-200 group-hover:text-gray-700 transition-colors">
+                                        Tap to set
+                                    </span>
+                                )}
+                            </div>
                         </div>
-                    </div>
+                    </button>
 
                     {/* Cart Items */}
                     <div className="flex-1 overflow-y-auto max-md:px-4">
@@ -140,6 +201,53 @@ const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRem
                             </button>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {/* Budget Adjustment Modal */}
+            {isBudgetModalOpen && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-opacity">
+                    <form onSubmit={handleSaveBudget} className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-in fade-in zoom-in duration-200">
+                        <div className="flex items-center gap-3 mb-2 text-orange-600">
+                            <div className="p-2 bg-orange-100 rounded-full">
+                                <Wallet size={24} />
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900">Set Your Budget</h3>
+                        </div>
+                        <p className="text-gray-500 text-sm mb-5">
+                            Enter how much you plan to spend. We&apos;ll track your remaining balance as you shop.
+                        </p>
+
+                        <div className="relative mb-6">
+                            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 font-bold">₱</span>
+                            <input
+                                type="number"
+                                step="0.01"
+                                min="0"
+                                autoFocus
+                                value={tempBudget}
+                                onChange={(e) => setTempBudget(e.target.value)}
+                                placeholder="0.00"
+                                className="w-full pl-8 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent font-medium text-gray-900"
+                            />
+                        </div>
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setIsBudgetModalOpen(false)}
+                                className="px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-4 py-2 text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg shadow-sm transition-colors"
+                            >
+                                Save Budget
+                            </button>
+                        </div>
+                    </form>
                 </div>
             )}
         </>

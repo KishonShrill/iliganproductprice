@@ -11,10 +11,11 @@ const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [token, setToken] = useState(cookies.get("budgetbuddy_token"));
     const location = useLocation();
+    const currentLocation = location.pathname
     let isAdvancedUser = false;
 
     const getLocationName = () => {
-        const pathParts = location.pathname.split('/');
+        const pathParts = currentLocation.split('/');
         if (pathParts[1] === 'location' && pathParts[2]) return decodeURIComponent(pathParts[2]);
         return null;
     };
@@ -22,7 +23,8 @@ const Header = () => {
 
     const { data } = useFetchListingsByLocation(locationTitle);
 
-    locationTitle = location.pathname.split('/')[1]
+    locationTitle = currentLocation.split('/')[1]
+
 
     if (token) {
         try {
@@ -80,14 +82,14 @@ const Header = () => {
 
             {/* LEFT: Logo & Desktop Title */}
             <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-                <img src="/budgetbuddy-logo.svg" className='w-[36px] h-[36px] rounded-full object-cover shadow-sm' alt="Budget Buddy" />
-                <span className="inter-bold hidden md:block text-xl text-orange-500 dark:text-white">Budget Buddy</span>
+                <img src="/budgetbuddy-logo.svg" className='w-[36px] h-[36px] rounded-full object-cover shadow-sm select-none' alt="Budget Buddy" />
+                <span className={`inter-bold text-xl text-orange-500 dark:text-white ${currentLocation !== '/' && 'hidden'}`}>Budget Buddy</span>
             </Link>
 
             {/* CENTER: Dynamic Location Title */}
             <div className="flex-1 flex justify-center text-center px-4 min-w-0">
                 {locationTitle && (
-                    <h1 className="truncate text-sm md:text-base capitalize font-bold text-gray-800 dark:text-gray-100">
+                    <h1 className={`truncate text-sm md:text-base capitalize font-bold py-1 px-2 rounded-lg text-white bg-orange-500 ${currentLocation === '/' && '!text-orange-500 bg-transparent text-xl pointer-events-none select-none'}`}>
                         {data?.location_name || locationTitle}
                     </h1>
                 )}
@@ -95,13 +97,6 @@ const Header = () => {
 
             {/* RIGHT: Settings & Menu Button (Mobile) */}
             <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
-                <Link
-                    to="/settings"
-                    className={`md:hidden p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ${checkIsActive("/settings") ? "text-orange-500" : "text-gray-600 dark:text-gray-300"}`}
-                >
-                    <Settings size={20} />
-                </Link>
-
                 <button
                     className="md:hidden p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     onClick={toggleMenu}
@@ -136,13 +131,18 @@ const Header = () => {
 
                     {/* Integrated Auth Section */}
                     <div className="flex flex-col md:flex-row md:border-l border-gray-200 dark:border-gray-600 mt-2 pt-2 md:mt-0 md:pt-0 md:pl-4 gap-1 md:gap-4">
+                        <hr className="mb-2" />
                         {/* Desktop Settings (Mobile has it in header) */}
                         <Link
-                            className={`nav-link hidden md:flex items-center gap-2 hover:text-orange-500 dark:hover:text-orange-500 ${checkIsActive("/settings") ? activeStyles : inactiveStyles}`}
+                            className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-50 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${checkIsActive("/settings") ? activeStyles : inactiveStyles}`}
                             to="/settings"
+                            onClick={() => setIsOpen(false)}
                         >
                             <Settings size={20} />
+                            <span data-text="Settings" className={`md:hidden ${keepWidthStyles}`}>Settings</span>
+
                         </Link>
+
 
                         {!token ? (
                             <Link
@@ -150,7 +150,7 @@ const Header = () => {
                                 to="/authenticate"
                                 onClick={() => setIsOpen(false)}
                             >
-                                <LogIn size={20} className="md:hidden" />
+                                <LogIn size={20} />
                                 <span data-text="Login" className={`md:hidden ${keepWidthStyles}`}>Login</span>
                             </Link>
                         ) : (
@@ -161,7 +161,7 @@ const Header = () => {
                                         to="/dev-mode"
                                         onClick={() => setIsOpen(false)}
                                     >
-                                        <Computer size={20} className="md:hidden" />
+                                        <Computer size={20} />
                                         <span data-text="Dev Mode" className={`md:hidden ${keepWidthStyles}`}>Dev Mode</span>
                                     </Link>
                                 ) : (
@@ -179,7 +179,7 @@ const Header = () => {
                     </div>
                 </ul>
             </nav>
-        </header>
+        </header >
     );
 };
 
