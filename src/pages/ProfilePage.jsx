@@ -28,7 +28,7 @@ const ProfilePage = () => {
         window.location.reload(); // Ensures state clears
     };
 
-    console.log()
+    console.log(user)
 
     return (
         < div className="mx-auto flex min-h-[calc(100vh-76px)] max-w-4xl flex-col p-4 sm:p-6 lg:p-10" >

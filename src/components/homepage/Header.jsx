@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Settings, LogIn, Menu, X, LayoutDashboard, Package, Utensils, Info, ShoppingCart, User, Computer, CircleUserRound, Scroll } from "lucide-react";
 import Cookies from "universal-cookie";
 import { jwtDecode } from "jwt-decode";
@@ -10,6 +10,7 @@ const cookies = new Cookies();
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [token, setToken] = useState(cookies.get("budgetbuddy_token"));
+    const location = useLocation();
     let isAdvancedUser = false;
 
     useEffect(() => {
@@ -54,6 +55,16 @@ const Header = () => {
         { to: "#", label: "About", icon: <Info size={20} />, disabled: true },
     ];
 
+    const checkIsActive = (path) => {
+        if (path === "/") return location.pathname === "/"; // Exact match for home
+        if (path === "#") return false;
+        return location.pathname.startsWith(path); // Highlights parent tab even if on child page
+    };
+
+    const activeStyles = "!text-orange-500 font-bold";
+    const inactiveStyles = "text-white md:text-black dark:md:text-white";
+    const keepWidthStyles = "inline-flex flex-col after:content-[attr(data-text)] after:font-bold after:h-0 after:invisible after:overflow-hidden after:select-none";
+
     return (
         <header className="header flex items-center justify-between px-6 py-2 dark:bg-gray-700 dark:border-b-gray-600">
             {/* Mobile Menu Toggle */}
@@ -69,12 +80,12 @@ const Header = () => {
                 {!token ? (
                     <>
                         <Link to="/authenticate" className="md:hidden">
-                            <LogIn size={24} className="dark:text-white" />
+                            <LogIn size={24} className={`dark:text-white ${checkIsActive("/authenticate")}`} />
                         </Link>
                     </>
                 ) : (
                     <Link to="/profile" className="md:hidden">
-                        <CircleUserRound size={24} className="dark:text-white" />
+                        <CircleUserRound size={24} className={`dark:text-white ${checkIsActive("/profile")}`} />
                     </Link>
                 )}
             </div>
@@ -88,30 +99,59 @@ const Header = () => {
 
                     {navLinks.map((link, index) => (
                         <li key={link.label}>
-                            <Link title={link.disabled && `Coming soon...`} className={`nav-link ${index !== 0 && 'max-md:border-t'} max-md:border-gray-500 text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 ${link.disabled && 'md:!text-gray-300 !text-gray-600'}`} to={link.to} onClick={toggleMenu}>
+                            <Link
+                                title={link.disabled && `Coming soon...`}
+                                className={`nav-link ${index !== 0 && 'max-md:border-t'} max-md:border-gray-500 text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 ${link.disabled && 'md:!text-gray-300 !text-gray-600'} ${checkIsActive(link.to) ? activeStyles : inactiveStyles}`}
+                                to={link.to}
+                                onClick={toggleMenu}
+                            >
                                 <span className="md:hidden">{link.icon}</span>
-                                {link.label}
+                                <span data-text={link.label} className={keepWidthStyles}>{link.label}</span>
                             </Link>
                         </li>
                     ))}
 
                     {/* Integrated Auth Section */}
                     <div className="flex flex-col mt-auto md:flex-row md:border-t-0 md:border-l border-gray-600 pt-4 md:pt-0 md:pl-4 md:mt-0 md:items-center md:gap-4">
-                        <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 max-md:border-t max-md:border-gray-500" to="/settings" onClick={toggleMenu}>
-                            <Settings size={20} /> <span className="md:hidden">Settings</span>
+                        <Link
+                            className={`nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 max-md:border-t max-md:border-gray-500 ${checkIsActive("/settings")}`}
+                            to="/settings"
+                            onClick={toggleMenu}
+                        >
+                            <Settings size={24} />
+                            <span data-text="Settings" className={`md:hidden ${keepWidthStyles}`}>Settings</span>
                         </Link>
                         {!token ? (
                             <>
-                                <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 max-md:border-t max-md:border-gray-500" to="/authenticate" onClick={toggleMenu}>
-                                    <LogIn size={20} /> <span className="md:hidden">Login</span>
+                                <Link
+                                    className={`nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 max-md:border-t max-md:border-gray-500 ${checkIsActive("/authenticate")}`}
+                                    to="/authenticate"
+                                    onClick={toggleMenu}
+                                >
+                                    <LogIn size={24} />
+                                    <span data-text="Login" className={`md:hidden ${keepWidthStyles}`}>Login</span>
                                 </Link>
                             </>
                         ) : (
                             <>
                                 {/* Toggle between Dev Mode and Profile based on role */}
-                                {isAdvancedUser && (
-                                    <Link className="nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 max-md:border-t max-md:border-gray-500 font-medium" to="/dev-mode" onClick={toggleMenu}>
-                                        <Computer size={20} /> <span className="md:hidden">Dev Mode</span>
+                                {isAdvancedUser ? (
+                                    <Link
+                                        className={`nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 max-md:border-t max-md:border-gray-500 font-medium ${checkIsActive("/dev-mode")}`}
+                                        to="/dev-mode"
+                                        onClick={toggleMenu}
+                                    >
+                                        <Computer size={24} />
+                                        <span data-text="Dev Mode" className={`md:hidden ${keepWidthStyles}`}>Dev Mode</span>
+                                    </Link>
+                                ) : (
+                                    <Link
+                                        className={`nav-link text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 max-md:border-t max-md:border-gray-500 font-medium ${checkIsActive("/profile")}`}
+                                        to="/profile"
+                                        onClick={toggleMenu}
+                                    >
+                                        <CircleUserRound size={24} />
+                                        <span data-text={"Profile"} className={`md:hidden ${keepWidthStyles}`}>Profile</span>
                                     </Link>
                                 )}
                             </>

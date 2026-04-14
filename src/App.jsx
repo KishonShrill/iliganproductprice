@@ -73,12 +73,7 @@ function App() {
                                         <Route path="profile" element={<ProfilePage />} />
                                         <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
                                         <Route path="terms-of-service" element={<TermsOfServicePage />} />
-
-
-                                        <Route
-                                            path="authenticate"
-                                            element={<LoginPage debugMode={DEVELOPMENT} />}
-                                        />
+                                        <Route path="authenticate" element={<LoginPage debugMode={DEVELOPMENT} />} />
                                         <Route path="*" element={<NotFound />} />
                                     </Route>
 

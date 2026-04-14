@@ -14,7 +14,7 @@ import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
 import '../styles/grocery.scss'
 
 
-function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
+function GroceryPage({ cartItems, addNewCartItem, removeCartItem, removeCartLocation }) {
     document.title = "Grocery List - Budget Buddy"
     const { settings } = useSettings()
 
@@ -260,7 +260,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                             </div>
                         </div>
                     ))}
-                    <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept} />
+                    <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} onRemoveLocation={removeCartLocation} reciept={reciept} />
                     <button ref={cartButtonRef} className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
                         {active
                             ? <img src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="My cart button" />
@@ -307,6 +307,7 @@ GroceryPage.propTypes = {
     }).isRequired,
     addNewCartItem: PropTypes.func.isRequired,
     removeCartItem: PropTypes.func.isRequired,
+    removeCartLocation: PropTypes.func.isRequired,
 };
 
 export default GroceryPage

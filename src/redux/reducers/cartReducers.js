@@ -1,5 +1,4 @@
-import { ADD } from "../actions/cartActions";
-import { REMOVE } from "../actions/cartActions";
+import { ADD, REMOVE, CLEAR_LOCATION } from "../actions/cartActions";
 
 const initialState = (() => {
     try {
@@ -30,7 +29,7 @@ const cartReducer = (state = initialState, action) => {
                     }
             };
 
-        case REMOVE:
+        case REMOVE: {
             if (!state[action.payload.product_id]) return state;
 
             if (state[action.payload.product_id].quantity > 1) {
@@ -45,6 +44,21 @@ const cartReducer = (state = initialState, action) => {
 
             const { [action.payload.product_id]: _, ...rest } = state
             return rest;
+        }
+
+        case CLEAR_LOCATION: {
+            const newState = { ...state };
+            const locationToClear = action.payload;
+            console.log(locationToClear)
+
+            // Loop through all items and delete keys matching the location
+            for (const key in newState) {
+                if (newState[key].location === locationToClear) {
+                    delete newState[key];
+                }
+            }
+            return newState;
+        }
 
         default:
             return state;

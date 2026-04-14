@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import GroceryPage from "../pages/GroceryPage";
-import { addToCart, removeFromCart } from "../redux/actions/cartActions";
+import { addToCart, clearLocationCart, removeFromCart } from "../redux/actions/cartActions";
 
 const mapStateToProps = (state) => ({
     cartItems: state,
@@ -9,6 +9,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
     addNewCartItem: (id, name, price, location, image) => dispatch(addToCart(id, name, price, location, image)),
     removeCartItem: (id) => dispatch(removeFromCart(id)),
+    removeCartLocation: (location) => dispatch(clearLocationCart(location)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(GroceryPage);

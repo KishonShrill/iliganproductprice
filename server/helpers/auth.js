@@ -50,12 +50,13 @@ export const isOneWeekOld = (request, response, next) => {
     const createdDate = new Date(request.user.created_date) || 0;
     const now = new Date();
     const diffMs = now - createdDate; // difference in milliseconds
-    const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
+    const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
     if (ROLE_HIERARCHY[request.user.user_role] > 1) return next();
-    if (~~diffMs < oneWeekMs) {
+    if (~~diffMs < ONE_WEEK_MS) {
+        const daysLeft = Math.ceil((ONE_WEEK_MS - ~~diffMs) / (1000 * 60 * 60 * 24));
         return response.status(403).json({
-            message: `Your account is NOT 1 week old. Please try again next time...`
+            message: `You have ${daysLeft} days left until you can access this page. Please try again next time...`
         })
     } else {
         next();

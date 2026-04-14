@@ -2,6 +2,7 @@
 import express from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
 import { OAuth2Client } from 'google-auth-library';
 import { ResultAsync, ok, err, errAsync, okAsync } from 'neverthrow'
 import { user_verify, requireRole } from '../helpers/auth.js';
@@ -32,20 +33,18 @@ router.post("/me", user_verify, requireRole("regular"), (req, res) => {
 router.post("/register", async (req, res) => {
     // #swagger.tags = ['Authentication']
     // #swagger.description = 'Endpoint to register a new user.'
-    const { token, username, email, password } = req.body;
+    const { token, iss, username, email, password } = req.body;
 
-    const ticket = token ? await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.VITE_CLIENT_ID,
+    const googleResponse = token ? await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${token}` }
     }) : null;
 
-    // 2. Extract the safe, verified user payload
-    const payload = token ? ticket.getPayload() : null;
+    const payload = googleResponse ? googleResponse.data : null;
 
     console.log(payload)
 
     const prepareUser = () => {
-        if (payload?.iss === "https://accounts.google.com") {
+        if (iss === "https://accounts.google.com") {
             const {
                 email: googleEmail,
                 email_verified,
@@ -121,8 +120,8 @@ router.post("/register", async (req, res) => {
                 username: user.username,
             };
 
-            if (payload?.iss === "https://accounts.google.com") {
-                payload.user_picture = user.profile_picture;
+            if (iss === "https://accounts.google.com") {
+                tokenInit.user_picture = user.profile_picture;
             }
 
             // BUG FIX: Replaced `const token` with standard return
@@ -146,14 +145,13 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
     // #swagger.tags = ['Authentication']
     // #swagger.description = 'Endpoint to login as a user.'
-    const { token, email, password } = req.body;
+    const { token, iss, email, password } = req.body;
 
-    const ticket = token ? await client.verifyIdToken({
-        idToken: token,
-        audience: process.env.VITE_CLIENT_ID,
+    const googleResponse = token ? await axios.get('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: { Authorization: `Bearer ${token}` }
     }) : null;
 
-    const payload = ticket ? ticket.getPayload() : null;
+    const payload = googleResponse ? googleResponse.data : null;
 
     if (typeof email !== "string" && !token) {
         return res.status(400).send({ message: "Invalid email" });
@@ -167,7 +165,7 @@ router.post("/login", async (req, res) => {
             user ? okAsync(user) : errAsync({ status: 404, message: "User not found" })
         )
         .andThen((user) => {
-            if (payload?.iss === "https://accounts.google.com") {
+            if (iss === "https://accounts.google.com") {
                 return okAsync(user);
             }
 
@@ -186,7 +184,7 @@ router.post("/login", async (req, res) => {
             };
 
             console.log(user.profile_picture)
-            if (payload?.iss === "https://accounts.google.com") {
+            if (iss === "https://accounts.google.com") {
                 initToken.profile_picture = user.profile_picture
             }
 

@@ -25,7 +25,7 @@ export default function LocationPage() {
     }
 
     return (
-        <>
+        <div className="min-h-[calc(100vh-141px-4.75rem)] overflow-y-auto">
             <div className="min-h-[calc(100vh-141px-3.75rem)]">
                 <section className="mx-auto max-w-6xl py-6 px-4 lg:p-10">
                     <SEO
@@ -61,6 +61,6 @@ export default function LocationPage() {
                 </section>
             </div>
             <SimpleFooter className={"max-md:mb-[4.5rem] bg-gray-900"} />
-        </>
+        </div>
     );
 }
