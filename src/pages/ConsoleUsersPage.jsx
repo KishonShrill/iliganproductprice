@@ -56,7 +56,7 @@ export default function ConsoleUsersPage() {
     const { data: users = [], isLoading } = useQuery('console_users', async () => {
         const response = await axios.get(DEVELOPMENT
             ? `http://${LOCALHOST}:5000/api/${API_VERSION}/users`
-            : `https://productprice-iligan.vercel.app/api/${API_VERSION}/users`,
+            : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/users`,
             {
                 headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` }
             });
@@ -79,7 +79,7 @@ export default function ConsoleUsersPage() {
         {
             onSuccess: (result) => {
                 result.match(
-                    (res) => {
+                    () => {
                         addToast("Success", "User role updated successfully!");
                         queryClient.invalidateQueries('console_users');
                     },

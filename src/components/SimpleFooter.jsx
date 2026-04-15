@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 const SimpleFooter = ({ className }) => {
     const navigate = useNavigate();
     return (
-        <footer className={`mt-6 border-t border-gray-200 p-8 text-center text-sm text-gray-500 ${className}`}>
+        <footer className={`mt-3 border-t border-gray-200 p-8 text-center text-sm text-gray-500 ${className}`}>
             <p>© 2026 Budget Buddy. All rights reserved.</p>
             <div className="mt-3 flex justify-center gap-6">
                 <button

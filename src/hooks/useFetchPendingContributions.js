@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
+import { ResultAsync } from 'neverthrow';
 
 const cookies = new Cookies();
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
@@ -13,10 +14,20 @@ const useFetchPendingContributions = () => {
         : `https://iliganproductprice-mauve.vercel.app/api/${API_VERSION}/contributions/pending`;
 
     const fetchURL = async () => {
-        const response = await axios.get(DATABASE_URL, {
-            headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` }
-        });
-        return response.data;
+        const result = await ResultAsync.fromPromise(
+            axios.get(DATABASE_URL, {
+                headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` }
+            }),
+            (error) => {
+                return new Error(error.response?.data?.message || "Failed to connect to the server.");
+            }
+        );
+
+        if (result.isErr()) {
+            throw result.error;
+        }
+
+        return result.value.data;
     };
 
     return useQuery(

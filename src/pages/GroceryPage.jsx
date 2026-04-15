@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, useMemo, Suspense } from "react";
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import { Package } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import PropTypes from "prop-types";
@@ -12,9 +12,10 @@ import SimpleFooter from "@/components/SimpleFooter";
 import useSettings from "../hooks/useSettings";
 import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
 import '../styles/grocery.scss'
+import { updateQuantityFromCart } from "@/redux/actions/cartActions";
 
 
-function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
+function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, removeCartItem, removeCartLocation, removeCartAll }) {
     document.title = "Grocery List - Budget Buddy"
     const { settings } = useSettings()
 
@@ -25,6 +26,8 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     const [animatingCards, setAnimatingCards] = useState([])
     const [selectedCatalog, setSelectedCatalog] = useState('All')
     const [windowWidth] = useState(window.innerWidth);
+
+    const { addToast } = useOutletContext();
 
     const cartButtonRef = useRef(null)
     const cartRef = useRef(null)
@@ -47,20 +50,12 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
         }
     }, [cartItems]);
 
-    // Remove Item from <Cart /> on Element Click
-    useEffect(() => {
-        if (cartRef.current) {
-            cartRef.current.onItemClick = (productId) => {
-                removeCartItem(productId);
-            };
-        }
-    }, [removeCartItem])
-
     const catalogs = useMemo(() => {
-        if (!data?.data) return [];
+        console.log(data)
+        if (!data?.products) return [];
         const uniqueCatalogs = new Set();
 
-        data.data.forEach(item => {
+        data.products.forEach(item => {
             if (item.category?.catalog) {
                 uniqueCatalogs.add(item.category.catalog);
             }
@@ -115,7 +110,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     }, [count]);
 
     const searchTerm = (search || "").toLowerCase();
-    const filteredProducts = data?.data.filter(item => {
+    const filteredProducts = data?.products.filter(item => {
         const matchesSearch = searchTerm === '' ||
             item.product.product_name?.toLowerCase().includes(searchTerm);
 
@@ -149,7 +144,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
     }
 
     return (
-        <div className="h-[calc(100vh-3.75rem)] overflow-y-auto">
+        <div className="h-[calc(100vh-62px)] overflow-y-auto">
             <div className="z-10 p-2 flex w-full gap-2 items-center justify-center">
                 {/* 🔊 Hidden audio element */}
                 <audio ref={audioRef} src="/sounds/click-pop.mp3" preload="auto" muted={!settings.soundEffects} />
@@ -183,7 +178,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                     </Button>
                 ))}
             </nav>
-            <div className="min-h-[calc(100vh-141px-60px-59px-44px)]">
+            <div className="min-h-[calc(100vh-117px-62px-59px-44px-0.75rem)]">
                 <section className="grocery px-5 max-md:pb-6 h-[calc(100%-72px)] bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
                     <main className={`grid ${!settings.hidePhotos && 'max-sm:grid-cols-1'} grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 md:gap-6`} id="productContainer">
                         <Suspense fallback={(
@@ -241,7 +236,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                             }}
                         >
                             <div className="flex h-full w-full flex-col overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5">
-                                {animatingCard.productImage ? (
+                                {!settings.hidePhotos && animatingCard.productImage ? (
                                     <div className="relative aspect-square h-[9.5rem] bg-gray-50">
                                         <img src={animatingCard.productImage} alt={animatingCard.productName} className="h-full w-full object-cover" />
                                     </div>
@@ -260,7 +255,16 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem }) {
                             </div>
                         </div>
                     ))}
-                    <Cart ref={cartRef} storage={cartItems} onRemove={removeCartItem} reciept={reciept} />
+                    <Cart
+                        ref={cartRef}
+                        storage={cartItems}
+                        onRemove={removeCartItem}
+                        onUpdateQuantity={updateQuantityFromCart}
+                        onRemoveLocation={removeCartLocation}
+                        onRemoveAll={removeCartAll}
+                        reciept={reciept}
+                        addToast={addToast}
+                    />
                     <button ref={cartButtonRef} className={`cart-btn phone fixed ${active ? 'active' : ''}`} onClick={openReciept}>
                         {active
                             ? <img src="/UI/shopping-cart-02-stroke-rounded-white.svg" alt="My cart button" />
@@ -307,6 +311,9 @@ GroceryPage.propTypes = {
     }).isRequired,
     addNewCartItem: PropTypes.func.isRequired,
     removeCartItem: PropTypes.func.isRequired,
+    updateQuantityFromCart: PropTypes.func.isRequired,
+    removeCartAll: PropTypes.func.isRequired,
+    removeCartLocation: PropTypes.func.isRequired,
 };
 
 export default GroceryPage

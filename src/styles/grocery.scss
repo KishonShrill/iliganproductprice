@@ -33,10 +33,9 @@ section.grocery {
 .cart {
   &-summary {
     position: sticky;
-    top: 6rem;
+    top: 1.5rem;
     width: 330px;
     min-width: 300px;
-    height: 60vh;
     padding: 15px;
     display: flex;
     flex-direction: column;
@@ -105,8 +104,6 @@ section.grocery {
   }
 
   &-category {
-    margin-block: 15px 0;
-    padding-bottom: 10px;
     color: $primary-color;
     font-size: 1em;
     // border-bottom: 2px solid #eee;
@@ -130,14 +127,10 @@ section.grocery {
   .cart {
     &-summary {
       position: fixed;
-      /* Make it sticky */
       top: calc(20px + 60px);
-      /* Stick below header, plus some gap */
       bottom: 0;
       left: 0%;
       width: 100%;
-      height: calc(100dvh - 66px);
-      /* Adjust height based on content */
       padding-bottom: 7rem;
       border-radius: 0;
     }

@@ -35,7 +35,12 @@ const allowedOrigins = process.env.VITE_DEVELOPMENT
         'http://localhost:5000',
         'https://productprice-iligan.vercel.app',
     ]
-    : 'https://productprice-iligan.vercel.app';
+    : process.env.VERCEL_URL
+        ? [
+            `https://${process.env.VERCEL_URL}`,
+            'https://productprice-iligan.vercel.app'
+        ]
+        : 'https://productprice-iligan.vercel.app';
 
 const corsOptions = {
     origin: function(origin, callback) {

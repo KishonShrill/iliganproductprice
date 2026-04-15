@@ -1,12 +1,16 @@
 import { Suspense } from "react";
+import { ServerCrash, AlertCircle } from "lucide-react";
 import useFetchLocations from '../hooks/useFetchLocations';
 import LocationCard from "../components/LocationCard";
 import '../styles/locations.scss'
-import SEO from "../components/SEO";
+
+import { Button } from "@/components/ui/button";
 import SimpleFooter from "@/components/SimpleFooter";
+import SEO from "../components/SEO";
+import PropTypes from "prop-types";
 
 export default function LocationPage() {
-    const { isLoading, data: locations, isError, error, isFetching } = useFetchLocations();
+    const { isLoading, data: locations, isError, isFetching, refetch } = useFetchLocations();
 
     // Display when fetched elements are empty or is loading...
     if (isLoading || isFetching) {
@@ -16,17 +20,10 @@ export default function LocationPage() {
             </main>
         )
     }
-    if (isError) {
-        return (
-            <main className='errorDisplay'>
-                <h2>Error: {error.message}</h2>
-            </main>
-        )
-    }
 
     return (
-        <>
-            <div className="min-h-[calc(100vh-141px-3.75rem)]">
+        <div className="overflow-y-auto">
+            <div className="min-h-[calc(100vh-117px-62px-0.75rem)]">
                 <section className="mx-auto max-w-6xl py-6 px-4 lg:p-10">
                     <SEO
                         title={"Locations - Budget Buddy"}
@@ -47,20 +44,59 @@ export default function LocationPage() {
                                 <h2>Loading<span className="animated-dots"></span></h2>
                             </main>
                         )}>
-                            {locations
-                                ? locations?.map((item) => (
-                                    <LocationCard
-                                        key={item._id}
-                                        item={item}
-                                    />
+                            {isError || locations.length === 0 ? (
+                                <LocationFallback
+                                    isError={isError}
+                                    onRetry={() => refetch()} // Pass refetch so they can try again!
+                                />
+                            ) : (
+                                locations.map((item) => (
+                                    <LocationCard key={item._id} item={item} />
                                 ))
-                                : <h2>No locations found...</h2>
-                            }
+                            )}
                         </Suspense>
                     </main>
                 </section>
             </div>
             <SimpleFooter className={"max-md:mb-[4.5rem] bg-gray-900"} />
-        </>
+        </div>
     );
+}
+
+const LocationFallback = ({ isError, onRetry }) => {
+    return (
+        <div className="col-span-full flex flex-col items-center justify-center py-20 px-4 bg-gray-50 dark:bg-gray-800/50 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-2xl text-center">
+            <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${isError ? 'bg-red-100 dark:bg-red-900/30' : 'bg-gray-200 dark:bg-gray-700'}`}>
+                {isError ? (
+                    <ServerCrash className="w-10 h-10 text-red-500 dark:text-red-400" />
+                ) : (
+                    <AlertCircle className="w-10 h-10 text-gray-400 dark:text-gray-500" />
+                )}
+            </div>
+
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+                {isError ? "Connection Error" : "No Locations Found"}
+            </h2>
+
+            <p className="text-gray-500 dark:text-gray-400 max-w-md mb-8 leading-relaxed">
+                {isError
+                    ? "We couldn't connect to the database. It might be offline or undergoing maintenance. Please try again in a few moments."
+                    : "There are currently no locations available to display."}
+            </p>
+
+            {isError && onRetry && (
+                <Button
+                    onClick={onRetry}
+                    className="bg-orange-500 hover:bg-orange-600 text-white px-8 shadow-sm transition-colors"
+                >
+                    Try Again
+                </Button>
+            )}
+        </div>
+    );
+};
+
+LocationFallback.propTypes = {
+    isError: PropTypes.bool.isRequired,
+    onRetry: PropTypes.func.isRequired
 }

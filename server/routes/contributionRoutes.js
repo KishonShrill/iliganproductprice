@@ -15,7 +15,7 @@ router.get('/pending', user_verify, isOneWeekOld, async (req, res) => {
     await ResultAsync
         .fromPromise(
             User.findById(currentUserId)
-                .select('daily_votes daily_submissions last_vote_date last_submission_date max_daily_votes max_daily_submissions')
+                .select('account_created daily_votes daily_submissions last_vote_date last_submission_date max_daily_votes max_daily_submissions')
                 .lean()
                 .exec(),
             (error) => new Error(`User Fetch Error: ${error.message}`)
