@@ -102,8 +102,8 @@ function App() {
                                 </Routes>
                             </Suspense>
                         </Provider>
-                        <SpeedInsights />
                     </BrowserRouter>
+                    <SpeedInsights />
                     {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />}
                 </QueryClientProvider >
             </HelmetProvider>
