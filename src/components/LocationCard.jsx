@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Store, MapPin, ServerCrash, AlertCircle } from "lucide-react";
+import { Store, MapPin } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const storeImages = {

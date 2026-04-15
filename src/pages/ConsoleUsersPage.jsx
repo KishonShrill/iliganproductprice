@@ -79,7 +79,7 @@ export default function ConsoleUsersPage() {
         {
             onSuccess: (result) => {
                 result.match(
-                    (res) => {
+                    () => {
                         addToast("Success", "User role updated successfully!");
                         queryClient.invalidateQueries('console_users');
                     },

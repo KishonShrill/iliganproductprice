@@ -1,4 +1,4 @@
-import { ADD, REMOVE, CLEAR_LOCATION, CLEAR_ALL } from "../actions/cartActions";
+import { ADD, REMOVE, UPDATE_QUANTITY, CLEAR_LOCATION, CLEAR_ALL } from "../actions/cartActions";
 
 const initialState = (() => {
     try {
@@ -44,6 +44,24 @@ const cartReducer = (state = initialState, action) => {
 
             const { [action.payload.product_id]: _, ...rest } = state
             return rest;
+        }
+
+        case UPDATE_QUANTITY: {
+            if (!state[action.payload.product_id]) return state;
+
+            // If user sets quantity to 0 in the modal, completely remove the item
+            if (action.payload.quantity === 0) {
+                const { [action.payload.product_id]: _, ...rest } = state;
+                return rest;
+            }
+
+            return {
+                ...state,
+                [action.payload.product_id]: {
+                    ...state[action.payload.product_id],
+                    quantity: action.payload.quantity,
+                }
+            };
         }
 
         case CLEAR_LOCATION: {

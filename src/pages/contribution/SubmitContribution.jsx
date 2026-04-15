@@ -143,7 +143,7 @@ export default function SubmitContribution() {
         )
             .map((response) => response.data) // Extract just the data using .map
             .match(
-                (data) => {
+                () => {
                     addToast("Success", "Contribution submitted for community review!");
                     queryClient.invalidateQueries('pending_contributions');
                     navigate('/contribution/hub');

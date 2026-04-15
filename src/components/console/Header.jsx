@@ -4,26 +4,26 @@ import PropTypes from 'prop-types';
 import { Button } from '../ui/button';
 import { Plus, LogOut, ChevronDown, CircleUserRound, House, UserCog } from 'lucide-react';
 import Cookies from 'universal-cookie';
-import { jwtDecode } from 'jwt-decode';
+// import { jwtDecode } from 'jwt-decode';
 
-const cookies = new Cookies();
+// const cookies = new Cookies();
 
 export default function Header({ title, actionLabel, onAction, onLogout, user }) {
-    const token = cookies.get('budgetbuddy_token');
+    // const token = cookies.get('budgetbuddy_token');
     const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const currentUser = user || { username: 'Admin', user_email: 'Loading...' };
-    let isAdmin = false;
+    // let isAdmin = false;
 
-    if (token) {
-        try {
-            const decoded = jwtDecode(token);
-            const role = decoded.user_role;
-            isAdmin = role === "admin";
-        } catch (error) {
-            console.error("Failed to decode token", error);
-        }
-    }
+    // if (token) {
+    //     try {
+    //         const decoded = jwtDecode(token);
+    //         const role = decoded.user_role;
+    //         isAdmin = role === "admin";
+    //     } catch (error) {
+    //         console.error("Failed to decode token", error);
+    //     }
+    // }
 
     return (
         <div className="flex flex-col items-start justify-between border-b border-gray-200 bg-white px-8 py-6 relative">

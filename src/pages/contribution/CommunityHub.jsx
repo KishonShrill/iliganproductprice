@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate, useOutletContext } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ThumbsUp, ThumbsDown, Plus, Clock, Store, Tag, PackageOpen, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -9,7 +9,6 @@ import useVoteContribution from '@/hooks/useVoteContribution';
 
 export default function CommunityHub() {
     const navigate = useNavigate();
-    const { addToast } = useOutletContext();
     const [activeTab, setActiveTab] = useState('to_review');
 
     const { data = { pending: [], votesToday: 0, submissionsToday: 0 }, isLoading, isError, error } = useFetchPendingContributions();

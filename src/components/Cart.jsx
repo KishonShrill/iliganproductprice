@@ -5,18 +5,27 @@ import {
     Trash2,
     Package,
     AlertTriangle,
-    Wallet
+    Wallet,
+    Minus,
+    Plus
 } from "lucide-react";
+import useSettings from "@/hooks/useSettings";
 
-const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRemoveAll, addToast, reciept }, ref) => {
-    const [locationToClear, setLocationToClear] = useState(null);
+const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRemoveAll, onUpdateQuantity, addToast, reciept }, ref) => {
+    const { settings } = useSettings();
 
+    // --- BUDGET STATE ---
     const [isBudgetModalOpen, setIsBudgetModalOpen] = useState(false);
     const [budget, setBudget] = useState(() => {
         const saved = localStorage.getItem('budgetbuddy_budget');
         return saved ? parseFloat(saved) : 0;
     });
     const [tempBudget, setTempBudget] = useState("");
+
+    // --- ITEM QUANTITY STATE ---
+    const [locationToClear, setLocationToClear] = useState(null);
+    const [itemToUpdate, setItemToUpdate] = useState(null);
+    const [tempQuantity, setTempQuantity] = useState(1);
 
     const cartItemQuantity = Object.keys(storage.cart).length;
     const groupedEntries = Object.entries(storage.cart).reduce((acc, [id, item]) => {
@@ -32,6 +41,7 @@ const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRem
     const remaining = budget - total;
     const isOverBudget = remaining < 0;
 
+    // --- BUDGET LOGIC ---
     const openBudgetModal = () => {
         setTempBudget(budget > 0 ? budget.toString() : "");
         setIsBudgetModalOpen(true);
@@ -48,6 +58,22 @@ const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRem
             localStorage.setItem('budgetbuddy_budget', "0");
         }
         setIsBudgetModalOpen(false);
+    };
+
+    // --- ITEM QUANTITY LOGIC ---
+    const openQuantityModal = (item) => {
+        setItemToUpdate(item);
+        setTempQuantity(item.quantity);
+    };
+
+    const handleSaveQuantity = (e) => {
+        e.preventDefault();
+        const newQuantity = parseInt(tempQuantity, 10);
+
+        if (!isNaN(newQuantity) && newQuantity >= 0) {
+            onUpdateQuantity(itemToUpdate.id, newQuantity);
+        }
+        setItemToUpdate(null);
     };
 
     const confirmClearLocation = () => {
@@ -144,7 +170,7 @@ const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRem
                                     <ul key={category} className="max-md:space-y-4 space-y-2">
                                         {items.map((item) => (
                                             <li key={item.id} className="flex items-center gap-3 rounded-xl border border-gray-50 bg-white p-2 shadow-sm">
-                                                {item.image ? (
+                                                {!settings.hidePhotos && (item.image ? (
                                                     <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-md bg-gray-100">
                                                         <img src={item.image} alt={item.name} className="h-full w-full object-cover" />
                                                     </div>
@@ -154,10 +180,25 @@ const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRem
                                                             <Package className="w-8 h-8 text-gray-400" />
                                                         </div>
                                                     </div>
-                                                )}
+                                                ))}
                                                 <div className="flex-1 min-w-0">
-                                                    <h4 className="truncate text-sm font-semibold text-gray-800">{item.name}</h4>
-                                                    <p className="text-xs text-gray-500">₱{item.price.toFixed(2)} <span className="text-orange-500 font-bold">x{item.quantity}</span></p>
+                                                    {/* UPDATED: Clickable Name */}
+                                                    <h4
+                                                        className="truncate text-sm font-semibold text-gray-800 cursor-pointer hover:text-orange-500 transition-colors"
+                                                        onClick={() => openQuantityModal(item)}
+                                                        title="Click to adjust quantity"
+                                                    >
+                                                        {item.name}
+                                                    </h4>
+                                                    <p className="text-xs text-gray-500">
+                                                        ₱{item.price.toFixed(2)}
+                                                        <button
+                                                            onClick={() => openQuantityModal(item)}
+                                                            className="text-orange-500 font-bold ml-1 hover:bg-orange-100 px-1.5 py-0.5 rounded transition-colors"
+                                                        >
+                                                            x{item.quantity}
+                                                        </button>
+                                                    </p>
                                                 </div>
                                                 <button
                                                     onClick={() => onRemove(item.id)}
@@ -250,6 +291,66 @@ const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRem
                     </form>
                 </div>
             )}
+
+            {itemToUpdate && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 transition-opacity">
+                    <form onSubmit={handleSaveQuantity} className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl animate-in fade-in zoom-in duration-200">
+                        <div className="flex items-center gap-3 mb-4 text-orange-600">
+                            <div className="p-2 bg-orange-100 rounded-full">
+                                <Package size={24} />
+                            </div>
+                            <h3 className="text-lg font-bold text-gray-900">Adjust Quantity</h3>
+                        </div>
+
+                        <div className="mb-6">
+                            <p className="text-gray-900 font-bold truncate text-lg mb-1">{itemToUpdate.name}</p>
+                            <p className="text-gray-500 text-sm">₱{itemToUpdate.price.toFixed(2)} each</p>
+                        </div>
+
+                        <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl p-2 mb-6">
+                            <button
+                                type="button"
+                                onClick={() => setTempQuantity(Math.max(0, tempQuantity - 1))}
+                                className="w-12 h-12 flex items-center justify-center bg-white rounded-lg shadow-sm border border-gray-200 text-gray-600 hover:bg-red-50 hover:text-red-500 hover:border-red-200 transition-all"
+                            >
+                                <Minus size={20} />
+                            </button>
+
+                            <input
+                                type="number"
+                                min="0"
+                                value={tempQuantity}
+                                onChange={(e) => setTempQuantity(parseInt(e.target.value) || 0)}
+                                className="w-20 text-center bg-transparent text-3xl font-bold text-gray-900 focus:outline-none"
+                            />
+
+                            <button
+                                type="button"
+                                onClick={() => setTempQuantity(tempQuantity + 1)}
+                                className="w-12 h-12 flex items-center justify-center bg-white rounded-lg shadow-sm border border-gray-200 text-gray-600 hover:bg-green-50 hover:text-green-500 hover:border-green-200 transition-all"
+                            >
+                                <Plus size={20} />
+                            </button>
+                        </div>
+
+                        <div className="flex justify-end gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setItemToUpdate(null)}
+                                className="px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-100 hover:text-gray-900 rounded-lg transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-4 py-2 text-sm font-semibold text-white bg-orange-500 hover:bg-orange-600 rounded-lg shadow-sm transition-colors"
+                            >
+                                Save Quantity
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            )}
         </>
     );
 }));
@@ -269,8 +370,10 @@ Cart.propTypes = {
         ).isRequired
     }).isRequired,
     onRemove: PropTypes.func.isRequired,
+    onUpdateQuantity: PropTypes.func.isRequired,
     onRemoveLocation: PropTypes.func.isRequired,
     onRemoveAll: PropTypes.func.isRequired,
+    addToast: PropTypes.func.isRequired,
     reciept: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
 };
 

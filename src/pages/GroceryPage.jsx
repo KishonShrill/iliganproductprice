@@ -12,9 +12,10 @@ import SimpleFooter from "@/components/SimpleFooter";
 import useSettings from "../hooks/useSettings";
 import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
 import '../styles/grocery.scss'
+import { updateQuantityFromCart } from "@/redux/actions/cartActions";
 
 
-function GroceryPage({ cartItems, addNewCartItem, removeCartItem, removeCartLocation, removeCartAll }) {
+function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, removeCartItem, removeCartLocation, removeCartAll }) {
     document.title = "Grocery List - Budget Buddy"
     const { settings } = useSettings()
 
@@ -258,6 +259,7 @@ function GroceryPage({ cartItems, addNewCartItem, removeCartItem, removeCartLoca
                         ref={cartRef}
                         storage={cartItems}
                         onRemove={removeCartItem}
+                        onUpdateQuantity={updateQuantityFromCart}
                         onRemoveLocation={removeCartLocation}
                         onRemoveAll={removeCartAll}
                         reciept={reciept}
@@ -309,6 +311,7 @@ GroceryPage.propTypes = {
     }).isRequired,
     addNewCartItem: PropTypes.func.isRequired,
     removeCartItem: PropTypes.func.isRequired,
+    updateQuantityFromCart: PropTypes.func.isRequired,
     removeCartAll: PropTypes.func.isRequired,
     removeCartLocation: PropTypes.func.isRequired,
 };
