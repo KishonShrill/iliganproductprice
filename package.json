@@ -5,6 +5,7 @@
     "type": "module",
     "scripts": {
         "dev": "vite --host",
+        "prebuild": "retype build ./documentation",
         "build": "vite build",
         "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
         "lint:fix": "eslint . --report-unused-disable-directives --max-warnings 0 --fix",
@@ -57,6 +58,7 @@
         "react-router-dom": "^6.22.3",
         "realm-web": "^2.0.0",
         "redux": "^5.0.1",
+        "retypeapp": "^4.5.3",
         "sass": "^1.75.0",
         "shadcn": "^4.1.2",
         "streamifier": "^0.1.1",

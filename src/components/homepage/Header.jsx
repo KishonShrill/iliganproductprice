@@ -26,15 +26,19 @@ const Header = () => {
     locationTitle = currentLocation.split('/')[1]
 
 
-    if (token) {
-        try {
-            const decoded = jwtDecode(token);
-            const role = decoded.user_role;
-            isAdvancedUser = role === "admin" || role === "moderator";
-        } catch (error) {
-            console.error("Failed to decode token", error);
+    useEffect(() => {
+        if (token) {
+            try {
+                const decoded = jwtDecode(token);
+                // Check if they are above a regular user. 
+                // (Note: use decoded.userRole if that's what you named it in your backend JWT payload!)
+                const role = decoded.user_role;
+                isAdvancedUser.current = role === "admin" || role === "moderator";
+            } catch (error) {
+                console.error("Failed to decode token", error);
+            }
         }
-    }
+    })
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -46,7 +50,7 @@ const Header = () => {
         ...(token
             ? [{ to: "/contribution", label: "Contribute", icon: <Scroll size={20} /> }]
             : []),
-        { to: "#", label: "About", icon: <Info size={20} />, disabled: true },
+        { to: "/docs", label: "About", icon: <Info size={20} /> },
     ];
 
     // Helper function to check if a path is active
@@ -115,17 +119,17 @@ const Header = () => {
                     {/* Dynamic Links */}
                     {navLinks.map((link) => (
                         <li key={link.label}>
-                            <Link
-                                title={link.disabled ? `Coming soon...` : undefined}
-                                className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-50 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${link.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(link.to) ? activeStyles : inactiveStyles}`}
-                                to={link.to}
-                                onClick={() => setIsOpen(false)}
-                            >
-                                <span className="md:hidden">{link.icon}</span>
-                                <span data-text={link.label} className={keepWidthStyles}>
-                                    {link.label}
-                                </span>
-                            </Link>
+                            {link.label === "About"
+                                ? (
+                                    <a href="/docs/" className={`nav-link ${index !== 0 && 'max-md:border-t'} max-md:border-gray-500 text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 ${link.disabled && 'md:!text-gray-300 !text-gray-600'}`}>
+                                        {link.label}
+                                    </a>
+                                ) : (
+                                    <Link title={link.disabled && `Coming soon...`} className={`nav-link ${index !== 0 && 'max-md:border-t'} max-md:border-gray-500 text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 ${link.disabled && 'md:!text-gray-300 !text-gray-600'}`} to={link.to} onClick={toggleMenu}>
+                                        <span className="md:hidden">{link.icon}</span>
+                                        {link.label}
+                                    </Link>
+                                )}
                         </li>
                     ))}
 
