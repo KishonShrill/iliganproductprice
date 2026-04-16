@@ -168,8 +168,7 @@ const Header = () => {
                                     ">
                                         {link.subLinks.map((sub, index) => (
                                             <li key={sub.label}>
-
-                                                {link.label === "About"
+                                                {sub.label === "About"
                                                     ? (
                                                         <a href="/docs/" className={`nav-link ${index !== 0 && 'max-md:border-t'} max-md:border-gray-500 text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 ${link.disabled && 'md:!text-gray-300 !text-gray-600'}`}>
                                                             {link.label}
@@ -184,7 +183,8 @@ const Header = () => {
                                                             <span className="text-gray-400 dark:text-gray-500">{sub.icon}</span>
                                                             <span className="text-sm font-medium">{sub.label}</span>
                                                         </Link>
-                                                    )}
+                                                    )
+                                                }
                                             </li>
                                         ))}
                                     </ul>
