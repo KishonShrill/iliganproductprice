@@ -51,7 +51,7 @@ function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, remove
     }, [cartItems]);
 
     const catalogs = useMemo(() => {
-        console.log(data)
+        //console.log(data)
         if (!data?.products) return [];
         const uniqueCatalogs = new Set();
 

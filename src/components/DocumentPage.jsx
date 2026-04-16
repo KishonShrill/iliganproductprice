@@ -16,7 +16,7 @@ const DocumentPage = ({ title, content }) => {
                 <h2>Loading<span className="animated-dots"></span></h2>
             </main>
         )}>
-            <div className="mx-auto max-w-4xl p-6 max-md:p-2 lg:p-10 relative">
+            <div className="mx-auto max-w-4xl p-6 max-md:px-2 py-2 lg:p-10 relative">
 
                 <style>{`
         /* Budget Buddy Markdown Styles */
@@ -73,7 +73,7 @@ const DocumentPage = ({ title, content }) => {
         }
       `}</style>
                 {/* Sticky Back Button so users can easily leave long documents */}
-                <div className="sticky top-20 right-0 z-10 mb-6 max-md:mb-2 flex justify-end">
+                <div className="sticky top-2 md:top-4 right-0 z-10 mb-6 max-md:mb-2 flex justify-end">
                     <button
                         onClick={() => navigate('/')}
                         className="flex items-center gap-2 rounded-full border border-gray-200 bg-white/90 backdrop-blur-md px-4 py-2 text-sm font-semibold text-gray-700 shadow-sm transition-all hover:bg-gray-50 hover:shadow-md hover:-translate-y-0.5"
