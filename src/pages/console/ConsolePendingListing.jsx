@@ -1,8 +1,8 @@
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useQueryClient } from 'react-query';
-import Header from '../components/console/Header';
-import DataTable from '../components/DataTable';
+import Header from '@/components/console/Header';
+import DataTable from '@/components/DataTable';
 import PropTypes from 'prop-types';
 import Cookies from 'universal-cookie';
 import useFetchPendingContributions from '@/hooks/useFetchPendingContributions';

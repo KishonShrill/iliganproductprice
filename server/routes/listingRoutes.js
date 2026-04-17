@@ -10,17 +10,26 @@ import { Listing } from '../models/models.js'; // adjust path
 const router = express.Router();
 
 
-router.get('/', user_verify, requireRole('moderator'), async (req, res) => {
+router.get('/', async (req, res) => {
     // #swagger.tags = ['v1 | Listing']
     // #swagger.description = 'Fetch all listing products.'
     try {
-        const products = await Listing.find(
+        const limitStr = req.query.limit;
+        const limit = limitStr ? parseInt(limitStr, 10) : 0;
+
+        let query = Listing.find(
             {},
             {
                 "category.catalog": 0,
                 "location.id": 0,
             }
         ).sort({ "prouct.product_id": -1, date_updated: -1 });
+
+        if (limit > 0) {
+            query = query.limit(limit);
+        }
+
+        const products = await query;
 
         res.json(products);
 

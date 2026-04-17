@@ -7,8 +7,8 @@ import { ResultAsync } from 'neverthrow';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
 
-import Header from '../components/console/Header';
-import DataTable from '../components/DataTable';
+import Header from '@/components/console/Header';
+import DataTable from '@/components/DataTable';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button } from '../ui/button';
 import { Plus, LogOut, ChevronDown, CircleUserRound, House, UserCog } from 'lucide-react';
-import Cookies from 'universal-cookie';
+//import Cookies from 'universal-cookie';
 // import { jwtDecode } from 'jwt-decode';
 
 // const cookies = new Cookies();
