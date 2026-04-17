@@ -6,7 +6,7 @@ import axios from 'axios';
 import Cookies from 'universal-cookie';
 import { Shield, ShieldAlert, User, Loader2, Mail, Search, ChevronLeft, ChevronRight, Trash2 } from 'lucide-react';
 
-import Header from '../components/console/Header';
+import Header from '@/components/console/Header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';

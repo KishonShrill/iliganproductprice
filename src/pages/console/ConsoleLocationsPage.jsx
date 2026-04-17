@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/console/Header';
-import DataTable from '../components/DataTable';
-import useFetchLocations from '../hooks/useFetchLocations';
+import Header from '@/components/console/Header';
+import DataTable from '@/components/DataTable';
+import useFetchLocations from '@/hooks/useFetchLocations';
 import Cookies from 'universal-cookie';
 import { jwtDecode } from 'jwt-decode';
 

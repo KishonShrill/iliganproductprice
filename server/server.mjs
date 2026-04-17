@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import swaggerUi from 'swagger-ui-express';
 import swaggerSpec from './swagger-output.json' with { type: 'json' }
+import path from 'path'
 import rateLimit from 'express-rate-limit';
 
 import authRoutes from './routes/authRoutes.js';
@@ -85,8 +86,27 @@ const limiter = rateLimit({
     message: 'Too many requests from this IP, please try again after 15 minutes.',
 });
 
+const SWAGGER_CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.min.css";
+const SWAGGER_JS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-bundle.min.js";
+const SWAGGER_PRESET_JS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui-standalone-preset.min.js";
+
+const swaggerUiOptions = {
+    explorer: true,
+    customCss: '.swagger-ui .opblock .opblock-summary-path-description-wrapper { align-items: center; display: flex; flex-wrap: wrap; gap: 0 10px; padding: 0 10px; width: 100%; }',
+    customCssUrl: SWAGGER_CSS_URL,
+    customJs: [
+        SWAGGER_JS_URL,
+        SWAGGER_PRESET_JS_URL
+    ]
+};
+
 app.use(['/auth/register', '/auth/login', '/api'], limiter);
-app.use('/api-docs', limiter, swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+app.use(
+    '/api-docs',
+    limiter,
+    swaggerUi.serve,
+    swaggerUi.setup(swaggerSpec, swaggerUiOptions)
+);
 
 // Standardized Route Prefixes
 app.use('/auth', authRoutes);

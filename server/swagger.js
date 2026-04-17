@@ -9,7 +9,7 @@ const doc = {
     info: {
         title: 'Budget Buddy Server',
         description: 'Connection APIs for products, locations, goods, and etc.',
-        version: '1.0.0',
+        version: '2.2.7',
     },
     host: `localhost:${PORT}`,
     schemes: ['http', 'https'],

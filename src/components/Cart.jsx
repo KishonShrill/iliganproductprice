@@ -87,14 +87,14 @@ const Cart = React.memo(forwardRef(({ storage, onRemove, onRemoveLocation, onRem
     };
 
     useEffect(() => {
-        if (isOverBudget) {
+        if (isOverBudget && budget !== 0) {
             addToast("Budget Warning", "You have gone beyond your limit. Becareful with your spending.", "destructive")
         }
-    }, [isOverBudget])
+    }, [isOverBudget, remaining, addToast])
 
     return (
         <>
-            <div ref={ref} className="cart-summary h-[calc(100vh-60px)] min-[700px]:h-[60vh] dark:bg-gray-500 z-10" style={{ left: reciept }}>
+            <div ref={ref} className="cart-summary h-[calc(100vh-60px)] min-[700px]:h-[60vh] dark:bg-gray-500 max-[700px]:z-40 z-20" style={{ left: reciept }}>
                 <div className="flex h-full flex-col">
                     {/* Cart Header */}
                     <button

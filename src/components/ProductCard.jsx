@@ -9,8 +9,10 @@ import {
 } from "lucide-react";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { mongoDateToText } from "../helpers/date";
+import useSettings from "@/hooks/useSettings";
 
-const ProductCard = ({ item, onAdd, settings }) => {
+const ProductCard = ({ item, onAdd }) => {
+    const { settings } = useSettings();
     return (
         <div className={`product-card ${!settings.hidePhotos && 'grid-cols-2'} group flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white p-3 shadow-sm transition-all duration-300 hover:shadow-lg`}
             data-product-id={item._id}
@@ -64,18 +66,20 @@ const ProductCard = ({ item, onAdd, settings }) => {
                         </span>
                     </div>
 
-                    <button
-                        data-product-id={item._id}
-                        data-product-name={item.product.product_name}
-                        data-product-price={item.updated_price}
-                        data-product-location={item.location.name}
-                        data-product-image={item.product.imageUrl}
-                        onClick={onAdd}
-                        className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-white shadow-md transition-transform hover:scale-110 hover:bg-orange-600 active:scale-95"
-                        aria-label="Add to cart"
-                    >
-                        <Plus size={20} strokeWidth={3} />
-                    </button>
+                    {onAdd && (
+                        <button
+                            data-product-id={item._id}
+                            data-product-name={item.product.product_name}
+                            data-product-price={item.updated_price}
+                            data-product-location={item.location.name}
+                            data-product-image={item.product.imageUrl}
+                            onClick={onAdd}
+                            className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500 text-white shadow-md transition-transform hover:scale-110 hover:bg-orange-600 active:scale-95"
+                            aria-label="Add to cart"
+                        >
+                            <Plus size={20} strokeWidth={3} />
+                        </button>
+                    )}
                 </div>
             </div>
         </div>
@@ -99,8 +103,7 @@ ProductCard.propTypes = {
             catalog: PropTypes.string,
         }),
     }).isRequired,
-    onAdd: PropTypes.func.isRequired,
-    settings: PropTypes.object,
+    onAdd: PropTypes.func,
 };
 
 

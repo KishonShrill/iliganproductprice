@@ -12,7 +12,6 @@ import SimpleFooter from "@/components/SimpleFooter";
 import useSettings from "../hooks/useSettings";
 import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
 import '../styles/grocery.scss'
-import { updateQuantityFromCart } from "@/redux/actions/cartActions";
 
 
 function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, removeCartItem, removeCartLocation, removeCartAll }) {
@@ -51,7 +50,7 @@ function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, remove
     }, [cartItems]);
 
     const catalogs = useMemo(() => {
-        console.log(data)
+        //console.log(data)
         if (!data?.products) return [];
         const uniqueCatalogs = new Set();
 
@@ -193,7 +192,6 @@ function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, remove
                                         key={item._id}
                                         item={item}
                                         onAdd={(event) => handleClick(event.currentTarget)}
-                                        settings={settings}
                                     />
                                 ))}
                             {filteredProducts.length === 0 && (

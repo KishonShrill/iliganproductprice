@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import Header from '../components/console/Header';
+import Header from '@/components/console/Header';
 import Cookies from 'universal-cookie';
 import { jwtDecode } from 'jwt-decode';
 
