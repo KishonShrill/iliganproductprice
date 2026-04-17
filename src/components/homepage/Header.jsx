@@ -141,7 +141,7 @@ const Header = () => {
                                 title={link.disabled ? `Coming soon...` : undefined}
                                 className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${link.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(link.to) ? activeStyles : inactiveStyles}`}
                                 to={link.to}
-                                onClick={() => { if (!link.isDropdown) setIsOpen(false) }}
+                                onClick={() => setIsOpen(false)}
                             >
                                 <span className="md:hidden">{link.icon}</span>
                                 <span data-text={link.label} className={`flex flex-row items-center ${keepWidthStyles}`}>
@@ -209,7 +209,15 @@ const Header = () => {
                             </Link>
                         ) : (
                             <>
-                                {isAdvancedUser ? (
+                                <Link
+                                    className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 font-medium ${checkIsActive("/profile") ? activeStyles : inactiveStyles}`}
+                                    to="/profile"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    <CircleUserRound size={20} />
+                                    <span data-text="Profile" className={`md:hidden ${keepWidthStyles}`}>Profile</span>
+                                </Link>
+                                {isAdvancedUser && (
                                     <Link
                                         className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 font-medium ${checkIsActive("/dev-mode") ? activeStyles : inactiveStyles}`}
                                         to="/dev-mode"
@@ -217,15 +225,6 @@ const Header = () => {
                                     >
                                         <Computer size={20} />
                                         <span data-text="Dev Mode" className={`md:hidden ${keepWidthStyles}`}>Dev Mode</span>
-                                    </Link>
-                                ) : (
-                                    <Link
-                                        className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 font-medium ${checkIsActive("/profile") ? activeStyles : inactiveStyles}`}
-                                        to="/profile"
-                                        onClick={() => setIsOpen(false)}
-                                    >
-                                        <CircleUserRound size={20} />
-                                        <span data-text="Profile" className={`md:hidden ${keepWidthStyles}`}>Profile</span>
                                     </Link>
                                 )}
                             </>

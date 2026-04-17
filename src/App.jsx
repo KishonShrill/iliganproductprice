@@ -26,6 +26,7 @@ const ProfilePage = lazy(() => import("./pages/ProfilePage.jsx"))
 const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage.jsx"))
 const TermsOfServicePage = lazy(() => import("./pages/TermsOfService.jsx"))
 const NotFound = lazy(() => import("./pages/NotFound.jsx"))
+const BudgetHubPage = lazy(() => import("@/pages/BudgetHubPage.jsx"))
 
 const ContributionLayout = lazy(() => import('./components/layouts/ContributionLayout.jsx'));
 const ContributionGuidePage = lazy(() => import("./pages/contribution/ContributionGuide.jsx"))
@@ -33,12 +34,12 @@ const CommunityHubPage = lazy(() => import("./pages/contribution/CommunityHub.js
 const SubmitContributionPage = lazy(() => import("./pages/contribution/SubmitContribution.jsx"))
 
 const ConsoleLayout = lazy(() => import("./components/layouts/ConsoleLayout.jsx"))
-const ConsoleDashboardPage = lazy(() => import("./pages/ConsoleDashboard.jsx"))
-const ConsoleProductsPage = lazy(() => import("./pages/ConsoleProductsPage.jsx"))
-const ConsoleListingsPage = lazy(() => import("./pages/ConsoleListingsPage.jsx"))
-const ConsolePendingListingsPage = lazy(() => import("./pages/ConsolePendingListing.jsx"))
-const ConsoleLocationsPage = lazy(() => import("./pages/ConsoleLocationsPage.jsx"))
-const ConsoleUsersPage = lazy(() => import("./pages/ConsoleUsersPage.jsx"))
+const ConsoleDashboardPage = lazy(() => import("./pages/console/ConsoleDashboard.jsx"))
+const ConsoleProductsPage = lazy(() => import("./pages/console/ConsoleProductsPage.jsx"))
+const ConsoleListingsPage = lazy(() => import("./pages/console/ConsoleListingsPage.jsx"))
+const ConsolePendingListingsPage = lazy(() => import("./pages/console/ConsolePendingListing.jsx"))
+const ConsoleLocationsPage = lazy(() => import("./pages/console/ConsoleLocationsPage.jsx"))
+const ConsoleUsersPage = lazy(() => import("./pages/console/ConsoleUsersPage.jsx"))
 const ProductForm = lazy(() => import('@/pages/console/ConsoleProductForm.jsx'));
 const ListingForm = lazy(() => import('@/pages/console/ConsoleListingForm.jsx'))
 
@@ -71,6 +72,7 @@ function App() {
                                         <Route path="receipt" element={<ReceiptPage />} />
                                         <Route path="settings" element={<SettingsPage />} />
                                         <Route path="profile" element={<ProfilePage />} />
+                                        <Route path="budget-hub" element={<BudgetHubPage />} />
                                         <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
                                         <Route path="terms-of-service" element={<TermsOfServicePage />} />
                                         <Route path="authenticate" element={<LoginPage debugMode={DEVELOPMENT} />} />

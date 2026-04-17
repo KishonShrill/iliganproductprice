@@ -11,14 +11,13 @@ const navigation = [
 
 const BottomNavigation = () => {
     const webLocation = useLocation()
-    if ('/' === webLocation.pathname
-        || '/authenticate' === webLocation.pathname
-        || '/profile' === webLocation.pathname) return null
+    if (new Set(['/', '/authenticate', '/profile', '/budget-hub']).has(webLocation.pathname)) return null;
+
 
     return (
         <>
             {/* Mobile Bottom Navigation */}
-            <div className="flex md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
+            <footer className="flex md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-700 border-t border-gray-200 dark:border-gray-600">
                 <nav className="flex flex-1 justify-between">
                     {navigation.map((item) => {
                         const isActive = webLocation.pathname === item.href;
@@ -46,7 +45,7 @@ const BottomNavigation = () => {
                         );
                     })}
                 </nav>
-            </div >
+            </footer >
         </>
     )
 }
