@@ -50,6 +50,7 @@
         "react-auth": "^1.0.0",
         "react-bootstrap": "^2.10.2",
         "react-dom": "^18.2.0",
+        "react-google-recaptcha": "^3.1.0",
         "react-helmet-async": "^3.0.0",
         "react-lazy-load-image-component": "^1.6.3",
         "react-markdown": "^10.1.0",

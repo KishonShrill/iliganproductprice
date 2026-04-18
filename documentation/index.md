@@ -41,7 +41,7 @@ We built this platform to solve a simple problem: finding the best grocery price
 
 - A modern web browser.
 - A **Google Account** 
-    - (👇👇👇 only required if 👇👇👇)**
+    - **(👇👇👇 only required if 👇👇👇)**
     - you want to submit prices
     - vote on pending items
     - rank up your contribution score

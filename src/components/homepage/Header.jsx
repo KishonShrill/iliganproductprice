@@ -135,23 +135,31 @@ const Header = () => {
             `}>
                 <ul className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 w-full">
                     {/* Dynamic Links */}
-                    {navLinks.map((link) => (
+                    {navLinks.map((link, index) => (
                         <li key={link.label} className={link.isDropdown ? "relative group" : ""}>
-                            <Link
-                                title={link.disabled ? `Coming soon...` : undefined}
-                                className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${link.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(link.to) ? activeStyles : inactiveStyles}`}
-                                to={link.to}
-                                onClick={() => setIsOpen(false)}
-                            >
-                                <span className="md:hidden">{link.icon}</span>
-                                <span data-text={link.label} className={`flex flex-row items-center ${keepWidthStyles}`}>
-                                    <div className="flex items-center gap-2 inter-regular">
+                            {link.label === "About"
+                                ? (
+                                    <a href="/docs/" className={`nav-link ${index !== 0 && 'max-md:border-t'} max-md:border-gray-500 text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 ${link.disabled && 'md:!text-gray-300 !text-gray-600'}`}>
                                         {link.label}
-                                        {/* Chevron Icon for Dropdown */}
-                                        {link.isDropdown && <ChevronDown size={14} className="hidden md:block transition-transform duration-200 group-hover:rotate-180" />}
-                                    </div>
-                                </span>
-                            </Link>
+                                    </a>
+                                ) : (
+                                    <Link
+                                        title={link.disabled ? `Coming soon...` : undefined}
+                                        className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${link.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(link.to) ? activeStyles : inactiveStyles}`}
+                                        to={link.to}
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        <span className="md:hidden">{link.icon}</span>
+                                        <span data-text={link.label} className={`flex flex-row items-center ${keepWidthStyles}`}>
+                                            <div className="flex items-center gap-2 inter-regular">
+                                                {link.label}
+                                                {/* Chevron Icon for Dropdown */}
+                                                {link.isDropdown && <ChevronDown size={14} className="hidden md:block transition-transform duration-200 group-hover:rotate-180" />}
+                                            </div>
+                                        </span>
+                                    </Link>
+                                )
+                            }
 
                             {/* Dropdown Menu (Desktop Hover / Mobile Inline) */}
                             {link.isDropdown && link.subLinks && (
@@ -166,25 +174,17 @@ const Header = () => {
                                         flex flex-col gap-1 mt-2 ml-9 md:ml-0 md:mt-0
                                         md:bg-white md:dark:bg-gray-800 md:border md:border-gray-100 md:dark:border-gray-700 md:shadow-xl md:rounded-2xl md:p-2 md:w-48
                                     ">
-                                        {link.subLinks.map((sub, index) => (
+                                        {link.subLinks.map((sub) => (
                                             <li key={sub.label}>
-                                                {sub.label === "About"
-                                                    ? (
-                                                        <a href="/docs/" className={`nav-link ${index !== 0 && 'max-md:border-t'} max-md:border-gray-500 text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 ${link.disabled && 'md:!text-gray-300 !text-gray-600'}`}>
-                                                            {link.label}
-                                                        </a>
-                                                    ) : (
-                                                        <Link
-                                                            title={sub.disabled ? `Coming soon...` : undefined}
-                                                            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-orange-500 dark:hover:text-orange-500 ${sub.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(sub.to) ? '!text-orange-500 font-bold bg-orange-50 dark:bg-gray-700/50' : inactiveStyles}`}
-                                                            to={sub.to}
-                                                            onClick={() => setIsOpen(false)}
-                                                        >
-                                                            <span className="text-gray-400 dark:text-gray-500">{sub.icon}</span>
-                                                            <span className="text-sm font-medium">{sub.label}</span>
-                                                        </Link>
-                                                    )
-                                                }
+                                                <Link
+                                                    title={sub.disabled ? `Coming soon...` : undefined}
+                                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-orange-500 dark:hover:text-orange-500 ${sub.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(sub.to) ? '!text-orange-500 font-bold bg-orange-50 dark:bg-gray-700/50' : inactiveStyles}`}
+                                                    to={sub.to}
+                                                    onClick={() => setIsOpen(false)}
+                                                >
+                                                    <span className="text-gray-400 dark:text-gray-500">{sub.icon}</span>
+                                                    <span className="text-sm font-medium">{sub.label}</span>
+                                                </Link>
                                             </li>
                                         ))}
                                     </ul>

@@ -11,6 +11,7 @@ import { ResultAsync } from 'neverthrow';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
 
+import ReCAPTCHA from 'react-google-recaptcha';
 import CustomDatalist from '@/components/CustomDatalist';
 
 import useFetchLocations from '@/hooks/useFetchLocations';
@@ -45,6 +46,7 @@ export default function SubmitContribution() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [activeList, setActiveList] = useState('Groceries');
+    const [capVal, setCapVal] = useState(null);
 
     const filteredProducts = useMemo(() => {
         if (!fetchedProducts.length) return [];
@@ -305,6 +307,15 @@ export default function SubmitContribution() {
                                 </SelectContent>
                             </Select>
 
+                            {!DEVELOPMENT && (
+                                <div className='flex justify-center'>
+                                    <ReCAPTCHA
+                                        sitekey='6Lc7v70sAAAAAKdVLFCjuNSzQq0Y6UIN5fhXf_Q9'
+                                        onChange={(val) => setCapVal(val)}
+                                    />
+                                </div>
+                            )}
+
                             <div className="flex flex-wrap items-center justify-center mt-2 text-sm text-gray-500">
                                 <Info className="w-4 h-4 mr-1.5 text-gray-400" />
                                 Don&apos;t see your store?
@@ -315,13 +326,14 @@ export default function SubmitContribution() {
                                     Request to add it here.
                                 </Link>
                             </div>
+
                         </div>
 
                         {/* Submit Action */}
                         <div className="mt-8 border-t border-gray-100">
                             <Button
                                 type="submit"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || !capVal}
                                 className="w-full bg-gray-900 hover:bg-gray-800 text-white py-6 text-lg transition-all"
                             >
                                 {isSubmitting ? (
