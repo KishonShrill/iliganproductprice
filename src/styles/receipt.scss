@@ -7,9 +7,7 @@
   }
 
   &-container {
-    width: 90%;
     max-width: 450px;
-    margin: 2rem auto;
     padding: 1.5rem;
     font-family: 'Courier New', Courier, monospace;
     border: 2px dashed #aaa;
@@ -39,7 +37,7 @@
     color: $primary-color;
     font-size: 1em;
 
-    &-group:nth-child(1) > & {
+    &-group:nth-child(1)>& {
       // margin-block: 0;
       user-select: none;
     }
@@ -80,9 +78,17 @@
 }
 
 .item {
-  &-name {flex: 1;}
-  &-qty {margin: 0 1rem;}
-  &-price {font-weight: bold;}
+  &-name {
+    flex: 1;
+  }
+
+  &-qty {
+    margin: 0 1rem;
+  }
+
+  &-price {
+    font-weight: bold;
+  }
 }
 
 .empty-receipt {
