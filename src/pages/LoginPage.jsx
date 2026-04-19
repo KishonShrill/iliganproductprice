@@ -31,7 +31,7 @@ const AuthForm = ({ debugMode }) => {
 
     useEffect(() => {
         if (token) {
-            navigate("/locations");
+            navigate("/budget-hub");
         }
     }, [token, navigate]);
 
@@ -63,7 +63,7 @@ const AuthForm = ({ debugMode }) => {
                     addToast("Success", isLogin ? `Welcome back ${user.username}!` : "Account created successfully!");
                     setStatus("success");
                     startTransition(() => {
-                        navigate("/locations");
+                        navigate("/budget-hub");
                     });
                 },
                 (errorMsg) => {

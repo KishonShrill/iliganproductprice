@@ -68,7 +68,7 @@ const Footer = () => {
         legal: [
             { name: 'Privacy Policy', href: '/privacy-policy' },
             { name: 'Terms of Service', href: '/terms-of-service' },
-            { name: 'Accessibility', href: '#', disabled: true }
+            { name: 'Report Missing Data', href: '/report' }
         ]
     };
 
@@ -230,7 +230,7 @@ const Footer = () => {
                                 {systemStatus === 'offline' && "Systems offline"}
                                 {systemStatus === 'checking' && "Checking systems..."}
                             </span>
-                            <span>Version 2.1.3</span>
+                            <span>Version 2.2.8</span>
                         </div>
                     </div>
                 </div>

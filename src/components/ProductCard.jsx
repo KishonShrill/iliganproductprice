@@ -49,7 +49,7 @@ const ProductCard = ({ item, onAdd }) => {
                     {item.product.product_name}
                 </h3>
 
-                <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-gray-500">
+                <div className="my-2 flex flex-wrap gap-x-2 text-[11px] text-gray-500">
                     <span className="flex items-center gap-1">
                         <Clock size={12} /> {mongoDateToText(item.date_updated)}
                     </span>

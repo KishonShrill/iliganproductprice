@@ -51,17 +51,17 @@ const Settings = () => {
                         />
                     )
                 },
-                {
-                    title: "Right-to-Left (RTL)",
-                    description: "Enable RTL layout for Arabic, Hebrew, and other RTL languages",
-                    icon: Globe,
-                    control: (
-                        <CustomSwitch
-                            checked={settings.rightToLeft}
-                            onCheckedChange={(checked) => updateSetting('rightToLeft', checked)}
-                        />
-                    )
-                },
+                //{
+                //    title: "Right-to-Left (RTL)",
+                //    description: "Enable RTL layout for Arabic, Hebrew, and other RTL languages",
+                //    icon: Globe,
+                //    control: (
+                //        <CustomSwitch
+                //            checked={settings.rightToLeft}
+                //            onCheckedChange={(checked) => updateSetting('rightToLeft', checked)}
+                //        />
+                //    )
+                //},
                 {
                     title: "Compact Mode",
                     description: "Use a more compact layout by hiding the photos to fit more content",
@@ -79,29 +79,29 @@ const Settings = () => {
             title: "Notifications",
             icon: Bell,
             items: [
-                {
-                    title: "Push Notifications",
-                    description: "Receive notifications about budget alerts and updates",
-                    icon: Bell,
-                    control: (
-                        <CustomSwitch
-                            checked={settings.notifications}
-                            onCheckedChange={(checked) => updateSetting('notifications', checked)}
-                        />
-                    )
-                },
-                {
-                    title: "Budget Alerts",
-                    description: "Get notified when approaching your budget limit",
-                    icon: DollarSign,
-                    control: (
-                        <CustomSwitch
-                            checked={settings.budgetAlerts}
-                            onCheckedChange={(checked) => updateSetting('budgetAlerts', checked)}
-                            disabled={!settings.notifications}
-                        />
-                    )
-                },
+                //{
+                //    title: "Push Notifications",
+                //    description: "Receive notifications about budget alerts and updates",
+                //    icon: Bell,
+                //    control: (
+                //        <CustomSwitch
+                //            checked={settings.notifications}
+                //            onCheckedChange={(checked) => updateSetting('notifications', checked)}
+                //        />
+                //    )
+                //},
+                //{
+                //    title: "Budget Alerts",
+                //    description: "Get notified when approaching your budget limit",
+                //    icon: DollarSign,
+                //    control: (
+                //        <CustomSwitch
+                //            checked={settings.budgetAlerts}
+                //            onCheckedChange={(checked) => updateSetting('budgetAlerts', checked)}
+                //            disabled={!settings.notifications}
+                //        />
+                //    )
+                //},
                 {
                     title: "Sound Effects",
                     description: "Play sounds for notifications and interactions",

@@ -286,6 +286,12 @@ function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, remove
                         )}
                     </button>
                 </section >
+
+                <div className="mt-8 max-[700px]:mb-8 max-[700px]:mt-4 flex flex-wrap justify-center gap-x-1">
+                    <p className="text-center">Don&apos;t see the product you&apos;re looking for?</p>
+                    <Link to="/contribution/hub" className="text-orange-500 hover:font-bold">Contribute with us</Link>
+                </div>
+
             </div>
             <SimpleFooter className={"max-md:mb-[4.5rem] bg-gray-900"} />
         </div>

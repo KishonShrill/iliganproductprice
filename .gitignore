@@ -29,3 +29,4 @@ node_modules
 .vercel
 # Custom Folder Assets
 mongodb_assets
+/public/docs

@@ -142,6 +142,88 @@
         }
       }
     },
+    "/api/reports/missing-location": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "locationName": {
+                  "example": "any"
+                },
+                "mapsUrl": {
+                  "example": "any"
+                },
+                "notes": {
+                  "example": "any"
+                },
+                "captchaToken": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
+    "/api/reports/missing-product": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "productName": {
+                  "example": "any"
+                },
+                "referenceUrl": {
+                  "example": "any"
+                },
+                "notes": {
+                  "example": "any"
+                },
+                "captchaToken": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        }
+      }
+    },
     "/api/v1/products/": {
       "get": {
         "tags": [

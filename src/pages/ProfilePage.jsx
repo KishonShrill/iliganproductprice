@@ -10,7 +10,7 @@ const ProfilePage = () => {
     const navigate = useNavigate();
     const queryClient = useQueryClient();
     const cookie = cookies.get("budgetbuddy_token");
-    const user = jwtDecode(cookie);
+    const user = cookie ? jwtDecode(cookie) : { username: "Guest", user_role: "guest" };
 
     const profile = {
         stats: {
@@ -28,7 +28,7 @@ const ProfilePage = () => {
         window.location.reload(); // Ensures state clears
     };
 
-    console.log(user)
+    console.log()
 
     return (
         < div className="mx-auto flex min-h-[calc(100vh-76px)] max-w-4xl flex-col p-4 sm:p-6 lg:p-10" >

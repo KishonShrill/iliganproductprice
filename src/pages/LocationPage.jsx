@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import { Link } from "react-router-dom";
 import { ServerCrash, AlertCircle } from "lucide-react";
 import useFetchLocations from '../hooks/useFetchLocations';
 import LocationCard from "../components/LocationCard";
@@ -56,6 +57,12 @@ export default function LocationPage() {
                             )}
                         </Suspense>
                     </main>
+
+                    <div className="mt-8 flex flex-wrap justify-center gap-x-1">
+                        <p className="text-center">Don&apos;t see your nearest location?</p>
+                        <Link to="/report" className="text-orange-500 hover:font-bold">Report it to us</Link>
+                        <p>now!</p>
+                    </div>
                 </section>
             </div>
             <SimpleFooter className={"max-md:mb-[4.5rem] bg-gray-900"} />
