@@ -111,7 +111,7 @@ function App() {
                         </Provider>
                     </BrowserRouter>
                     <SpeedInsights />
-                    {/* {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />} */}
+                    {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />}
                 </QueryClientProvider >
             </HelmetProvider>
         </>

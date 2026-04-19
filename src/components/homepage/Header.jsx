@@ -208,6 +208,7 @@ const Header = () => {
                     ))}
 
                     {/* Integrated Auth Section */}
+                    {/* ... (The rest of your code remains identical) ... */}
                     <div className="flex flex-col md:flex-row md:border-l border-gray-200 dark:border-gray-600 mt-2 pt-2 md:mt-0 md:pt-0 md:pl-4 gap-1 md:gap-4">
                         <hr className="mb-2 md:hidden" />
                         <Link
