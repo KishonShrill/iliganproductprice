@@ -73,7 +73,7 @@ const BudgetHub = () => {
             {/* Top 10 Newest Listings */}
             <div className="mt-8 sm:mt-12 flex-1">
                 <div className="mb-6 flex items-center justify-between">
-                    <h2 className="text-xl sm:text-2xl font-black text-gray-900">Newest Additions</h2>
+                    <h2 className="max-[500px]:text-lg text-xl sm:text-2xl font-black text-gray-900">Newest Additions</h2>
                     <button onClick={() => navigate('/locations')} className="text-sm font-bold text-orange-500 hover:text-orange-600 hover:underline">
                         View All Locations
                     </button>
@@ -129,7 +129,7 @@ const BudgetHub = () => {
 
                         {/* State 4: Success with Data */}
                         {!isLoading && !isError && recentListings?.length > 0 && (
-                            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                            <div className="grid max-[500px]:grid-cols-1 grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
                                 {recentListings.map(product => (
                                     <ProductCard
                                         key={product._id}
@@ -144,9 +144,10 @@ const BudgetHub = () => {
 
             <footer className="mt-12 border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
                 <p>© 2026 Budget Buddy. All rights reserved.</p>
-                <div className="mt-3 flex justify-center gap-6">
-                    <button onClick={() => navigate('privacy')} className="font-medium hover:text-orange-500 hover:underline">Privacy Policy</button>
-                    <button onClick={() => navigate('terms')} className="font-medium hover:text-orange-500 hover:underline">Terms of Service</button>
+                <div className="mt-3 flex flex-wrap justify-center gap-x-6 gap-y-2">
+                    <button onClick={() => navigate('/privacy-policy')} className="font-medium hover:text-orange-500 hover:underline">Privacy Policy</button>
+                    <button onClick={() => navigate('/terms-of-service')} className="font-medium hover:text-orange-500 hover:underline">Terms of Service</button>
+                    <button onClick={() => navigate('/report')} className="font-medium hover:text-orange-500 hover:underline">Report Missing Data</button>
                 </div>
             </footer>
         </div >

@@ -20,7 +20,6 @@ router.get('/', async (req, res) => {
         let query = Listing.find(
             {},
             {
-                "category.catalog": 0,
                 "location.id": 0,
             }
         ).sort({ "prouct.product_id": -1, date_updated: -1 });

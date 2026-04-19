@@ -109,7 +109,7 @@ const Header = () => {
             </Link>
 
             {/* CENTER: Dynamic Location Title */}
-            <div className="flex-1 flex justify-center text-center px-4 min-w-0">
+            <div className="flex-1 flex justify-center md:justify-start text-center px-4 min-w-0">
                 {locationTitle && (
                     <h1 className={`truncate text-sm md:text-base capitalize font-bold py-1 px-2 rounded-lg text-white bg-orange-500 ${currentLocation === '/' && '!text-orange-500 bg-transparent text-xl pointer-events-none select-none'}`}>
                         {data?.location_name || locationTitle}

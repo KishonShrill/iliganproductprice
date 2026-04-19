@@ -25,7 +25,7 @@ const Hero = () => {
                         </p>
 
                         <div className="flex flex-col max-md:px-4 sm:flex-row gap-4 items-center justify-center lg:justify-start">
-                            <Link to="/locations" className="flex items-center w-fit bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 max-md:py-3 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 group">
+                            <Link to="/budget-hub" className="flex items-center w-fit bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 max-md:py-3 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 group">
                                 Start Budgeting Now
                                 <ShoppingCart className="w-5 h-5 ml-2 inline group-hover:translate-x-1 transition-transform duration-300" />
                             </Link>

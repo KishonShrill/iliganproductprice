@@ -82,7 +82,7 @@ export default function Header({ title, actionLabel, onAction, onLogout, user })
                                     {/* Menu Actions */}
                                     <div className="py-1">
                                         <button
-                                            onClick={() => navigate('/locations')}
+                                            onClick={() => navigate('/budget-hub')}
                                             className="w-full text-left px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-3 transition-colors"
                                         >
                                             <House className="h-4 w-4 text-gray-400" />

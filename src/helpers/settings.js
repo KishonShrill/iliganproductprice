@@ -4,7 +4,7 @@ export const defaultSettings = {
     theme: 'light',
     hidePhotos: false,
     rightToLeft: false,
-    soundEffects: true,
+    soundEffects: false,
     notifications: false,
     budgetAlerts: false,
 };

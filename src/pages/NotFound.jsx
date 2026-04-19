@@ -54,7 +54,7 @@ const NotFound = () => {
 
                     {/* Budget Buddy Branding */}
                     <div className="flex items-center justify-center space-x-2 mb-4 sm:mb-8 group">
-                        <img src="/budgetbuddy-logo.svg" className='w-16 h-16' />
+                        <img src="/budgetbuddy-logo.svg" className='w-16 h-16 rounded-full' />
                         <span className="text-xl font-bold text-gray-900 group-hover:text-[#ee4d2d] transition-colors duration-300">
                             Budget Buddy
                         </span>

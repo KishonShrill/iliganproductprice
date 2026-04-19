@@ -320,7 +320,7 @@ export default function SubmitContribution() {
                                 <Info className="w-4 h-4 mr-1.5 text-gray-400" />
                                 Don&apos;t see your store?
                                 <Link
-                                    to="/support"
+                                    to="/report"
                                     className="ml-1 text-orange-500 hover:text-orange-600 font-medium hover:underline"
                                 >
                                     Request to add it here.
