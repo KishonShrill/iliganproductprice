@@ -103,8 +103,8 @@ const Header = () => {
         <header ref={headerRef} className="header relative flex items-center justify-between px-4 md:px-6 py-3 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 z-30">
 
             {/* LEFT: Logo & Desktop Title */}
-            <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-                <img src="/budgetbuddy-logo.svg" className='w-[36px] h-[36px] rounded-full object-cover shadow-sm select-none' alt="Budget Buddy" />
+            <Link to="/" className="flex items-center gap-2 flex-shrink-0" aria-label="Go to homepage">
+                <img src="/budgetbuddy-logo.svg" className='w-[36px] h-[36px] rounded-full object-cover shadow-sm select-none' alt="Budget Buddy Logo" />
                 <span className={`inter-bold text-xl text-orange-500 dark:text-white ${currentLocation !== '/' && 'hidden'}`}>Budget Buddy</span>
             </Link>
 
@@ -122,6 +122,8 @@ const Header = () => {
                 <button
                     className="md:hidden p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                     onClick={toggleMenu}
+                    aria-label="Toggle navigation menu"
+                    aria-expanded={isOpen}
                 >
                     {isOpen ? <X size={20} /> : <Menu size={20} />}
                 </button>
@@ -131,11 +133,13 @@ const Header = () => {
             <nav className={`
                 absolute top-[calc(100%+0.5rem)] left-4 right-4 bg-white/95 backdrop-blur-xl dark:bg-gray-800/95 border border-gray-100 dark:border-gray-700 rounded-2xl shadow-xl p-4 transition-all duration-200 origin-top
                 md:static md:flex md:p-0 md:bg-transparent md:border-none md:shadow-none md:mt-0 md:backdrop-blur-none md:w-auto
-                ${isOpen ? "scale-y-100 opacity-100 pointer-events-auto" : "scale-y-95 opacity-0 pointer-events-none md:scale-y-100 md:opacity-100 md:pointer-events-auto"}
+                ${isOpen
+                    ? "scale-y-100 opacity-100 pointer-events-auto visible"
+                    : "scale-y-95 opacity-0 pointer-events-none invisible md:scale-y-100 md:opacity-100 md:pointer-events-auto md:visible"}
             `}>
                 <ul className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 w-full">
                     {/* Dynamic Links */}
-                    {navLinks.map((link, index) => (
+                    {navLinks.map((link) => (
                         <li key={link.label} className={link.isDropdown ? "relative group" : ""}>
                             {link.label === "About"
                                 ? (
@@ -155,13 +159,12 @@ const Header = () => {
                                         title={link.disabled ? `Coming soon...` : undefined}
                                         className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${link.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(link.to) ? activeStyles : inactiveStyles}`}
                                         to={link.to}
-                                        onClick={() => setIsOpen(false)}
+                                        onClick={() => { if (!link.isDropdown) setIsOpen(false) }}
                                     >
                                         <span className="md:hidden">{link.icon}</span>
                                         <span data-text={link.label} className={`flex flex-row items-center ${keepWidthStyles}`}>
                                             <div className="flex items-center gap-2 inter-regular">
                                                 {link.label}
-                                                {/* Chevron Icon for Dropdown */}
                                                 {link.isDropdown && <ChevronDown size={14} className="hidden md:block transition-transform duration-200 group-hover:rotate-180" />}
                                             </div>
                                         </span>
@@ -169,11 +172,14 @@ const Header = () => {
                                 )
                             }
 
-                            {/* Dropdown Menu (Desktop Hover / Mobile Inline) */}
+                            {/* Dropdown Menu (Desktop Hover / Keyboard Focus / Mobile Inline) */}
                             {link.isDropdown && link.subLinks && (
                                 <div className="
                                     md:absolute md:top-full md:left-1/2 md:-translate-x-1/2 md:pt-4
-                                    md:opacity-0 md:invisible md:group-hover:opacity-100 md:group-hover:visible transition-all duration-200 z-30
+                                    md:opacity-0 md:invisible 
+                                    md:group-hover:opacity-100 md:group-hover:visible 
+                                    md:group-focus-within:opacity-100 md:group-focus-within:visible 
+                                    transition-all duration-200 z-30
                                 ">
                                     {/* Invisible Bridge to keep hover active in the gap */}
                                     <div className="absolute top-0 left-0 w-full h-4 hidden md:block"></div>
@@ -202,7 +208,6 @@ const Header = () => {
                     ))}
 
                     {/* Integrated Auth Section */}
-                    {/* ... (The rest of your code remains identical) ... */}
                     <div className="flex flex-col md:flex-row md:border-l border-gray-200 dark:border-gray-600 mt-2 pt-2 md:mt-0 md:pt-0 md:pl-4 gap-1 md:gap-4">
                         <hr className="mb-2 md:hidden" />
                         <Link
