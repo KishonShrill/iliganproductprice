@@ -11,7 +11,7 @@ const navigation = [
 
 const BottomNavigation = () => {
     const webLocation = useLocation()
-    if (new Set(['/', '/authenticate', '/profile', '/budget-hub']).has(webLocation.pathname)) return null;
+    if (new Set(['/', '/authenticate', '/profile', '/budget-hub', '/report']).has(webLocation.pathname)) return null;
 
 
     return (

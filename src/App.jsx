@@ -25,6 +25,8 @@ const LoginPage = lazy(() => import("./pages/LoginPage.jsx"))
 const ProfilePage = lazy(() => import("./pages/ProfilePage.jsx"))
 const PrivacyPolicyPage = lazy(() => import("./pages/PrivacyPolicyPage.jsx"))
 const TermsOfServicePage = lazy(() => import("./pages/TermsOfService.jsx"))
+const ReportPage = lazy(() => import('./pages/ReportPage.jsx'))
+
 const NotFound = lazy(() => import("./pages/NotFound.jsx"))
 const BudgetHubPage = lazy(() => import("@/pages/BudgetHubPage.jsx"))
 
@@ -73,8 +75,11 @@ function App() {
                                         <Route path="settings" element={<SettingsPage />} />
                                         <Route path="profile" element={<ProfilePage />} />
                                         <Route path="budget-hub" element={<BudgetHubPage />} />
+
                                         <Route path="privacy-policy" element={<PrivacyPolicyPage />} />
                                         <Route path="terms-of-service" element={<TermsOfServicePage />} />
+                                        <Route path="report" element={<ReportPage />} />
+
                                         <Route path="authenticate" element={<LoginPage debugMode={DEVELOPMENT} />} />
                                         <Route path="*" element={<NotFound />} />
                                     </Route>

@@ -14,6 +14,7 @@ import categoryRoutes from './routes/categoryRoutes.js';
 import listingRoutes from './routes/listingRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import contributionRoutes from './routes/contributionRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
 
 config();
 
@@ -110,6 +111,8 @@ app.use(
 
 // Standardized Route Prefixes
 app.use('/auth', authRoutes);
+app.use('/api/reports', reportRoutes);
+
 app.use('/api/v1/products', productRoutes);
 app.use('/api/v1/locations', locationRoutes);
 app.use('/api/v1/categories', categoryRoutes);

@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { User, MapPin, Utensils, Package, ReceiptText, ServerCrash, Lock } from "lucide-react";
@@ -52,7 +51,7 @@ const BudgetHub = () => {
 
                 <button
                     onClick={() => navigate("#")}
-                    className="group flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-4 sm:p-6 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md"
+                    className="cursor-not-allowed group flex flex-col items-center justify-center rounded-2xl border border-gray-100 bg-white p-4 sm:p-6 shadow-sm transition-transform hover:-translate-y-1 hover:shadow-md"
                 >
                     <div className="mb-2 sm:mb-3 rounded-full bg-green-100 p-3 sm:p-4 text-green-500 transition-colors group-hover:bg-green-500 group-hover:text-white">
                         <Utensils size={24} className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -124,7 +123,7 @@ const BudgetHub = () => {
                             <div className="flex w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 py-12 text-center text-gray-500">
                                 <Package size={48} className="mb-4 text-gray-300" />
                                 <h3 className="mb-1 text-lg font-bold">No products found</h3>
-                                <p className="text-sm">We couldn't find any recent additions right now.</p>
+                                <p className="text-sm">We couldn&apos;t find any recent additions right now.</p>
                             </div>
                         )}
 

@@ -139,8 +139,16 @@ const Header = () => {
                         <li key={link.label} className={link.isDropdown ? "relative group" : ""}>
                             {link.label === "About"
                                 ? (
-                                    <a href="/docs/" className={`nav-link ${index !== 0 && 'max-md:border-t'} max-md:border-gray-500 text-white md:text-black dark:md:text-white hover:text-orange-500 dark:hover:text-orange-500 ${link.disabled && 'md:!text-gray-300 !text-gray-600'}`}>
-                                        {link.label}
+                                    <a
+                                        href="/docs/"
+                                        className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${link.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(link.to) ? activeStyles : inactiveStyles}`}
+                                    >
+                                        <span className="md:hidden">{link.icon}</span>
+                                        <span data-text={link.label} className={`flex flex-row items-center ${keepWidthStyles}`}>
+                                            <div className="flex items-center gap-2 inter-regular">
+                                                {link.label}
+                                            </div>
+                                        </span>
                                     </a>
                                 ) : (
                                     <Link
