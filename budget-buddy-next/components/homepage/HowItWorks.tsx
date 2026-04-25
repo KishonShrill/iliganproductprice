@@ -13,7 +13,7 @@ const HowItWorks = () => {
         },
         {
             icon: Calculator,
-            link: '/receipt', // Added leading slash for Next.js routing
+            link: '/receipt',
             title: 'Track Your Total',
             description: 'Watch your running total update in real-time with tax and shipping estimates.',
             details: 'Set your budget limit and get visual indicators when you\'re approaching your spending goal.'
@@ -27,7 +27,7 @@ const HowItWorks = () => {
     ];
 
     return (
-        <section id="how-it-works" className="py-20 bg-white dark:bg-gray-700">
+        <section id="how-it-works" className="py-20 bg-white dark:bg-gray-900 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 {/* Header */}
                 <div className="text-center mb-16">
@@ -37,7 +37,7 @@ const HowItWorks = () => {
                             Works
                         </span>
                     </h2>
-                    <p className="text-lg text-gray-600 dark:text-slate-200 max-w-3xl mx-auto">
+                    <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
                         Get started in three simple steps and take control of your shopping budget today.
                     </p>
                 </div>
@@ -61,22 +61,22 @@ const HowItWorks = () => {
                                 </div>
 
                                 {/* Card */}
-                                <div className="bg-white dark:bg-slate-500 p-8 rounded-2xl border border-gray-100 dark:border-gray-600 hover:border-[#ee4d2d]/20 hover:shadow-xl transition-all duration-500 hover:-translate-y-2 h-full">
+                                <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl border border-gray-100 dark:border-gray-700 hover:border-[#ee4d2d]/20 dark:hover:border-[#ee4d2d]/40 hover:shadow-xl dark:hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 h-full">
                                     <div className='max-sm:flex max-sm:gap-4 max-sm:mb-2'>
                                         {/* Icon */}
-                                        <div className={`w-16 h-16 max-sm:w-14 max-sm:h-14 max-sm:my-auto bg-linear-to-br from-[#ee4d2d] to-[#ff6b47] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                                        <div className={`w-16 h-16 max-sm:w-14 max-sm:h-14 max-sm:my-auto bg-linear-to-br from-[#ee4d2d] to-[#ff6b47] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-md`}>
                                             <step.icon className="w-8 h-8 text-white" />
                                         </div>
 
                                         {/* Content */}
-                                        <h3 className="max-sm:h-fit max-sm:my-auto text-xl font-bold text-gray-900 dark:text-white sm:mb-3 group-hover:text-[#ee4d2d] transition-colors duration-300">
+                                        <h3 className="max-sm:h-fit max-sm:my-auto text-xl font-bold text-gray-900 dark:text-white sm:mb-3 group-hover:text-[#ee4d2d] dark:group-hover:text-orange-400 transition-colors duration-300">
                                             {step.title}
                                         </h3>
                                     </div>
-                                    <p className="text-gray-600 dark:text-slate-300 mb-4 leading-relaxed">
+                                    <p className="text-gray-600 dark:text-gray-300 mb-4 leading-relaxed">
                                         {step.description}
                                     </p>
-                                    <p className="text-sm text-gray-500 dark:text-slate-50 leading-relaxed">
+                                    <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
                                         {step.details}
                                     </p>
 
@@ -93,9 +93,9 @@ const HowItWorks = () => {
                 </div>
 
                 {/* Demo Section */}
-                <div className="mt-20 max-sm:mt-15 bg-linear-to-br from-[#ee4d2d]/5 to-orange-50 dark:from-gray-800 dark:to-gray-800 rounded-3xl p-8 md:p-12 border dark:border-gray-700">
+                <div className="mt-20 max-sm:mt-15 bg-linear-to-br from-[#ee4d2d]/5 to-orange-50 dark:from-gray-800/80 dark:to-gray-800/40 rounded-3xl p-8 md:p-12 border border-transparent dark:border-gray-700">
                     <div className="text-center mb-8">
-                        <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-gray-50 mb-4">
+                        <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
                             See It In Action
                         </h3>
                         <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
@@ -105,10 +105,10 @@ const HowItWorks = () => {
 
                     <div className="grid md:grid-cols-2 gap-8 items-center">
                         {/* Demo Interface */}
-                        <div className="bg-white dark:bg-gray-700 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                        <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg hover:shadow-xl transition-shadow duration-300 border border-transparent dark:border-gray-700">
                             <div className="flex items-center justify-between mb-4">
-                                <h4 className="font-semibold text-gray-900 dark:text-gray-50">Shopping Cart</h4>
-                                <div className="text-sm text-gray-500 dark:text-gray-300">Budget: ₱200</div>
+                                <h4 className="font-semibold text-gray-900 dark:text-white">Shopping Cart</h4>
+                                <div className="text-sm text-gray-500 dark:text-gray-400">Budget: ₱200</div>
                             </div>
 
                             <div className="space-y-3 mb-6">
@@ -117,22 +117,22 @@ const HowItWorks = () => {
                                     { item: 'Ginger', price: 19.99 },
                                     { item: 'Eggplant', price: 34.99 }
                                 ].map((product, idx) => (
-                                    <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-600 hover:bg-gray-200 dark:hover:bg-gray-500 rounded-lg select-none">
-                                        <span className="text-gray-700 dark:text-gray-50">{product.item}</span>
-                                        <span className="font-semibold text-[#ee4d2d]">₱{product.price}</span>
+                                    <div key={idx} className="flex justify-between items-center p-3 bg-gray-50 dark:bg-gray-700/50 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg select-none transition-colors duration-300 border border-transparent dark:border-gray-600/50">
+                                        <span className="text-gray-700 dark:text-gray-200">{product.item}</span>
+                                        <span className="font-semibold text-[#ee4d2d] dark:text-orange-400">₱{product.price}</span>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="border-t dark:border-gray-600 pt-4">
+                            <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
                                 <div className="flex justify-between items-center mb-2">
-                                    <span className="font-semibold dark:text-gray-50">Total:</span>
-                                    <span className="text-2xl font-bold text-[#ee4d2d]">₱100.97</span>
+                                    <span className="font-semibold text-gray-900 dark:text-white">Total:</span>
+                                    <span className="text-2xl font-bold text-[#ee4d2d] dark:text-orange-400">₱100.97</span>
                                 </div>
-                                <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2">
+                                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                                     <div className="bg-linear-to-r from-[#ee4d2d] to-[#ff6b47] h-2 rounded-full" style={{ width: '50.5%' }}></div>
                                 </div>
-                                <div className="text-sm text-gray-600 dark:text-gray-300 mt-2">₱99.03 remaining in budget</div>
+                                <div className="text-sm text-gray-600 dark:text-gray-400 mt-2">₱99.03 remaining in budget</div>
                             </div>
                         </div>
 
@@ -144,14 +144,14 @@ const HowItWorks = () => {
                                 { title: 'Multiple Store Support', desc: 'Works with all major online retailers' }
                             ].map((benefit, idx) => (
                                 <div key={idx} className="flex items-start space-x-4 group cursor-default">
-                                    <div className="w-6 h-6 bg-linear-to-r from-[#ee4d2d] to-[#ff6b47] rounded-full flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300">
+                                    <div className="w-6 h-6 bg-linear-to-r from-[#ee4d2d] to-[#ff6b47] rounded-full flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300 shadow-sm">
                                         <CheckCircle className="w-4 h-4 text-white" />
                                     </div>
                                     <div>
-                                        <h5 className="font-semibold text-gray-900 dark:text-gray-200 group-hover:text-[#ee4d2d] transition-colors duration-300">
+                                        <h5 className="font-semibold text-gray-900 dark:text-gray-200 group-hover:text-[#ee4d2d] dark:group-hover:text-orange-400 transition-colors duration-300">
                                             {benefit.title}
                                         </h5>
-                                        <p className="text-gray-600 dark:text-gray-500 text-sm">{benefit.desc}</p>
+                                        <p className="text-gray-600 dark:text-gray-400 text-sm">{benefit.desc}</p>
                                     </div>
                                 </div>
                             ))}
@@ -159,7 +159,7 @@ const HowItWorks = () => {
                     </div>
 
                     <div className="text-center mt-10 mb-4">
-                        <Link href="/locations" className="bg-linear-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25">
+                        <Link href="/locations" className="inline-block bg-linear-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 dark:hover:shadow-orange-900/50">
                             Try Budget Buddy Now
                         </Link>
                     </div>

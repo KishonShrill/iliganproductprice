@@ -23,15 +23,15 @@ export default function RootLayout({
             lang="en"
             className={`${inter.className} h-full antialiased`}
         >
-            <Providers>
-                <ToastProvider>
-                    <body className="min-h-full flex flex-col">
+            <body className="min-h-full flex flex-col">
+                <Providers>
+                    <ToastProvider>
                         <Header />
-                        <main className="h-[calc(100vh-62px)] overflow-y-auto">{children}</main>
+                        <main className="h-[calc(100vh-62px)] overflow-y-auto dark:bg-gray-800">{children}</main>
                         <MainBottomNav />
-                    </body>
-                </ToastProvider>
-            </Providers>
+                    </ToastProvider>
+                </Providers>
+            </body>
         </html>
     );
 }

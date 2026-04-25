@@ -1,55 +1,54 @@
-import Link from 'next/link'; // Next.js optimized Link
+import Link from 'next/link';
 import { ShoppingCart, TrendingUp, Shield, ExternalLink } from 'lucide-react';
 
 const Hero = () => {
     return (
-        <section className="flex items-center pt-12 pb-16 bg-orange-50 dark:from-gray-800 dark:to-gray-800 overflow-hidden">
+        <section className="flex items-center pt-12 pb-16 bg-orange-50 dark:bg-gray-900 overflow-hidden transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid lg:grid-cols-2 gap-12 max-md:gap-6 items-center">
                     {/* Left Content */}
                     <div className="text-center lg:text-left">
-                        <div className="select-none inline-flex items-center bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 dark:from-white dark:to-orange-100 px-4 py-2 rounded-full text-[#ee4d2d] font-medium text-sm mb-6 hover:scale-105 transition-transform duration-300">
+                        {/* FIX 2: Softened the badge background and text for dark mode */}
+                        <div className="select-none inline-flex items-center bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 dark:from-[#ee4d2d]/20 dark:to-orange-900/30 px-4 py-2 rounded-full text-[#ee4d2d] dark:text-orange-400 font-medium text-sm mb-6 hover:scale-105 transition-transform duration-300">
                             <Shield className="w-4 h-4 mr-2" />
                             100% Free • Non-Profit Initiative
                         </div>
 
-                        {/* Using standard Tailwind font-black (900) instead of custom inter-black */}
-                        <h1 className="flex flex-wrap justify-center lg:justify-start gap-x-2 inter-black text-shadow-xl text-4xl md:text-5xl lg:text-6xl text-gray-900 dark:text-gray-50 mb-6 leading-none">
+                        <h1 className="flex flex-wrap justify-center lg:justify-start gap-x-2 font-black text-shadow-xl text-4xl md:text-5xl lg:text-6xl text-gray-900 dark:text-gray-50 mb-6 leading-none">
                             Shop Smarter,
-                            <span className="inter-black font-black text-transparent bg-clip-text bg-linear-to-r from-[#ee4d2d] to-[#ff6b47]">
+                            <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47]">
                                 Spend Less
                             </span>
                         </h1>
 
-                        <p className="text-lg max-md:text-base text-gray-600 dark:text-slate-100 mb-8 max-w-2xl mx-auto lg:mx-0">
+                        <p className="text-lg max-md:text-base text-gray-600 dark:text-slate-300 mb-8 max-w-2xl mx-auto lg:mx-0">
                             Track your shopping cart total in real-time before checkout. Budget Buddy helps you make informed decisions and stick to your budget effortlessly.
                         </p>
 
                         <div className="flex flex-col max-md:px-4 sm:flex-row gap-4 items-center justify-center lg:justify-start">
-                            {/* Changed 'to' to 'href' */}
                             <Link href="/budget-hub" className="flex items-center w-fit bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 max-md:py-3 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 group">
                                 Start Budgeting Now
                                 <ShoppingCart className="w-5 h-5 ml-2 inline group-hover:translate-x-1 transition-transform duration-300" />
                             </Link>
 
-                            <a href="https://github.com/KishonShrill/BudgetBuddy-IliganCity" target='_blank' rel="noopener noreferrer" className="flex items-center w-fit border-2 border-[#ee4d2d] text-[#ee4d2d] px-8 py-4 max-md:py-3 rounded-full font-semibold text-lg hover:bg-[#ee4d2d] hover:text-white transition-all duration-300 hover:scale-105 group">
+                            <a href="https://github.com/KishonShrill/BudgetBuddy-IliganCity" target='_blank' rel="noopener noreferrer" className="flex items-center w-fit border-2 border-[#ee4d2d] text-[#ee4d2d] dark:text-orange-400 dark:border-orange-400 px-8 py-4 max-md:py-3 rounded-full font-semibold text-lg hover:bg-[#ee4d2d] dark:hover:bg-orange-500 hover:text-white dark:hover:text-gray-900 transition-all duration-300 hover:scale-105 group">
                                 Visit Github
                                 <ExternalLink className='w-5 h-5 ml-2 inline group-hover:translate-x-1 transition-transform duration-300' />
                             </a>
                         </div>
 
                         {/* Stats */}
-                        {/* <div className="grid grid-cols-3 gap-8 mt-12 pt-8 border-t border-gray-200">
+                        {/* <div className="grid grid-cols-3 gap-8 mt-12 pt-8 border-t border-gray-200 dark:border-gray-800">
                             {[
                                 { number: '50K+', label: 'Happy Users' },
-                                { number: '$2M+', label: 'Money Saved' },
+                                { number: '₱2M+', label: 'Money Saved' },
                                 { number: '4.9★', label: 'User Rating' }
                             ].map((stat, index) => (
                                 <div key={index} className="text-center group cursor-pointer">
-                                    <div className="text-2xl font-bold text-gray-900 group-hover:text-[#ee4d2d] transition-colors duration-300">
+                                    <div className="text-2xl font-bold text-gray-900 dark:text-gray-100 group-hover:text-[#ee4d2d] dark:group-hover:text-orange-400 transition-colors duration-300">
                                         {stat.number}
                                     </div>
-                                    <div className="text-sm text-gray-600 mt-1">{stat.label}</div>
+                                    <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{stat.label}</div>
                                 </div>
                             ))}
                         </div> */}
@@ -57,8 +56,8 @@ const Hero = () => {
 
                     {/* Right Content - Mockup */}
                     <div className="relative">
-                        <div className="select-none relative z-10 bg-white dark:bg-gray-700 dark:border dark:border-gray-600 rounded-3xl shadow-2xl max-md:m-4 max-md:p-4 p-8 hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                            <div className="bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] rounded-2xl p-6 mb-3 md:mb-6">
+                        <div className="select-none relative z-10 bg-white dark:bg-gray-800 dark:border dark:border-gray-700 rounded-3xl shadow-2xl max-md:m-4 max-md:p-4 p-8 hover:shadow-3xl transition-all duration-500 hover:scale-105">
+                            <div className="bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] rounded-2xl p-6 mb-3 md:mb-6 shadow-md">
                                 <div className="flex items-center justify-between text-white mb-4">
                                     <h3 className="text-lg font-semibold">Shopping Cart</h3>
                                     <TrendingUp className="w-6 h-6" />
@@ -74,22 +73,24 @@ const Hero = () => {
                                     { name: 'Ottogi Cheese Ramen Pouch 111g', price: '₱89' },
                                     { name: 'Century Tuna Flakes in Oil 180g', price: '₱52' }
                                 ].map((item, index) => (
-                                    <div key={index} className="flex gap-2 justify-between items-center p-3 bg-gray-50 dark:bg-gray-600 rounded-lg hover:bg-gray-100 transition-colors duration-300">
-                                        <span className="text-gray-700 dark:text-gray-50 text-sm">{item.name}</span>
-                                        <span className="font-semibold text-[#ee4d2d]">{item.price}</span>
+                                    <div key={index} className="flex gap-2 justify-between items-center p-3 bg-gray-50 dark:bg-gray-700 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors duration-300 border border-transparent dark:border-gray-600">
+                                        <span className="text-gray-700 dark:text-gray-200 text-sm">{item.name}</span>
+                                        <span className="font-semibold text-[#ee4d2d] dark:text-orange-400">{item.price}</span>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="mt-3 md:mt-6 p-4 bg-green-50 dark:bg-gray-800 border border-green-200 rounded-lg">
-                                <div className="text-green-800 dark:text-green-500 font-medium">✓ Under Budget!</div>
-                                <div className="text-green-600 text-sm">You have ₱22.50 remaining</div>
+                            {/* FIX 4: Made the 'Under Budget' box legible in dark mode */}
+                            <div className="mt-3 md:mt-6 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 rounded-lg">
+                                <div className="text-green-800 dark:text-green-400 font-medium">✓ Under Budget!</div>
+                                <div className="text-green-600 dark:text-green-500 text-sm">You have ₱22.50 remaining</div>
                             </div>
                         </div>
 
                         {/* Background Elements */}
-                        <div className="absolute -top-4 -right-4 w-72 h-72 bg-gradient-to-br from-[#ee4d2d]/20 to-orange-200/20 rounded-full blur-3xl"></div>
-                        <div className="absolute -bottom-8 -left-8 w-64 h-64 bg-gradient-to-br from-orange-200/20 to-[#ee4d2d]/20 rounded-full blur-3xl"></div>
+                        {/* FIX 5: Dimmed the glowing orbs in dark mode so they don't overpower the design */}
+                        <div className="absolute -top-4 -right-4 w-72 h-72 bg-linear-to-br from-[#ee4d2d]/20 to-orange-200/20 dark:from-[#ee4d2d]/10 dark:to-orange-900/10 rounded-full blur-3xl"></div>
+                        <div className="absolute -bottom-8 -left-8 w-64 h-64 bg-linear-to-br from-orange-200/20 to-[#ee4d2d]/20 dark:from-orange-900/10 dark:to-[#ee4d2d]/10 rounded-full blur-3xl"></div>
                     </div>
                 </div>
             </div>

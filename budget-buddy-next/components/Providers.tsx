@@ -1,6 +1,8 @@
 "use client";
 
+import { ThemeProvider } from "./ThemeProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const queryClient = new QueryClient()
 
@@ -9,8 +11,17 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     // preventing data loss if React decides to suspend or re-render the component.
 
     return (
-        <QueryClientProvider client={queryClient}>
-            {children}
-        </QueryClientProvider>
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+        >
+            <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_CLIENT_ID as string}>
+                <QueryClientProvider client={queryClient}>
+                    {children}
+                </QueryClientProvider>
+            </GoogleOAuthProvider>
+        </ThemeProvider>
     );
 }

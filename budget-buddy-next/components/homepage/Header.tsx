@@ -172,7 +172,7 @@ const Header = () => {
                                 ? (
                                     <a
                                         href={link.to}
-                                        className={`flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${link.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(link.to) ? activeStyles : inactiveStyles}`}
+                                        className={`flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent dark:md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${link.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(link.to) ? activeStyles : inactiveStyles}`}
                                     >
                                         <span className="md:hidden">{link.icon}</span>
                                         <span data-text={link.label} className={`flex items-center ${keepWidthStyles}`}>
@@ -184,7 +184,7 @@ const Header = () => {
                                 ) : (
                                     <Link
                                         title={link.disabled ? `Coming soon...` : undefined}
-                                        className={`flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${link.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(link.to) ? activeStyles : inactiveStyles}`}
+                                        className={`flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent dark:md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${link.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(link.to) ? activeStyles : inactiveStyles}`}
                                         href={link.to}
                                         onClick={() => { if (!link.isDropdown) setIsOpen(false) }}
                                     >
@@ -239,7 +239,7 @@ const Header = () => {
                     <div className="flex flex-col md:flex-row md:border-l border-gray-200 dark:border-gray-600 mt-2 pt-2 md:mt-0 md:pt-0 md:pl-4 gap-1 md:gap-4">
                         <hr className="mb-2 md:hidden" />
                         <Link
-                            className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${checkIsActive("/settings") ? activeStyles : inactiveStyles}`}
+                            className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent dark:md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 ${checkIsActive("/settings") ? activeStyles : inactiveStyles}`}
                             href="/settings"
                             onClick={() => setIsOpen(false)}
                         >
@@ -249,7 +249,7 @@ const Header = () => {
 
                         {!checkIsActive("/authenticate") && (!token ? (
                             <Link
-                                className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors max-md:bg-orange-500 hover:bg-gray-200 md:hover:bg-transparent max-md:text-white hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-white ${checkIsActive("/authenticate") ? activeStyles : inactiveStyles}`}
+                                className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors max-md:bg-orange-500 hover:bg-gray-200 md:hover:bg-transparent dark:md:hover:bg-transparent max-md:text-white hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-white ${checkIsActive("/authenticate") ? activeStyles : inactiveStyles}`}
                                 href="/authenticate"
                                 onClick={() => setIsOpen(false)}
                             >
@@ -259,7 +259,7 @@ const Header = () => {
                         ) : (
                             <>
                                 <Link
-                                    className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 font-medium ${checkIsActive("/profile") ? activeStyles : inactiveStyles}`}
+                                    className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent dark:md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 font-medium ${checkIsActive("/profile") ? activeStyles : inactiveStyles}`}
                                     href="/profile"
                                     onClick={() => setIsOpen(false)}
                                 >
@@ -268,7 +268,7 @@ const Header = () => {
                                 </Link>
                                 {isAdvancedUser && (
                                     <Link
-                                        className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 font-medium ${checkIsActive("/dev-mode") ? activeStyles : inactiveStyles}`}
+                                        className={`nav-link flex items-center gap-3 px-3 py-2.5 md:p-0 rounded-xl transition-colors hover:bg-gray-200 md:hover:bg-transparent dark:md:hover:bg-transparent hover:text-orange-500 dark:hover:bg-gray-700 dark:hover:text-orange-500 font-medium ${checkIsActive("/dev-mode") ? activeStyles : inactiveStyles}`}
                                         href="/dev-mode"
                                         onClick={() => setIsOpen(false)}
                                     >

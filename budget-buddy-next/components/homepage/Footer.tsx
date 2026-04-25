@@ -15,6 +15,12 @@ import Linkedin from '@/public/images/icons/LI-In-Bug.png'
 const DEVELOPMENT = process.env.NEXT_PUBLIC_DEVELOPMENT === "true";
 const LOCALHOST = process.env.NEXT_PUBLIC_LOCALHOST;
 
+type Links = {
+    name: string;
+    href: string;
+    disabled?: boolean;
+}
+
 const Footer = () => {
     const pathname = usePathname();
     const [systemStatus, setSystemStatus] = useState<'checking' | 'operational' | 'offline'>('checking');
@@ -61,7 +67,7 @@ const Footer = () => {
         checkHealth();
     }, []);
 
-    const footerLinks = {
+    const footerLinks: Record<string, Links[]> = {
         product: [
             { name: 'Features', href: '/#features' },
             { name: 'How It Works', href: '/#how-it-works' },
@@ -89,7 +95,7 @@ const Footer = () => {
     ];
 
     return (
-        <footer className="bg-gray-900 text-white">
+        <footer className="bg-gray-900 text-white dark:border-t dark:border-gray-800">
             <div className="max-w-7xl mx-auto px-8 py-16">
                 <div className="grid lg:grid-cols-6 gap-8">
                     {/* Brand Section */}
@@ -114,7 +120,7 @@ const Footer = () => {
                                     href={social.href}
                                     target='_blank'
                                     rel="noopener noreferrer"
-                                    className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-white transition-colors duration-300 group"
+                                    className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-[#ee4d2d] transition-colors duration-300 group"
                                     aria-label={social.label}
                                 >
                                     <Image
