@@ -1,5 +1,7 @@
 import type { NextConfig } from "next";
 
+const DEVELOPMENT = process.env.NEXT_PUBLIC_DEVELOPMENT === "true";
+
 const nextConfig: NextConfig = {
     // async rewrites() {
     //     return [
@@ -15,6 +17,19 @@ const nextConfig: NextConfig = {
     //         }
     //     ];
     // },
+    async headers() {
+        return [
+            {
+                source: '/(.*)',
+                headers: [
+                    {
+                        key: 'Content-Security-Policy',
+                        value: `connect-src 'self' https://accounts.google.com https://iliganproductprice-mauve.vercel.app ${DEVELOPMENT ? `http://localhost:5000 http://127.0.0.1:5000` : ''};`
+                    },
+                ],
+            },
+        ];
+    },
     images: {
         remotePatterns: [
             {

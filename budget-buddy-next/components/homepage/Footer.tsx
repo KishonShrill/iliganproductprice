@@ -49,6 +49,8 @@ const Footer = () => {
                 (error: any) => error
             );
 
+            console.log(result)
+
             result.match(
                 (response) => {
                     if (response.data && response.data.healthy === true) {
@@ -120,7 +122,7 @@ const Footer = () => {
                                     href={social.href}
                                     target='_blank'
                                     rel="noopener noreferrer"
-                                    className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-[#ee4d2d] transition-colors duration-300 group"
+                                    className="w-10 h-10 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-white transition-colors duration-300 group"
                                     aria-label={social.label}
                                 >
                                     <Image
