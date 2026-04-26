@@ -9,14 +9,14 @@ const Hero = () => {
                     {/* Left Content */}
                     <div className="text-center lg:text-left">
                         {/* FIX 2: Softened the badge background and text for dark mode */}
-                        <div className="select-none inline-flex items-center bg-gradient-to-r from-[#ee4d2d]/10 to-orange-100 dark:from-[#ee4d2d]/20 dark:to-orange-900/30 px-4 py-2 rounded-full text-[#ee4d2d] dark:text-orange-400 font-medium text-sm mb-6 hover:scale-105 transition-transform duration-300">
+                        <div className="select-none inline-flex items-center bg-linear-to-r from-[#ee4d2d]/10 to-orange-100 dark:from-[#ee4d2d]/20 dark:to-orange-900/30 px-4 py-2 rounded-full text-[#ee4d2d] dark:text-orange-400 font-medium text-sm mb-6 hover:scale-105 transition-transform duration-300">
                             <Shield className="w-4 h-4 mr-2" />
                             100% Free • Non-Profit Initiative
                         </div>
 
                         <h1 className="flex flex-wrap justify-center lg:justify-start gap-x-2 font-black text-shadow-xl text-4xl md:text-5xl lg:text-6xl text-gray-900 dark:text-gray-50 mb-6 leading-none">
                             Shop Smarter,
-                            <span className="font-black text-transparent bg-clip-text bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47]">
+                            <span className="font-black text-transparent bg-clip-text bg-linear-to-r from-[#ee4d2d] to-[#ff6b47]">
                                 Spend Less
                             </span>
                         </h1>
@@ -26,7 +26,7 @@ const Hero = () => {
                         </p>
 
                         <div className="flex flex-col max-md:px-4 sm:flex-row gap-4 items-center justify-center lg:justify-start">
-                            <Link href="/budget-hub" className="flex items-center w-fit bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 max-md:py-3 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 group">
+                            <Link href="/budget-hub" className="flex items-center w-fit bg-linear-to-r from-[#ee4d2d] to-[#ff6b47] text-white px-8 py-4 max-md:py-3 rounded-full font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:shadow-[#ee4d2d]/25 group">
                                 Start Budgeting Now
                                 <ShoppingCart className="w-5 h-5 ml-2 inline group-hover:translate-x-1 transition-transform duration-300" />
                             </Link>
@@ -57,7 +57,7 @@ const Hero = () => {
                     {/* Right Content - Mockup */}
                     <div className="relative">
                         <div className="select-none relative z-10 bg-white dark:bg-gray-800 dark:border dark:border-gray-700 rounded-3xl shadow-2xl max-md:m-4 max-md:p-4 p-8 hover:shadow-3xl transition-all duration-500 hover:scale-105">
-                            <div className="bg-gradient-to-r from-[#ee4d2d] to-[#ff6b47] rounded-2xl p-6 mb-3 md:mb-6 shadow-md">
+                            <div className="bg-linear-to-r from-[#ee4d2d] to-[#ff6b47] rounded-2xl p-6 mb-3 md:mb-6 shadow-md">
                                 <div className="flex items-center justify-between text-white mb-4">
                                     <h3 className="text-lg font-semibold">Shopping Cart</h3>
                                     <TrendingUp className="w-6 h-6" />

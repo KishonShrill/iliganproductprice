@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { Plus, Calculator, CheckCircle, ArrowRight } from 'lucide-react';
-import React from 'react';
 
 const HowItWorks = () => {
     const steps = [

@@ -25,7 +25,7 @@ const BottomNavigation = () => {
     const pathname = usePathname();
 
     // Hide the bottom nav on specific routes
-    if (new Set(['/', '/authenticate', '/profile', '/budget-hub', '/report']).has(pathname)) {
+    if (new Set(['/', '/authenticate', '/profile', '/budget-hub', '/report', '/locations']).has(pathname)) {
         return null;
     }
 

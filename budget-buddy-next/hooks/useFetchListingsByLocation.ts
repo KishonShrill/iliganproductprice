@@ -16,7 +16,7 @@ const useFetchListingsByLocation = (location: string | null) => {
             axios.get(DATBASE_URL),
             (error: unknown) => {
                 if (axios.isAxiosError(error)) {
-                    new Error(error.response?.data?.message || "Failed to fetch data.")
+                    return new Error(error.response?.data?.message || "Failed to fetch data.")
                 }
                 return new Error(error instanceof Error ? error.message : "An unexpected error occurred.");
             }
@@ -32,7 +32,7 @@ const useFetchListingsByLocation = (location: string | null) => {
     };
 
     return useQuery({
-        queryKey: ['fetchedProductsByLocation', location],
+        queryKey: ['fetchedListingsByLocation', location],
         queryFn: fetchURL,
         gcTime: 1000 * 60 * 5,// int - keeps the data longer
         staleTime: 1000 * 60 * 2, // staleTime: int - default is 0 sec

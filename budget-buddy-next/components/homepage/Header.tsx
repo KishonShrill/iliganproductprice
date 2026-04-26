@@ -44,7 +44,7 @@ const Header = () => {
 
     const getLocationName = () => {
         const pathParts = currentLocation.split('/');
-        if (pathParts[1] === 'location' && pathParts[2]) return decodeURIComponent(pathParts[2]);
+        if (pathParts[1] === 'locations' && pathParts[2]) return decodeURIComponent(pathParts[2]);
         return null;
     };
     let locationTitle = getLocationName();
@@ -138,7 +138,7 @@ const Header = () => {
             {/* CENTER: Dynamic Location Title */}
             <div className="flex-1 flex justify-center md:justify-start text-center px-4 min-w-0">
                 {locationTitle && (
-                    <h1 className={`truncate text-sm md:text-base capitalize font-bold py-1 px-2 rounded-lg text-white bg-orange-500 ${currentLocation === '/' && '!text-orange-500 bg-transparent text-xl pointer-events-none select-none'}`}>
+                    <h1 className={`truncate text-sm md:text-base capitalize font-bold py-1 px-2 rounded-lg text-white bg-orange-500 ${currentLocation === '/' && 'text-orange-500! bg-transparent text-xl pointer-events-none select-none'}`}>
                         {data?.location_name || locationTitle}
                     </h1>
                 )}
@@ -219,7 +219,7 @@ const Header = () => {
                                             <li key={sub.label}>
                                                 <Link
                                                     title={sub.disabled ? `Coming soon...` : undefined}
-                                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-orange-500 dark:hover:text-orange-500 ${sub.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(sub.to) ? '!text-orange-500 font-bold bg-orange-50 dark:bg-gray-700/50' : inactiveStyles}`}
+                                                    className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-colors hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-orange-500 dark:hover:text-orange-500 ${sub.disabled && 'opacity-50 pointer-events-none'} ${checkIsActive(sub.to) ? 'text-orange-500! font-bold bg-orange-50 dark:bg-gray-700/50' : inactiveStyles}`}
                                                     href={sub.to}
                                                     onClick={() => setIsOpen(false)}
                                                 >

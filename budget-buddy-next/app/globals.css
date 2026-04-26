@@ -144,6 +144,15 @@
     ::-webkit-scrollbar-thumb:hover {
         background: #d63916;
     }
+
+    @media (max-width: 640px) {
+        ::-webkit-scrollbar {
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            display: none;
+        }
+    }
 }
 
 .dark {
