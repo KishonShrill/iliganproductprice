@@ -11,12 +11,13 @@ import ProductCard from '@/components/parts/ProductCard';
 import Searchbar from "@/components/parts/Searchbar";
 import SimpleFooter from "@/components/parts/SimpleFooter";
 
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/redux/store";
+import { addToCart, removeFromCart, updateQuantity, clearLocation, clearAll } from "@/redux/cartSlice";
+
 import useSettings from "@/hooks/useSettings";
 import useFetchListingsByLocation from '@/hooks/useFetchListingsByLocation';
 import { useToast } from "@/components/ToastProvider";
-
-// Assuming you've moved cart logic to a hook/context
-// import { useCart } from "@/hooks/useCart"; 
 
 interface GroceryClientProps {
     locationId: string;
@@ -25,9 +26,7 @@ interface GroceryClientProps {
 export default function GroceryClient({ locationId }: GroceryClientProps) {
     const { settings } = useSettings();
     const { addToast } = useToast();
-
-    // Replace these with your actual Cart Context values
-    // const { cartItems, addNewCartItem, ... } = useCart(); 
+    const dispatch = useDispatch();
 
     const [count, setCount] = useState(0);
     const [receiptVisible, setReceiptVisible] = useState(false);
@@ -40,6 +39,7 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
     const cartRef = useRef<any>(null);
     const searchbarRef = useRef<HTMLInputElement>(null);
     const audioRef = useRef<HTMLAudioElement>(null);
+    const cartItems = useSelector((state: RootState) => state.cart.items);
 
     const { isLoading, data, isError, error, isFetching } = useFetchListingsByLocation(locationId);
 
@@ -50,6 +50,10 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
+
+    useEffect(() => {
+        localStorage.setItem("cart", JSON.stringify(cartItems));
+    }, [cartItems]);
 
     const catalogs = useMemo(() => {
         if (!data?.products) return [];
@@ -65,7 +69,7 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
         const price = parseFloat(productPrice || "0");
 
         const card = el.closest('.product-card');
-        const cartButton = (windowWidth < 700) ? cartButtonRef.current : cartRef.current;
+        const cartButton = (windowWidth < 768) ? cartButtonRef.current : cartRef.current; // Changed 700 to 768 (md breakpoint)
 
         if (!card || !cartButton) return;
 
@@ -76,6 +80,14 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
 
         const cardRect = card.getBoundingClientRect();
         const cartShape = cartButton.getBoundingClientRect();
+
+        dispatch(addToCart({
+            id: productId!,
+            name: productName!,
+            price: parseFloat(productPrice!),
+            location: productLocation!,
+            image: productImage!
+        }));
 
         const animatingCard = {
             count,
@@ -96,8 +108,7 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
             setAnimatingCards(prev => prev.filter(c => c.count !== animatingCard.count));
         }, 800);
 
-        // addNewCartItem(productId, productName, price, productLocation, productImage);
-    }, [count, windowWidth, settings.soundEffects]);
+    }, [count, windowWidth, settings.soundEffects, dispatch]);
 
     const filteredProducts = useMemo(() => {
         const term = search.toLowerCase();
@@ -107,6 +118,9 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
             return matchesSearch && matchesCatalog;
         }) || [];
     }, [data, search, selectedCatalog]);
+
+    // Calculate total quantity for the mobile badge
+    const totalQty = Object.values(cartItems).reduce((sum, item: any) => sum + item.quantity, 0);
 
     if (isLoading || isFetching) {
         return (
@@ -125,27 +139,29 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
     }
 
     return (
-        <div className="h-[calc(100vh-62px)] overflow-y-auto bg-white dark:bg-gray-900 transition-colors duration-300">
+        <div className="h-[calc(100vh-62px)] overflow-y-auto overflow-x-hidden bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
             {/* Audio Element */}
             <audio ref={audioRef} src="/sounds/click-pop.mp3" preload="auto" />
 
-            <div className="sticky top-0 z-20 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md p-2 flex w-full gap-2 items-center justify-center border-b dark:border-gray-800">
-                <Link href="/locations" className="p-2 rounded-xl border-2 border-transparent hover:border-[#ee4d2d] transition-colors">
-                    <ArrowLeft className="w-6 h-6 dark:text-white" />
-                </Link>
+            {/* Sticky Header */}
+            <div className={`sticky top-0 ${!receiptVisible ? "z-[21]" : "z-0"} dark:bg-gray-900/80 backdrop-blur-md p-2 flex w-full gap-2 items-center justify-center max-w-400 mx-auto`}>
                 <Searchbar
                     ref={searchbarRef}
                     type="text"
                     placeholder="Search products..."
                     onChange={(e) => setSearch(e.target.value)}
                 />
+                <Link href="/locations" className="p-2 rounded-md border-2 border-transparent bg-white hover:border-[#ee4d2d] transition-colors shadow-[0_2px_5px_rgba(0,0,0,0.1)]">
+                    <ArrowLeft className="w-6 h-6 dark:text-white" />
+                </Link>
             </div>
 
-            <nav className="flex overflow-x-auto gap-2 px-5 py-4 scrollbar-hide bg-white dark:bg-gray-900">
+            {/* Navigation Tabs */}
+            <nav className="flex overflow-x-auto gap-2 px-5 py-4 scrollbar-hide bg-gray-50 dark:bg-gray-900 max-w-400 mx-auto">
                 <Button
                     variant={selectedCatalog === 'All' ? 'default' : 'outline'}
                     size="sm"
-                    className={`rounded-full whitespace-nowrap transition-all ${selectedCatalog === 'All' ? 'bg-[#ee4d2d] text-white' : 'dark:text-gray-300'}`}
+                    className={`rounded-full whitespace-nowrap transition-all ${selectedCatalog === 'All' ? 'bg-[#ee4d2d] hover:bg-[#d63916] text-white border-transparent' : 'bg-white dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'}`}
                     onClick={() => setSelectedCatalog('All')}
                 >
                     All Items
@@ -156,7 +172,7 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
                         key={catalog}
                         variant={selectedCatalog === catalog ? 'default' : 'outline'}
                         size="sm"
-                        className={`rounded-full whitespace-nowrap transition-all ${selectedCatalog === catalog ? 'bg-[#ee4d2d] text-white' : 'dark:text-gray-300 dark:border-gray-700'}`}
+                        className={`rounded-full whitespace-nowrap transition-all ${selectedCatalog === catalog ? 'bg-[#ee4d2d] hover:bg-[#d63916] text-white border-transparent' : 'bg-white dark:bg-gray-800 dark:text-gray-300 dark:border-gray-700'}`}
                         onClick={() => setSelectedCatalog(catalog)}
                     >
                         {catalog}
@@ -164,35 +180,57 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
                 ))}
             </nav>
 
-            <section className="px-5 pb-24 transition-colors">
-                <main className={`grid ${!settings.hidePhotos && 'max-sm:grid-cols-1'} grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 md:gap-6`} id="productContainer">
-                    {filteredProducts
-                        .sort((a: any, b: any) => a.product.product_name.localeCompare(b.product.product_name))
-                        .map((item: any) => (
-                            <ProductCard
-                                key={item._id}
-                                item={item}
-                                onAdd={(event) => handleClick(event.currentTarget)}
-                            />
-                        ))}
+            {/* ✨ MAIN FLEX LAYOUT ✨ */}
+            <div className="flex flex-col md:flex-row gap-6 px-5 pb-24 relative max-w-400 mx-auto items-start z-20">
 
-                    {filteredProducts.length === 0 && (
-                        <div className="col-span-full py-20 text-center">
-                            <p className="text-gray-500 dark:text-gray-400">No products found for <b className="text-[#ee4d2d]">{search}</b></p>
-                            <Button
-                                variant="outline"
-                                className="mt-6 border-[#ee4d2d] text-[#ee4d2d] hover:bg-[#ee4d2d] hover:text-white"
-                                onClick={() => {
-                                    setSearch('');
-                                    if (searchbarRef.current) searchbarRef.current.value = '';
-                                }}
-                            >
-                                Clear Filters
-                            </Button>
-                        </div>
-                    )}
-                </main>
-            </section>
+                {/* LEFT SIDE: Product Grid */}
+                <section className="flex-1 min-w-0 transition-colors">
+                    <main className={`grid ${!settings.hidePhotos ? 'max-sm:grid-cols-1' : 'grid-cols-2'} grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 md:gap-6`}>
+                        {filteredProducts
+                            .sort((a: any, b: any) => a.product.product_name.localeCompare(b.product.product_name))
+                            .map((item: any) => (
+                                <ProductCard
+                                    key={item._id}
+                                    item={item}
+                                    onAdd={(event) => handleClick(event.currentTarget)}
+                                />
+                            ))}
+
+                        {filteredProducts.length === 0 && (
+                            <div className="col-span-full py-20 text-center">
+                                <p className="text-gray-500 dark:text-gray-400">No products found for <b className="text-[#ee4d2d]">{search}</b></p>
+                                <Button
+                                    variant="outline"
+                                    className="mt-6 border-[#ee4d2d] text-[#ee4d2d] hover:bg-[#ee4d2d] hover:text-white"
+                                    onClick={() => {
+                                        setSearch('');
+                                        if (searchbarRef.current) searchbarRef.current.value = '';
+                                    }}
+                                >
+                                    Clear Filters
+                                </Button>
+                            </div>
+                        )}
+                    </main>
+
+                    <div className="mt-12 flex flex-wrap justify-center gap-x-1 text-gray-500 dark:text-gray-400">
+                        <p className="text-center">Don&apos;t see the product you&apos;re looking for?</p>
+                        <Link href="/contribution/hub" className="text-orange-500 hover:font-bold">Contribute with us</Link>
+                    </div>
+                </section>
+
+                {/* RIGHT SIDE: Cart Sidebar / Mobile Overlay */}
+                <Cart
+                    ref={cartRef}
+                    storage={{ cart: cartItems }}
+                    onRemove={(id) => dispatch(removeFromCart(id))}
+                    onUpdateQuantity={(id, q) => dispatch(updateQuantity({ id, quantity: q }))}
+                    onRemoveLocation={(loc) => dispatch(clearLocation(loc))}
+                    onRemoveAll={() => dispatch(clearAll())}
+                    receipt={receiptVisible}
+                    addToast={addToast}
+                />
+            </div>
 
             {/* Animation Overlay */}
             {animatingCards.map((card) => (
@@ -205,7 +243,6 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
                         width: '160px',
                         height: '200px',
                         animation: `flyToCart 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards`,
-                        // These variables must be defined in your CSS file
                         ['--start-x' as any]: `${card.startX}px`,
                         ['--start-y' as any]: `${card.startY}px`,
                         ['--target-x' as any]: `${card.targetX}px`,
@@ -214,7 +251,7 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
                 >
                     <div className="flex h-full w-full flex-col overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5">
                         {card.productImage && (
-                            <div className="relative aspect-square h-[9.5rem] bg-gray-50">
+                            <div className="relative aspect-square h-38 bg-gray-50">
                                 <Image src={card.productImage} alt="" fill className="object-cover" />
                             </div>
                         )}
@@ -226,17 +263,21 @@ export default function GroceryClient({ locationId }: GroceryClientProps) {
                 </div>
             ))}
 
-            {/* Mobile Cart Button */}
+            {/* Mobile Cart Button with Redux Quantity Badge */}
             <button
                 ref={cartButtonRef}
                 onClick={() => setReceiptVisible(!receiptVisible)}
-                className={`fixed bottom-22 right-4 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#ee4d2d] text-white shadow-lg transition-transform active:scale-95 lg:hidden`}
+                className={`fixed bottom-20 right-6 z-30 flex h-14 w-14 items-center justify-center rounded-full bg-[#ee4d2d] text-white shadow-lg transition-transform active:scale-95 md:hidden`}
             >
                 <Package className="w-6 h-6" />
-                {/* Total Quantity Badge would go here */}
+                {totalQty > 0 && (
+                    <span className="absolute -top-1 -right-1 flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-red-600 px-1.5 py-0.5 text-[10px] font-bold text-white ring-2 ring-white dark:ring-gray-900">
+                        {totalQty}
+                    </span>
+                )}
             </button>
 
-            <SimpleFooter className="bg-gray-900 mt-20" />
+            <SimpleFooter className="bg-gray-900" />
         </div>
     );
 }

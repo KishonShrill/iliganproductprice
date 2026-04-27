@@ -3,7 +3,7 @@ import { ShoppingCart, TrendingUp, Shield, ExternalLink } from 'lucide-react';
 
 const Hero = () => {
     return (
-        <section className="flex items-center pt-12 pb-16 bg-orange-50 dark:bg-gray-900 overflow-hidden transition-colors duration-300">
+        <section className="flex items-center pt-12 pb-16 bg-orange-50 dark:bg-gray-900 overflow-visible transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid lg:grid-cols-2 gap-12 max-md:gap-6 items-center">
                     {/* Left Content */}

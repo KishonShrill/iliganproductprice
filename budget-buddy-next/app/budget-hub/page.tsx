@@ -60,7 +60,7 @@ export default function BudgetHub() {
                 < button
                     onClick={() => router.push('/locations')
                     }
-                    className="group flex flex-col items-center justify-center rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 sm:p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:hover:shadow-xl dark:hover:border-gray-600"
+                    className="cursor-pointer group flex flex-col items-center justify-center rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 sm:p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:hover:shadow-xl dark:hover:border-gray-600"
                 >
                     <div className="mb-2 sm:mb-3 rounded-full bg-blue-100 dark:bg-blue-900/30 p-3 sm:p-4 text-blue-500 dark:text-blue-400 transition-colors group-hover:bg-blue-500 group-hover:text-white dark:group-hover:bg-blue-500 dark:group-hover:text-white">
                         <MapPin size={24} className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -80,7 +80,7 @@ export default function BudgetHub() {
 
                 <button
                     onClick={() => router.push('/receipt')}
-                    className="group flex flex-col items-center justify-center rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 sm:p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:hover:shadow-xl dark:hover:border-gray-600"
+                    className="cursor-pointer group flex flex-col items-center justify-center rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 sm:p-6 shadow-sm transition-all hover:-translate-y-1 hover:shadow-md dark:hover:shadow-xl dark:hover:border-gray-600"
                 >
                     <div className="mb-2 sm:mb-3 rounded-full bg-purple-100 dark:bg-purple-900/30 p-3 sm:p-4 text-purple-500 dark:text-purple-400 transition-colors group-hover:bg-purple-500 group-hover:text-white dark:group-hover:bg-purple-500 dark:group-hover:text-white">
                         <ReceiptText size={24} className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -109,7 +109,7 @@ export default function BudgetHub() {
                             <p className="mb-6 max-w-sm text-sm text-gray-500 dark:text-gray-400">Create an account or log in to see the newest product additions and start budgeting.</p>
                             <button
                                 onClick={() => router.push('/authenticate')}
-                                className="rounded-xl bg-orange-500 px-6 py-3 font-bold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-orange-600 hover:shadow-md"
+                                className="cursor-pointer rounded-xl bg-orange-500 px-6 py-3 font-bold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-orange-600 hover:shadow-md"
                             >
                                 Sign In / Register
                             </button>
@@ -173,9 +173,9 @@ export default function BudgetHub() {
             <footer className="mt-12 border-t border-gray-200 dark:border-gray-800 pt-8 text-center text-sm text-gray-500 dark:text-gray-400 transition-colors">
                 <p>© 2026 Budget Buddy. All rights reserved.</p>
                 <div className="mt-3 flex flex-wrap justify-center gap-x-6 gap-y-2">
-                    <button onClick={() => router.push('/privacy-policy')} className="font-medium hover:text-orange-500 dark:hover:text-orange-400 hover:underline">Privacy Policy</button>
-                    <button onClick={() => router.push('/terms-of-service')} className="font-medium hover:text-orange-500 dark:hover:text-orange-400 hover:underline">Terms of Service</button>
-                    <button onClick={() => router.push('/report')} className="font-medium hover:text-orange-500 dark:hover:text-orange-400 hover:underline">Report Missing Data</button>
+                    <button onClick={() => router.push('/privacy-policy')} className="cursor-pointer font-medium hover:text-orange-500 dark:hover:text-orange-400 hover:underline">Privacy Policy</button>
+                    <button onClick={() => router.push('/terms-of-service')} className="cursor-pointer font-medium hover:text-orange-500 dark:hover:text-orange-400 hover:underline">Terms of Service</button>
+                    <button onClick={() => router.push('/report')} className="cursor-pointer font-medium hover:text-orange-500 dark:hover:text-orange-400 hover:underline">Report Missing Data</button>
                 </div>
             </footer>
         </div >

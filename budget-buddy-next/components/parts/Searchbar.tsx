@@ -2,6 +2,7 @@
 
 import React, { forwardRef } from "react";
 import Image from "next/image";
+import { cn } from "@/helpers/utils";
 
 interface SearchbarProps {
     type: string;
@@ -14,7 +15,17 @@ const Searchbar = forwardRef<HTMLInputElement, SearchbarProps>(
     ({ type, placeholder = "Search", children, onChange }, ref) => {
         return (
             <div className="flex w-full items-center gap-2">
-                <div className="searchbar-container relative flex flex-1 items-center overflow-hidden rounded-xl border border-gray-200 bg-gray-50 dark:border-gray-700 dark:bg-gray-800 transition-all focus-within:border-[#ee4d2d] focus-within:ring-1 focus-within:ring-[#ee4d2d]">
+                <div
+                    className={cn(
+                        "relative flex flex-1 items-center w-full z-[2]",
+                        "rounded-[7px] border border-transparent",
+                        "bg-white shadow-[0_2px_5px_rgba(0,0,0,0.1)]",
+                        "transition-all duration-200",
+                        "dark:bg-gray-800 dark:border-gray-700",
+                        // The custom focus-within glow from smoothshadows.com
+                        "focus-within:border-[#ee4d2d] focus-within:shadow-[0px_0px_5px_rgba(238,77,45,0.09),0px_0px_21px_rgba(238,77,45,0.18)]"
+                    )}
+                >
                     <Image
                         className="ml-3 opacity-50 dark:invert"
                         height={20}
@@ -24,7 +35,14 @@ const Searchbar = forwardRef<HTMLInputElement, SearchbarProps>(
                     />
                     <input
                         ref={ref}
-                        className="searchbar w-full bg-transparent px-3 py-2.5 text-sm outline-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                        className={cn(
+                            "grow w-full h-full",
+                            "py-[0.6rem] px-2 text-[1.1rem]",
+                            "bg-transparent border-none outline-none focus:outline-none",
+                            "rounded-r-[7px]",
+                            "text-gray-900 dark:text-white",
+                            "placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                        )}
                         type={type}
                         placeholder={placeholder}
                         onChange={onChange}

@@ -1,6 +1,8 @@
 {
-    "framework": "nextjs",
-    "buildCommand": "cd budget-buddy-next && npm run build",
-    "installCommand": "cd budget-buddy-next && npm install",
-    "outputDirectory": "budget-buddy-next/.next"
+    "rewrites": [
+        {
+            "source": "/budget-buddy-next/(.*)",
+            "destination": "/"
+        }
+    ]
 }

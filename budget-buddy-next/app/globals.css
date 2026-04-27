@@ -202,3 +202,22 @@
         @apply font-sans;
     }
 }
+
+@keyframes flyToCart {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: translate(calc((var(--target-x) - var(--start-x)) * 0.5),
+                calc((var(--target-y) - var(--start-y)) * 0.3)) scale(0.8);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: translate(calc(var(--target-x) - var(--start-x)),
+                calc(var(--target-y) - var(--start-y))) scale(0.2);
+        opacity: 0;
+    }
+}
