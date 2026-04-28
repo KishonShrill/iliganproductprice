@@ -12,8 +12,13 @@ import useFetchListings from "@/hooks/useFetchListings";
 
 // 1. Define the shape of your decoded JWT
 interface DecodedToken {
+    user_id: string;
+    user_email: string;
+    user_role: string;
     username: string;
     profile_picture?: string;
+    iat?: number; // Issued at (added automatically by jwt.sign)
+    exp?: number; // Expiration time (added automatically by jwt.sign)
 }
 
 interface Listing {
@@ -46,7 +51,7 @@ export default function BudgetHub() {
                     <p className="text-sm sm:text-base font-medium opacity-90">Welcome back,</p>
                     <h1 className="text-xl sm:text-4xl font-black tracking-tight">{userData.username}!</h1>
                 </div>
-                <Link href='/profile' className="flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center overflow-hidden rounded-full border-4 border-white/20 bg-white dark:bg-gray-800 shadow-inner hover:scale-105 transition-transform">
+                <Link href='/profile' className="relative flex h-16 w-16 sm:h-20 sm:w-20 items-center justify-center overflow-hidden rounded-full border-4 border-white/20 bg-white dark:bg-gray-800 shadow-inner hover:scale-105 transition-transform">
                     {userData.profile_picture ? (
                         <Image src={userData.profile_picture} alt="Profile" fill className="object-cover" />
                     ) : (

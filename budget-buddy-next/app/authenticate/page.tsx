@@ -221,7 +221,7 @@ export default function AuthPage() {
                     </div>
 
                     {status === "error" && (
-                        <p className="mt-4 text-center text-red-600 dark:text-red-400 text-xs font-bold uppercase">{errorMessage}</p>
+                        <p className="mt-4 text-center text-red-600 dark:text-red-400 text-xs font-bold">{errorMessage}</p>
                     )}
 
                     <div className="mt-6 text-center text-xs">

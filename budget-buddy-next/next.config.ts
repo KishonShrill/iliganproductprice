@@ -34,8 +34,17 @@ const nextConfig: NextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'res.cloudinary.com',
+                hostname: 'lh3.googleusercontent.com',
+                port: '',
+                pathname: '/**', // This allows any image path from this domain
             },
+            // You might also want to add Cloudinary here since you use it for products!
+            {
+                protocol: 'https',
+                hostname: 'res.cloudinary.com',
+                port: '',
+                pathname: '/**',
+            }
         ],
     },
 };
