@@ -98,9 +98,9 @@ export default function ListingForm() {
 
                 console.log(dataToSend)
 
-                //await axios.post(targetUrl, dataToSend, {
-                //    headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` }
-                //});
+                await axios.post(targetUrl, dataToSend, {
+                    headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` }
+                });
             }
 
             queryClient.invalidateQueries('fetchedListings_Admin');
@@ -120,7 +120,7 @@ export default function ListingForm() {
             navigate("/dev-mode/listings");
         }
         if (!locationsLoading) setInitialLoading(false);
-    }, [location, navigate, baseProducts, populated]);
+    }, [location, navigate, baseProducts, populated, locationsLoading]);
 
     if (!populated) return null;
 
@@ -133,7 +133,7 @@ export default function ListingForm() {
     }
 
     return (
-        <div className="flex-1 overflow-auto bg-gray-50 min-h-screen">
+        <div className="relative flex-1 overflow-hidden bg-gray-50 min-h-screen">
             {/* Header */}
             <div className="flex items-center justify-between border-b border-gray-200 bg-white px-4 md:px-8 py-4 md:py-6">
                 <div>
@@ -150,7 +150,7 @@ export default function ListingForm() {
             </div>
 
             {/* Form Container */}
-            <div className="p-4 md:p-8 pb-20 md:pb-8">
+            <div className="h-[calc(100vh-100px)] overflow-y-auto p-4 md:p-8 pb-20 md:pb-8">
                 <div className="max-w-4xl mx-auto bg-white">
                     <Card>
                         <CardHeader className="flex flex-row items-center justify-between">
@@ -165,7 +165,7 @@ export default function ListingForm() {
                                     </SelectTrigger>
                                     <SelectContent className="bg-white">
                                         {fetchedLocations.map((loc) => (
-                                            <SelectItem key={loc._id || loc.id} value={loc._id || loc.id}>
+                                            <SelectItem key={loc._id || loc.id} value={loc._id || loc.id} className="cursor-pointer hover:bg-gray-200">
                                                 {loc.location_name}
                                             </SelectItem>
                                         ))}

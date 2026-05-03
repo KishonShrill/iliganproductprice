@@ -22,9 +22,9 @@ function ContributionLayout() {
         }, 400);
     }, []);
 
-    const addToast = useCallback((name, description = null) => {
+    const addToast = useCallback((name, description = null, type) => {
         const id = Date.now() + Math.random();
-        setToasts(prev => [...prev, { id, name, description, open: true }]);
+        setToasts(prev => [...prev, { id, name, description, type, open: true }]);
     }, []);
 
     useEffect(() => {

@@ -134,12 +134,30 @@ const pendingListingSchema = new mongoose.Schema({
     status: { type: String, default: 'pending' }
 }, { timestamps: true });
 
+const priceLogSchema = new mongoose.Schema({
+    listing_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Listing',
+        required: true,
+        index: true // Crucial for fetching the chart data quickly later
+    },
+    old_price: {
+        type: Number,
+        required: true
+    },
+    date_recorded: {
+        type: Date,
+        required: true
+    }
+});
+
 const User = mongoose.model('Authentication', authenticationSchema, 'users');
 const Product = mongoose.model('Product', productSchema, 'products');
 const Location = mongoose.model('Location', locationSchema, 'locations');
 const Listing = mongoose.model('Listing', listingSchema, 'listings');
 const PendingListing = mongoose.model('PendingListing', pendingListingSchema, 'pendingListings');
 const Category = mongoose.model('Category', categorySchema, 'category');
+const PriceLog = mongoose.model('PriceLog', priceLogSchema, 'priceLogs');
 
 // Export the models
 export {
@@ -147,5 +165,6 @@ export {
     Product,
     Location,
     Listing, PendingListing,
-    Category
+    Category,
+    PriceLog
 };

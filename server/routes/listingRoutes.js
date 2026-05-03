@@ -5,7 +5,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import getPaginationParams from '../helpers/getPaginationParams.js';
 
-import { Listing } from '../models/models.js'; // adjust path
+import { Listing, PriceLog } from '../models/models.js'; // adjust path
 
 const router = express.Router();
 
@@ -43,6 +43,17 @@ router.post('/', user_verify, requireRole("moderator"), async (req, res) => {
 
     const listingPayload = req.body;
 
+    const existingListing = await Listing.findOne({
+        "product.product_id": listingPayload.product.product_id,
+        "location.id": listingPayload.location.id
+    }).sort({ "product.product_id": -1, "location.id": -1 });
+
+    if (existingListing) {
+        return res.status(409).json({
+            message: `This product is already listed at ${listingPayload.location.name}. Please edit the existing listing instead.`
+        });
+    }
+
     await ResultAsync.fromPromise(
         new Listing(listingPayload).save(),
         (error) => new Error(`Failed to save listing: ${error.message}`)
@@ -69,6 +80,22 @@ router.post('/bulk', user_verify, requireRole("moderator"), async (req, res) => 
     // #swagger.description = 'Bulk create new product listings.'
 
     const listingsArray = req.body;
+
+    const incomingProductIds = listingsArray.map(item => item.product.product_id);
+    const targetLocationId = listingsArray[0].location.id;
+
+    // 3. Find if any of these products ALREADY exist at this location
+    const existingListings = await Listing.find({
+        "location.id": targetLocationId,
+        "product.product_id": { $in: incomingProductIds }
+    }).sort({ "product.product_id": -1, "location.id": -1 });
+
+    if (existingListings.length > 0) {
+        const duplicateNames = existingListings.map(l => l.product.product_name).join(', ');
+        return res.status(409).json({
+            message: `Cannot process bulk upload. The following products are already listed at this location: ${duplicateNames}`
+        });
+    }
 
     // 1. Validate that we actually received an array
     if (!Array.isArray(listingsArray) || listingsArray.length === 0) {
@@ -99,7 +126,7 @@ router.post('/bulk', user_verify, requireRole("moderator"), async (req, res) => 
 
 router.put('/:id', user_verify, requireRole("moderator"), async (req, res) => {
     // #swagger.tags = ['v1 | Listing']
-    // #swagger.description = 'Update a listing by MongoDB _id'
+    // #swagger.description = 'Update a listing by MongoDB _id and log price changes'
 
     const id = req.params.id;
 
@@ -109,39 +136,55 @@ router.put('/:id', user_verify, requireRole("moderator"), async (req, res) => {
 
     const updatePayload = req.body;
 
-    await ResultAsync.fromPromise(
-        // { new: true } ensures Mongoose returns the updated document, not the old one
-        // { runValidators: true } ensures any Mongoose schema rules are still enforced
-        Listing.findByIdAndUpdate(id, updatePayload, { new: true, runValidators: true }),
-        (error) => new Error(`Database update error: ${error.message}`)
-    )
-        .andThen((updatedListing) => {
-            // Explicitly handle the case where the ID is valid but the document doesn't exist
-            if (!updatedListing) return errAsync(new Error("Listing not found."));
-            return okAsync(updatedListing);
-        })
-        .match(
-            (savedListing) => {
-                return res.status(200).json({
-                    message: 'Listing updated successfully!',
-                    listing: savedListing,
-                });
-            },
-            (error) => {
-                console.error('Error updating listing:', error);
+    try {
+        // 1. Fetch the EXISTING listing BEFORE updating
+        const existingListing = await Listing.findById(id);
 
-                // Catch our specific 404 error
-                if (error.message === "Listing not found.") {
-                    return res.status(404).json({ message: error.message });
+        if (!existingListing) {
+            return res.status(404).json({ message: "Listing not found." });
+        }
+
+        // 2. Compare prices. We only want to log it if the price ACTUALLY changed.
+        // (This prevents logging if the admin just fixed a typo in the category)
+        if (updatePayload.updated_price && existingListing.updated_price !== updatePayload.updated_price) {
+
+            // 3. Save the OLD price and OLD date to the PriceLog
+            await PriceLog.create({
+                listing_id: existingListing._id,
+                old_price: existingListing.updated_price,
+                // Fallback to current date if the old listing somehow lacked a date
+                date_recorded: existingListing.date_updated || new Date()
+            });
+        }
+
+        // 4. Now perform your original update logic using ResultAsync
+        await ResultAsync.fromPromise(
+            Listing.findByIdAndUpdate(id, updatePayload, { new: true, runValidators: true }),
+            (error) => new Error(`Database update error: ${error.message}`)
+        )
+            .match(
+                (savedListing) => {
+                    return res.status(200).json({
+                        message: 'Listing updated successfully!',
+                        listing: savedListing,
+                    });
+                },
+                (error) => {
+                    console.error('Error updating listing:', error);
+                    return res.status(500).json({
+                        message: 'Failed to update listing.',
+                        error: error.message
+                    });
                 }
+            );
 
-                // Catch all other 500 errors
-                return res.status(500).json({
-                    message: 'Failed to update listing.',
-                    error: error.message
-                });
-            }
-        );
+    } catch (error) {
+        console.error('Server error during update process:', error);
+        return res.status(500).json({
+            message: 'An unexpected error occurred.',
+            error: error.message
+        });
+    }
 });
 
 //! [ ] CHECK IF THIS WORKS
