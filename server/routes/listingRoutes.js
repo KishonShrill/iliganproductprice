@@ -64,6 +64,39 @@ router.post('/', user_verify, requireRole("moderator"), async (req, res) => {
         );
 });
 
+router.post('/bulk', user_verify, requireRole("moderator"), async (req, res) => {
+    // #swagger.tags = ['v1 | Listing']
+    // #swagger.description = 'Bulk create new product listings.'
+
+    const listingsArray = req.body;
+
+    // 1. Validate that we actually received an array
+    if (!Array.isArray(listingsArray) || listingsArray.length === 0) {
+        return res.status(400).json({ message: 'Payload must be a non-empty array of listings.' });
+    }
+
+    // 2. Use Mongoose's insertMany for bulk operations
+    await ResultAsync.fromPromise(
+        Listing.insertMany(listingsArray),
+        (error) => new Error(`Failed to save bulk listings: ${error.message}`)
+    )
+        .match(
+            (savedListings) => {
+                return res.status(201).json({
+                    message: `Successfully created ${savedListings.length} listings!`,
+                    count: savedListings.length
+                });
+            },
+            (error) => {
+                console.error('Error creating bulk listings:', error);
+                return res.status(500).json({
+                    message: 'Failed to create bulk listings.',
+                    error: error.message
+                });
+            }
+        );
+});
+
 router.put('/:id', user_verify, requireRole("moderator"), async (req, res) => {
     // #swagger.tags = ['v1 | Listing']
     // #swagger.description = 'Update a listing by MongoDB _id'

@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { useQueryClient } from 'react-query';
-import { Search, Package, ChevronRight, Loader2 } from 'lucide-react';
+import { Search, Package, ChevronRight, Loader2, CheckCircle2 } from 'lucide-react';
 import { ResultAsync } from 'neverthrow';
 import Cookies from 'universal-cookie';
 import axios from 'axios';
@@ -11,6 +11,7 @@ import Header from '@/components/console/Header';
 import DataTable from '@/components/DataTable';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 import useFetchListings from '@/hooks/useFetchListings';
 import useFetchProducts from '@/hooks/useFetchProducts';
@@ -40,6 +41,8 @@ export default function Listings() {
     const { addToast } = useOutletContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [isBulkMode, setIsBulkMode] = useState(false);
+    const [selectedProducts, setSelectedProducts] = useState([]);
 
     const { isLoading, data } = useFetchListings(token)
     const { data: productsData, isLoading: productsLoading } = useFetchProducts(token);
@@ -115,10 +118,26 @@ export default function Listings() {
     }, [productsData, searchTerm]);
 
     const handleSelectProduct = (selectedProduct) => {
+        if (isBulkMode) {
+            // Toggle selection
+            setSelectedProducts(prev => {
+                const isSelected = prev.find(p => p._id === selectedProduct._id);
+                if (isSelected) return prev.filter(p => p._id !== selectedProduct._id);
+                return [...prev, selectedProduct];
+            });
+        } else {
+            // Original single-select behavior
+            setIsModalOpen(false);
+            navigate('/dev-mode/listings/new', {
+                state: { baseProducts: [selectedProduct], populated: true, isBulk: false }
+            });
+        }
+    };
+
+    const handleProceedBulk = () => {
         setIsModalOpen(false);
-        // Use Router State to pass the product invisibly as discussed!
         navigate('/dev-mode/listings/new', {
-            state: { baseProduct: selectedProduct, populated: true }
+            state: { baseProducts: selectedProducts, populated: true, isBulk: true }
         });
     };
 
@@ -151,25 +170,35 @@ export default function Listings() {
                 {/* max-h-[85vh] ensures it doesn't break off the screen on mobile */}
                 <DialogContent className="sm:max-w-2xl max-h-[85vh] flex flex-col p-0 gap-y-0 overflow-hidden bg-white">
 
-                    <div className="px-6 pt-6 pb-4 border-b">
+                    {/* Header Controls */}
+                    <div className="px-6 pt-6 pb-4 border-b flex justify-between items-center">
                         <DialogHeader>
-                            <DialogTitle className="text-xl">Select a Product</DialogTitle>
+                            <DialogTitle className="text-xl">Select Product(s)</DialogTitle>
                             <DialogDescription>
-                                Choose the base product you want to create a listing for.
+                                {isBulkMode ? "Select multiple products to price at once." : "Choose the base product you want to create a listing for."}
                             </DialogDescription>
                         </DialogHeader>
+                        <Button
+                            className={`bg-green-500 ${isBulkMode && 'bg-green-700'} text-white`}
+                            variant={isBulkMode ? "default" : "outline"}
+                            onClick={() => {
+                                setIsBulkMode(!isBulkMode);
+                                setSelectedProducts([]); // clear on toggle
+                            }}
+                        >
+                            {isBulkMode ? "Cancel Bulk" : "Bulk Mode"}
+                        </Button>
+                    </div>
 
-                        {/* Sticky Search Bar */}
-                        <div className="relative mt-4">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                            <Input
-                                placeholder="Search by name or ID..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 bg-gray-50 border-gray-200"
-                                autoFocus
-                            />
-                        </div>
+                    {/* Sticky Search Bar */}
+                    <div className="px-6 py-2 border-b relative">
+                        <Search className="absolute left-9 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                        <Input
+                            placeholder="Search by name or ID..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="pl-10 bg-gray-50 border-gray-200"
+                        />
                     </div>
 
                     {/* Scrollable Product List */}
@@ -186,42 +215,65 @@ export default function Listings() {
                             </div>
                         ) : (
                             <div className="grid gap-2">
-                                {filteredProducts.map((product) => (
-                                    <div
-                                        key={product._id}
-                                        onClick={() => handleSelectProduct(product)}
-                                        className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm cursor-pointer transition-all group"
-                                    >
-                                        <div className="flex items-center gap-4 min-w-0">
-                                            {/* Thumbnail Placeholder (if image exists) */}
-                                            <div className="h-12 w-12 bg-gray-100 rounded-md flex items-center justify-center shrink-0 overflow-hidden border">
-                                                {product.imageUrl ? (
-                                                    <img src={product.imageUrl} alt={product.product_name} className="h-full w-full object-cover" />
-                                                ) : (
-                                                    <Package className="h-6 w-6 text-gray-400" />
-                                                )}
-                                            </div>
+                                {filteredProducts.map((product) => {
+                                    const isSelected = selectedProducts.some(p => p._id === product._id);
 
-                                            <div className="min-w-0">
-                                                <h4 className="font-semibold text-gray-900 truncate">
-                                                    {product.product_name}
-                                                </h4>
-                                                <p className="text-xs text-gray-500 flex gap-2 mt-1">
-                                                    <span className="font-mono text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">
-                                                        {product.product_id}
-                                                    </span>
-                                                    <span className="truncate">
-                                                        {product.category?.name || "Uncategorized"}
-                                                    </span>
-                                                </p>
+                                    return (
+                                        <div
+                                            key={product._id}
+                                            onClick={() => handleSelectProduct(product)}
+                                            className={`flex items-center justify-between p-4 border rounded-lg cursor-pointer transition-all group ${isSelected
+                                                ? 'bg-green-50 border-green-500 shadow-sm'
+                                                : 'bg-white border-gray-200 hover:border-blue-300 hover:shadow-sm'
+                                                }`}
+                                        >
+                                            <div className="flex items-center gap-4 min-w-0">
+                                                <div className={`h-12 w-12 rounded-md flex items-center justify-center shrink-0 overflow-hidden border ${isSelected ? 'bg-green-500' : 'bg-gray-100'}`}>
+                                                    {isSelected ? (
+                                                        <CheckCircle2 className="h-6 w-6 text-white" />
+                                                    ) : product.imageUrl ? (
+                                                        <img src={product.imageUrl} alt={product.product_name} className="h-full w-full object-cover" />
+                                                    ) : (
+                                                        <Package className="h-6 w-6 text-gray-400" />
+                                                    )}
+                                                </div>
+
+                                                <div className="min-w-0">
+                                                    <h4 className="font-semibold text-gray-900 truncate">
+                                                        {product.product_name}
+                                                    </h4>
+                                                    <p className="text-xs text-gray-500 flex gap-2 mt-1">
+                                                        <span className="font-mono text-[10px] bg-gray-100 px-1.5 py-0.5 rounded text-gray-600">
+                                                            {product.product_id}
+                                                        </span>
+                                                        <span className="truncate">
+                                                            {product.category?.name || "Uncategorized"}
+                                                        </span>
+                                                    </p>
+                                                </div>
                                             </div>
                                         </div>
-                                        <ChevronRight className="h-5 w-5 text-gray-300 group-hover:text-blue-500 transition-colors shrink-0" />
-                                    </div>
-                                ))}
+                                    )
+                                })}
                             </div>
                         )}
                     </div>
+
+                    {/* Bulk Proceed Footer */}
+                    {isBulkMode && (
+                        <div className="p-4 border-t bg-white flex justify-between items-center">
+                            <span className="text-sm font-medium text-gray-600">
+                                {selectedProducts.length} selected
+                            </span>
+                            <Button
+                                onClick={handleProceedBulk}
+                                disabled={selectedProducts.length === 0}
+                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                            >
+                                Proceed to Pricing
+                            </Button>
+                        </div>
+                    )}
                 </DialogContent>
             </Dialog>
         </>
