@@ -98,10 +98,18 @@ router.post('/', user_verify, requireRole("moderator"), async (req, res) => {
     // #swagger.description = 'Create a new product listing.'
 
     const listingPayload = req.body;
+    const productId = listingPayload?.product?.product_id;
+    const locationId = listingPayload?.location?.id;
+
+    if (typeof productId !== 'string' || typeof locationId !== 'string') {
+        return res.status(400).json({
+            message: 'Invalid payload: product.product_id and location.id must be strings.'
+        });
+    }
 
     const existingListing = await Listing.findOne({
-        "product.product_id": listingPayload.product.product_id,
-        "location.id": listingPayload.location.id
+        "product.product_id": { $eq: productId },
+        "location.id": { $eq: locationId }
     }).sort({ "product.product_id": -1, "location.id": -1 });
 
     if (existingListing) {
