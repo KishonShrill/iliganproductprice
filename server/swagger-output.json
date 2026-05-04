@@ -517,6 +517,21 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "product": {
+                  "example": "any"
+                },
+                "location": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {
@@ -528,6 +543,9 @@
           },
           "403": {
             "description": "Forbidden"
+          },
+          "409": {
+            "description": "Conflict"
           },
           "500": {
             "description": "Internal Server Error"
@@ -553,6 +571,9 @@
             "schema": {
               "type": "object",
               "properties": {
+                "map(item": {
+                  "example": "any"
+                },
                 "length": {
                   "example": "any"
                 }
@@ -573,6 +594,9 @@
           "403": {
             "description": "Forbidden"
           },
+          "409": {
+            "description": "Conflict"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -584,7 +608,7 @@
         "tags": [
           "v1 | Listing"
         ],
-        "description": "Update a listing by MongoDB _id",
+        "description": "Update a listing by MongoDB _id and log price changes",
         "parameters": [
           {
             "name": "id",
@@ -596,6 +620,18 @@
             "name": "authorization",
             "in": "header",
             "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "updated_price": {
+                  "example": "any"
+                }
+              }
+            }
           }
         ],
         "responses": {

@@ -104,6 +104,40 @@ export default function Listings() {
             );
     };
 
+    const edit_listing = (item) => {
+        // 1. Find the full, un-normalized listing from the original fetched data
+        const originalListing = data.find(l => l._id === item);
+        console.log(originalListing)
+
+        if (!originalListing) {
+            addToast("Error", "Could not find listing details.", "destructive");
+            return;
+        }
+
+        // 2. Reconstruct the "baseProduct" to match what the form expects from the Products collection
+        const baseProduct = {
+            _id: originalListing.product.product_id, // We use product_id as the dictionary key in the form
+            product_id: originalListing.product.product_id,
+            product_name: originalListing.product.product_name,
+            imageUrl: originalListing.product.imageUrl,
+            category: originalListing.category
+        };
+
+        // 3. Navigate with the specific edit state
+        navigate('/dev-mode/listings/new', {
+            state: {
+                baseProducts: [baseProduct],
+                populated: true,
+                isEdit: true,
+                isBulk: false,
+                listingId: originalListing._id,
+                // Pass these so the form can pre-fill!
+                existingPrice: originalListing.updated_price,
+                existingLocationId: originalListing.location.id
+            }
+        });
+    };
+
     // Filter products based on search bar inside the modal
     const filteredProducts = useMemo(() => {
         // Handle both standard arrays and axios { data: [] } structures
@@ -160,6 +194,7 @@ export default function Listings() {
                             columns={columns}
                             filterableColumns={['category', 'location', 'status', 'has_image']}
                             onDelete={delete_listing}
+                            onEdit={edit_listing}
                         />
                     }
                 </div>

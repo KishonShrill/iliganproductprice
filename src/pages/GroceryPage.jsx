@@ -8,6 +8,7 @@ import Cart from "../components/Cart";
 import ProductCard from '../components/ProductCard';
 import Searchbar from "../components/Searchbar";
 import SimpleFooter from "@/components/SimpleFooter";
+import PriceHistoryModal from '../components/PriceHistoryModal';
 
 import useSettings from "../hooks/useSettings";
 import useFetchListingsByLocation from '../hooks/useFetchListingsByLocation'
@@ -22,6 +23,8 @@ function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, remove
     const [reciept, setReceipt] = useState("100%")
     const [active, setActive] = useState(false)
     const [search, setSearch] = useState('')
+    const [historyModalOpen, setHistoryModalOpen] = useState(false);
+    const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
     const [animatingCards, setAnimatingCards] = useState([])
     const [selectedCatalog, setSelectedCatalog] = useState('All')
     const [windowWidth] = useState(window.innerWidth);
@@ -108,6 +111,11 @@ function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, remove
         addNewCartItem(productId, productName, productPrice, productLocation, productImage);
     }, [count]);
 
+    const handleViewHistory = useCallback((item) => {
+        setSelectedHistoryItem(item);
+        setHistoryModalOpen(true);
+    }, []);
+
     const searchTerm = (search || "").toLowerCase();
     const filteredProducts = data?.products.filter(item => {
         const matchesSearch = searchTerm === '' ||
@@ -192,6 +200,7 @@ function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, remove
                                         key={item._id}
                                         item={item}
                                         onAdd={(event) => handleClick(event.currentTarget)}
+                                        onViewHistory={handleViewHistory}
                                     />
                                 ))}
                             {filteredProducts.length === 0 && (
@@ -293,6 +302,13 @@ function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, remove
                 </div>
 
             </div>
+
+            <PriceHistoryModal
+                isOpen={historyModalOpen}
+                onClose={() => setHistoryModalOpen(false)}
+                listing={selectedHistoryItem}
+            />
+
             <SimpleFooter className={"max-md:mb-[4.5rem] bg-gray-900"} />
         </div>
     );

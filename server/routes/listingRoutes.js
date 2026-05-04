@@ -18,10 +18,7 @@ router.get('/', async (req, res) => {
         const limit = limitStr ? parseInt(limitStr, 10) : 0;
 
         let query = Listing.find(
-            {},
-            {
-                "location.id": 0,
-            }
+            {}
         ).sort({ "prouct.product_id": -1, date_updated: -1 });
 
         if (limit > 0) {
@@ -36,6 +33,65 @@ router.get('/', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 })
+
+router.get('/:id', async (req, res) => {
+    // #swagger.tags = ['v1 | PriceLog']
+    // #swagger.description = 'Fetch historical price logs for a specific listing'
+
+    const listingId = req.params.id;
+
+    // Validate if the ID is a valid MongoDB ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(listingId)) {
+        return res.status(400).json({ message: 'Invalid listing ID format' });
+    }
+
+    try {
+        // Use .find() instead of .findById() because we want an array of logs 
+        // that share this listing_id. We also sort by date_recorded ascending (1).
+        const history = await PriceLog.find({ listing_id: listingId })
+            .sort({ date_recorded: 1 });
+
+        // We return it wrapped in an object with a 'data' property to match 
+        // what your frontend axios.get call is expecting (response.data.data)
+        res.status(200).json({ data: history });
+
+    } catch (error) {
+        console.error('Error fetching price history:', error);
+        res.status(500).json({ message: 'Failed to fetch price history', error: error.message });
+    }
+});
+
+
+router.get('/category/:categoryId', async (req, res) => {
+    const categoryId = req.params.categoryId;
+    const { page, limit, skip } = getPaginationParams(req);
+
+    try {
+        // Build the filter by category_id
+        const filter = { category_id: categoryId };
+
+        // Get total count of products in this category
+        const totalProducts = await Listing.countDocuments(filter);
+        // Get the paginated products in this category
+        const products = await Listing.find(filter)
+            .skip(skip)
+            .limit(limit);
+
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        res.json({
+            message: `Products for category ${categoryId} fetched successfully`,
+            products,
+            totalProducts,
+            totalPages,
+            currentPage: page
+        });
+
+    } catch (error) {
+        console.error(`Error fetching products for category ${categoryId}:`, error);
+        res.status(500).json({ message: 'Failed to fetch products by category.', error: error.message });
+    }
+});
 
 router.post('/', user_verify, requireRole("moderator"), async (req, res) => {
     // #swagger.tags = ['v1 | Listing']
@@ -184,64 +240,6 @@ router.put('/:id', user_verify, requireRole("moderator"), async (req, res) => {
             message: 'An unexpected error occurred.',
             error: error.message
         });
-    }
-});
-
-//! [ ] CHECK IF THIS WORKS
-// Get endpoint to fetch a single product by _id
-router.get('/:id', async (req, res) => {
-    const id = req.params.id; // This is the MongoDB _id
-
-    // Validate if the ID is a valid MongoDB ObjectId format
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ message: 'Invalid product ID format' });
-    }
-
-    try {
-        const product = await Listing.findById(id); // Use findById for fetching by _id
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-        res.json(product);
-
-    } catch (error) {
-        console.error('Error fetching product by ID:', error);
-        res.status(500).json({ message: error.message });
-    }
-});
-
-
-//! [ ] CHECK IF THIS WORKS
-// 2. Fetch items according to category with pagination
-// GET /api/products/category/:categoryId?page=1&limit=20
-router.get('/category/:categoryId', async (req, res) => {
-    const categoryId = req.params.categoryId;
-    const { page, limit, skip } = getPaginationParams(req);
-
-    try {
-        // Build the filter by category_id
-        const filter = { category_id: categoryId };
-
-        // Get total count of products in this category
-        const totalProducts = await Listing.countDocuments(filter);
-        // Get the paginated products in this category
-        const products = await Listing.find(filter)
-            .skip(skip)
-            .limit(limit);
-
-        const totalPages = Math.ceil(totalProducts / limit);
-
-        res.json({
-            message: `Products for category ${categoryId} fetched successfully`,
-            products,
-            totalProducts,
-            totalPages,
-            currentPage: page
-        });
-
-    } catch (error) {
-        console.error(`Error fetching products for category ${categoryId}:`, error);
-        res.status(500).json({ message: 'Failed to fetch products by category.', error: error.message });
     }
 });
 

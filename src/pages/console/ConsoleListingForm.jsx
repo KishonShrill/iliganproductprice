@@ -119,6 +119,7 @@ export default function ListingForm() {
             addToast("Forbidden!", `Please access this page through console listings page.`);
             navigate("/dev-mode/listings");
         }
+        if (isEdit) setLocationId(location.state.existingLocationId)
         if (!locationsLoading) setInitialLoading(false);
     }, [location, navigate, baseProducts, populated, locationsLoading]);
 
