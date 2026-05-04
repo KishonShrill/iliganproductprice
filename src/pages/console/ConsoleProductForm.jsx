@@ -528,13 +528,13 @@ export default function ProductForm() {
             </div>
 
             {/* Form */}
-            <div className={`p-4 md:p-8 pb-20 md:pb-8 ${isDragging && 'pointer-events-none'}`} >
+            <div className={`h-[calc(100vh-100px)] overflow-y-auto p-4 md:p-8 pb-20 md:pb-8 ${isDragging && 'pointer-events-none'}`} >
                 {
                     bulkProducts ? (
                         /* ========================================= */
                         /* BULK IMPORT REVIEW UI                     */
                         /* ========================================= */
-                        <div className="space-y-4" >
+                        <div className="space-y-4 overflow-y-auto" >
                             <div className="flex justify-between items-center mb-4">
                                 <span className="font-semibold max-md:font-normal text-gray-700">{bulkProducts.length} Products Pending</span>
                                 <Button
@@ -565,7 +565,7 @@ export default function ProductForm() {
                                                         updated[index].categoryId = ''; // Reset category on switch
                                                         setBulkProducts(updated);
                                                     }}
-                                                    className={`!flex-shrink w-full text-xs ${product.activeList === 'Groceries' && 'bg-orange-500'}`}
+                                                    className={`!flex-shrink w-full text-xs rounded-lg ${product.activeList === 'Groceries' && 'bg-orange-500'}`}
                                                 >
                                                     Groceries
                                                 </Button>
@@ -576,7 +576,7 @@ export default function ProductForm() {
                                                         updated[index].categoryId = ''; // Reset category on switch
                                                         setBulkProducts(updated);
                                                     }}
-                                                    className={`!flex-shrink w-full text-xs ${product.activeList === 'Cuisines' && 'bg-orange-500'}`}
+                                                    className={`!flex-shrink w-full text-xs rounded-lg ${product.activeList === 'Cuisines' && 'bg-orange-500'}`}
                                                 >
                                                     Cuisines
                                                 </Button>
@@ -618,7 +618,8 @@ export default function ProductForm() {
                                                             No categories found.
                                                         </div>
                                                     )}
-                                                </SelectContent>                                        </Select >
+                                                </SelectContent>
+                                            </Select >
                                         </CardContent >
                                     </Card >
                                 ))}

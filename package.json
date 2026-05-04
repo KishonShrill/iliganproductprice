@@ -59,6 +59,7 @@
         "react-redux": "^9.2.0",
         "react-router-dom": "^6.22.3",
         "realm-web": "^2.0.0",
+        "recharts": "^3.8.1",
         "redux": "^5.0.1",
         "retypeapp": "^4.5.3",
         "sass": "^1.75.0",
