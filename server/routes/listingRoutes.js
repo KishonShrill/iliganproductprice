@@ -145,12 +145,38 @@ router.post('/bulk', user_verify, requireRole("moderator"), async (req, res) => 
 
     const listingsArray = req.body;
 
+    // 1. Validate that we actually received an array
+    if (!Array.isArray(listingsArray) || listingsArray.length === 0) {
+        return res.status(400).json({ message: 'Payload must be a non-empty array of listings.' });
+    }
+
+    // 2. Validate payload shape and literal types to prevent query-object injection
+    const hasInvalidItem = listingsArray.some(
+        (item) =>
+            !item ||
+            typeof item?.product?.product_id !== 'string' ||
+            typeof item?.location?.id !== 'string'
+    );
+
+    if (hasInvalidItem) {
+        return res.status(400).json({
+            message: 'Invalid payload: each listing must include string product.product_id and location.id.'
+        });
+    }
+
     const incomingProductIds = listingsArray.map(item => item.product.product_id);
     const targetLocationId = listingsArray[0].location.id;
 
+    const allSameLocation = listingsArray.every(item => item.location.id === targetLocationId);
+    if (!allSameLocation) {
+        return res.status(400).json({
+            message: 'Invalid payload: all listings in a bulk request must target the same location.id.'
+        });
+    }
+
     // 3. Find if any of these products ALREADY exist at this location
     const existingListings = await Listing.find({
-        "location.id": targetLocationId,
+        "location.id": { $eq: targetLocationId },
         "product.product_id": { $in: incomingProductIds }
     }).sort({ "product.product_id": -1, "location.id": -1 });
 
@@ -161,12 +187,7 @@ router.post('/bulk', user_verify, requireRole("moderator"), async (req, res) => 
         });
     }
 
-    // 1. Validate that we actually received an array
-    if (!Array.isArray(listingsArray) || listingsArray.length === 0) {
-        return res.status(400).json({ message: 'Payload must be a non-empty array of listings.' });
-    }
-
-    // 2. Use Mongoose's insertMany for bulk operations
+    // 4. Use Mongoose's insertMany for bulk operations
     await ResultAsync.fromPromise(
         Listing.insertMany(listingsArray),
         (error) => new Error(`Failed to save bulk listings: ${error.message}`)
