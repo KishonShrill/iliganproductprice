@@ -121,11 +121,6 @@ export default function DataTable({
             <Icon className="h-4 w-4" />
         </Button>
     );
-    ActionButton.propTypes = {
-        icon: PropTypes.Icon,
-        onClick: PropTypes.func,
-        hoverColor: PropTypes.string
-    }
 
     return (
         <div className="space-y-6 max-md:mb-[4.5rem]">

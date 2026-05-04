@@ -5,7 +5,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import getPaginationParams from '../helpers/getPaginationParams.js';
 
-import { Listing } from '../models/models.js'; // adjust path
+import { Listing, PriceLog } from '../models/models.js'; // adjust path
 
 const router = express.Router();
 
@@ -18,10 +18,7 @@ router.get('/', async (req, res) => {
         const limit = limitStr ? parseInt(limitStr, 10) : 0;
 
         let query = Listing.find(
-            {},
-            {
-                "location.id": 0,
-            }
+            {}
         ).sort({ "prouct.product_id": -1, date_updated: -1 });
 
         if (limit > 0) {
@@ -37,107 +34,34 @@ router.get('/', async (req, res) => {
     }
 })
 
-router.post('/', user_verify, requireRole("moderator"), async (req, res) => {
-    // #swagger.tags = ['v1 | Listing']
-    // #swagger.description = 'Create a new product listing.'
+router.get('/:id', async (req, res) => {
+    // #swagger.tags = ['v1 | PriceLog']
+    // #swagger.description = 'Fetch historical price logs for a specific listing'
 
-    const listingPayload = req.body;
+    const listingId = req.params.id;
 
-    await ResultAsync.fromPromise(
-        new Listing(listingPayload).save(),
-        (error) => new Error(`Failed to save listing: ${error.message}`)
-    )
-        .match(
-            (savedListing) => {
-                return res.status(201).json({
-                    message: 'Listing created successfully!',
-                    listing: savedListing,
-                });
-            },
-            (error) => {
-                console.error('Error creating listing:', error);
-                return res.status(500).json({
-                    message: 'Failed to create listing.',
-                    error: error.message
-                });
-            }
-        );
-});
-
-router.put('/:id', user_verify, requireRole("moderator"), async (req, res) => {
-    // #swagger.tags = ['v1 | Listing']
-    // #swagger.description = 'Update a listing by MongoDB _id'
-
-    const id = req.params.id;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
+    // Validate if the ID is a valid MongoDB ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(listingId)) {
         return res.status(400).json({ message: 'Invalid listing ID format' });
     }
 
-    const updatePayload = req.body;
-
-    await ResultAsync.fromPromise(
-        // { new: true } ensures Mongoose returns the updated document, not the old one
-        // { runValidators: true } ensures any Mongoose schema rules are still enforced
-        Listing.findByIdAndUpdate(id, updatePayload, { new: true, runValidators: true }),
-        (error) => new Error(`Database update error: ${error.message}`)
-    )
-        .andThen((updatedListing) => {
-            // Explicitly handle the case where the ID is valid but the document doesn't exist
-            if (!updatedListing) return errAsync(new Error("Listing not found."));
-            return okAsync(updatedListing);
-        })
-        .match(
-            (savedListing) => {
-                return res.status(200).json({
-                    message: 'Listing updated successfully!',
-                    listing: savedListing,
-                });
-            },
-            (error) => {
-                console.error('Error updating listing:', error);
-
-                // Catch our specific 404 error
-                if (error.message === "Listing not found.") {
-                    return res.status(404).json({ message: error.message });
-                }
-
-                // Catch all other 500 errors
-                return res.status(500).json({
-                    message: 'Failed to update listing.',
-                    error: error.message
-                });
-            }
-        );
-});
-
-//! [ ] CHECK IF THIS WORKS
-// Get endpoint to fetch a single product by _id
-router.get('/:id', async (req, res) => {
-    const id = req.params.id; // This is the MongoDB _id
-
-    // Validate if the ID is a valid MongoDB ObjectId format
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ message: 'Invalid product ID format' });
-    }
-
     try {
-        const product = await Listing.findById(id); // Use findById for fetching by _id
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
-        }
-        res.json(product);
+        // Use .find() instead of .findById() because we want an array of logs 
+        // that share this listing_id. We also sort by date_recorded ascending (1).
+        const history = await PriceLog.find({ listing_id: listingId })
+            .sort({ date_recorded: 1 });
+
+        // We return it wrapped in an object with a 'data' property to match 
+        // what your frontend axios.get call is expecting (response.data.data)
+        res.status(200).json({ data: history });
 
     } catch (error) {
-        console.error('Error fetching product by ID:', error);
-        res.status(500).json({ message: error.message });
+        console.error('Error fetching price history:', error);
+        res.status(500).json({ message: 'Failed to fetch price history', error: error.message });
     }
 });
 
 
-//! [ ] CHECK IF THIS WORKS
-// 2. Fetch items according to category with pagination
-// GET /api/products/category/:categoryId?page=1&limit=20
 router.get('/category/:categoryId', async (req, res) => {
     const categoryId = req.params.categoryId;
     const { page, limit, skip } = getPaginationParams(req);
@@ -166,6 +90,185 @@ router.get('/category/:categoryId', async (req, res) => {
     } catch (error) {
         console.error(`Error fetching products for category ${categoryId}:`, error);
         res.status(500).json({ message: 'Failed to fetch products by category.', error: error.message });
+    }
+});
+
+router.post('/', user_verify, requireRole("moderator"), async (req, res) => {
+    // #swagger.tags = ['v1 | Listing']
+    // #swagger.description = 'Create a new product listing.'
+
+    const listingPayload = req.body;
+    const productId = listingPayload?.product?.product_id;
+    const locationId = listingPayload?.location?.id;
+
+    if (typeof productId !== 'string' || typeof locationId !== 'string') {
+        return res.status(400).json({
+            message: 'Invalid payload: product.product_id and location.id must be strings.'
+        });
+    }
+
+    const existingListing = await Listing.findOne({
+        "product.product_id": { $eq: productId },
+        "location.id": { $eq: locationId }
+    }).sort({ "product.product_id": -1, "location.id": -1 });
+
+    if (existingListing) {
+        return res.status(409).json({
+            message: `This product is already listed at ${listingPayload.location.name}. Please edit the existing listing instead.`
+        });
+    }
+
+    await ResultAsync.fromPromise(
+        new Listing(listingPayload).save(),
+        (error) => new Error(`Failed to save listing: ${error.message}`)
+    )
+        .match(
+            (savedListing) => {
+                return res.status(201).json({
+                    message: 'Listing created successfully!',
+                    listing: savedListing,
+                });
+            },
+            (error) => {
+                console.error('Error creating listing:', error);
+                return res.status(500).json({
+                    message: 'Failed to create listing.',
+                    error: error.message
+                });
+            }
+        );
+});
+
+router.post('/bulk', user_verify, requireRole("moderator"), async (req, res) => {
+    // #swagger.tags = ['v1 | Listing']
+    // #swagger.description = 'Bulk create new product listings.'
+
+    const listingsArray = req.body;
+
+    // 1. Validate that we actually received an array
+    if (!Array.isArray(listingsArray) || listingsArray.length === 0) {
+        return res.status(400).json({ message: 'Payload must be a non-empty array of listings.' });
+    }
+
+    // 2. Validate payload shape and literal types to prevent query-object injection
+    const hasInvalidItem = listingsArray.some(
+        (item) =>
+            !item ||
+            typeof item?.product?.product_id !== 'string' ||
+            typeof item?.location?.id !== 'string'
+    );
+
+    if (hasInvalidItem) {
+        return res.status(400).json({
+            message: 'Invalid payload: each listing must include string product.product_id and location.id.'
+        });
+    }
+
+    const incomingProductIds = listingsArray.map(item => item.product.product_id);
+    const targetLocationId = listingsArray[0].location.id;
+
+    const allSameLocation = listingsArray.every(item => item.location.id === targetLocationId);
+    if (!allSameLocation) {
+        return res.status(400).json({
+            message: 'Invalid payload: all listings in a bulk request must target the same location.id.'
+        });
+    }
+
+    // 3. Find if any of these products ALREADY exist at this location
+    const existingListings = await Listing.find({
+        "location.id": { $eq: targetLocationId },
+        "product.product_id": { $in: incomingProductIds }
+    }).sort({ "product.product_id": -1, "location.id": -1 });
+
+    if (existingListings.length > 0) {
+        const duplicateNames = existingListings.map(l => l.product.product_name).join(', ');
+        return res.status(409).json({
+            message: `Cannot process bulk upload. The following products are already listed at this location: ${duplicateNames}`
+        });
+    }
+
+    // 4. Use Mongoose's insertMany for bulk operations
+    await ResultAsync.fromPromise(
+        Listing.insertMany(listingsArray),
+        (error) => new Error(`Failed to save bulk listings: ${error.message}`)
+    )
+        .match(
+            (savedListings) => {
+                return res.status(201).json({
+                    message: `Successfully created ${savedListings.length} listings!`,
+                    count: savedListings.length
+                });
+            },
+            (error) => {
+                console.error('Error creating bulk listings:', error);
+                return res.status(500).json({
+                    message: 'Failed to create bulk listings.',
+                    error: error.message
+                });
+            }
+        );
+});
+
+router.put('/:id', user_verify, requireRole("moderator"), async (req, res) => {
+    // #swagger.tags = ['v1 | Listing']
+    // #swagger.description = 'Update a listing by MongoDB _id and log price changes'
+
+    const id = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ message: 'Invalid listing ID format' });
+    }
+
+    const updatePayload = req.body;
+
+    try {
+        // 1. Fetch the EXISTING listing BEFORE updating
+        const existingListing = await Listing.findById(id);
+
+        if (!existingListing) {
+            return res.status(404).json({ message: "Listing not found." });
+        }
+
+        // 2. Compare prices. We only want to log it if the price ACTUALLY changed.
+        // (This prevents logging if the admin just fixed a typo in the category)
+        if (updatePayload.updated_price && existingListing.updated_price !== updatePayload.updated_price) {
+
+            // 3. Save the OLD price and OLD date to the PriceLog
+            await PriceLog.create({
+                listing_id: existingListing._id,
+                old_price: existingListing.updated_price,
+                // Fallback to current date if the old listing somehow lacked a date
+                date_recorded: existingListing.date_updated || new Date()
+            });
+        }
+
+        // 4. Now perform your original update logic using ResultAsync
+        await ResultAsync.fromPromise(
+            Listing.findByIdAndUpdate(id, updatePayload, { new: true, runValidators: true }),
+            (error) => new Error(`Database update error: ${error.message}`)
+        )
+            .match(
+                (savedListing) => {
+                    return res.status(200).json({
+                        message: 'Listing updated successfully!',
+                        listing: savedListing,
+                    });
+                },
+                (error) => {
+                    console.error('Error updating listing:', error);
+                    return res.status(500).json({
+                        message: 'Failed to update listing.',
+                        error: error.message
+                    });
+                }
+            );
+
+    } catch (error) {
+        console.error('Server error during update process:', error);
+        return res.status(500).json({
+            message: 'An unexpected error occurred.',
+            error: error.message
+        });
     }
 });
 
