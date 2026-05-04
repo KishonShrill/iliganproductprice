@@ -159,12 +159,12 @@ export default function ConsoleUsersPage() {
     return (
         <>
             <Header
-                title="User Management"
+                title="Manage Users"
                 subtitle="Manage clearance levels and platform access."
                 onLogout={logout}
                 user={currentUser}
             />
-            <div className="p-4 md:p-8 max-w-6xl mx-auto">
+            <div className="h-[calc(100vh-120px-72px)] md:h-[calc(100vh-120px)] overflow-y-auto p-4 md:p-8 max-w-6xl mx-auto">
 
                 {/* SEARCH BAR */}
                 <div className="relative w-full md:w-80 mb-6">
@@ -192,11 +192,11 @@ export default function ConsoleUsersPage() {
                                 //console.log(user)
 
                                 return (
-                                    <div key={user._id} className="flex flex-col sm:flex-row sm:items-center justify-between p-6 hover:bg-gray-50/50 transition-colors">
+                                    <div key={user._id} className="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-6 max-sm:py-3 hover:bg-gray-50/50 transition-colors">
 
                                         {/* User Info */}
-                                        <div className="flex items-center gap-4 mb-4 sm:mb-0">
-                                            <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center flex-shrink-0">
+                                        <div className="overflow-x-auto flex items-center gap-4 mb-4 max-sm:mb-2 sm:mb-0">
+                                            <div className="h-12 w-12 rounded-full bg-orange-100 max-lg:hidden flex items-center justify-center flex-shrink-0">
                                                 {user.role === 'admin' ? <ShieldAlert className="text-orange-600 h-6 w-6" /> :
                                                     user.role === 'moderator' ? <Shield className="text-orange-500 h-6 w-6" /> :
                                                         <User className="text-gray-500 h-6 w-6" />}
