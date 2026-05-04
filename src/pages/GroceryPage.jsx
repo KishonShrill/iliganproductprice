@@ -213,6 +213,7 @@ function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, remove
                                         size="sm"
                                         onClick={() => {
                                             setSearch('');
+                                            setSelectedCatalog('All')
                                             searchbarRef.current.value = '';
                                         }}
                                         className="mt-6 bg-blue-500 hover:bg-blue-700 rounded-md text-white"
