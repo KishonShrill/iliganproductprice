@@ -12,6 +12,9 @@ const ProfilePage = () => {
     const cookie = cookies.get("budgetbuddy_token");
     const user = cookie ? jwtDecode(cookie) : { username: "Guest", user_role: "guest" };
 
+
+
+
     const profile = {
         stats: {
             points: 0,
