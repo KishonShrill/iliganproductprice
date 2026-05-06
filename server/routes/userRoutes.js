@@ -15,7 +15,7 @@ router.get('/me', user_verify, async (req, res) => {
 
     await ResultAsync.fromPromise(
         // Exclude passwords and sensitive data from the payload
-        User.find({ email: req.user.email }, { stats: 1, _id: 0 }).exec(),
+        User.find({ email: req.user.user_email }, { stats: 1, _id: 0 }).exec(),
         (error) => new Error(`Database fetch failed: ${error.message}`)
     )
         .match(

@@ -147,7 +147,7 @@ export default function SubmitContribution() {
             .match(
                 () => {
                     addToast("Success", "Contribution submitted for community review!");
-                    queryClient.invalidateQueries('pending_contributions');
+                    queryClient.invalidateQueries('pendingContributions_User');
                     navigate('/contribution/hub');
                 },
                 (errMessage) => {
@@ -333,7 +333,7 @@ export default function SubmitContribution() {
                         <div className="mt-8 border-t border-gray-100">
                             <Button
                                 type="submit"
-                                disabled={isSubmitting || !capVal}
+                                disabled={isSubmitting}
                                 className="w-full bg-gray-900 hover:bg-gray-800 text-white py-6 text-lg transition-all"
                             >
                                 {isSubmitting ? (
