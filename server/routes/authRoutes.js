@@ -181,6 +181,7 @@ router.post("/login", async (req, res) => {
                 user_email: user.email,
                 user_role: user.role,
                 username: user.username,
+                account_created: user.account_created
             };
 
             console.log(user.profile_picture)

@@ -23,9 +23,12 @@ const LOCALHOST = import.meta.env.VITE_LOCALHOST;
 
 // 1. Define the strict hierarchy weights
 const ROLE_WEIGHTS = {
-    admin: 10,
+    regular: 1,
+    budget_starter: 2,
+    wise_spender: 3,
+    budget_guru: 4,
     moderator: 5,
-    regular: 1
+    admin: 10
 };
 
 export default function ConsoleUsersPage() {
@@ -223,7 +226,7 @@ export default function ConsoleUsersPage() {
                                                         }
                                                     }}
                                                 >
-                                                    <SelectTrigger className={`w-full ${!isManageable ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'bg-white hover:border-orange-400 focus:ring-orange-500'}`}>
+                                                    <SelectTrigger className={`w-full capitalize ${!isManageable ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'bg-white hover:border-orange-400 focus:ring-orange-500'}`}>
                                                         <SelectValue />
                                                     </SelectTrigger>
                                                     <SelectContent className='bg-white'>
@@ -233,7 +236,7 @@ export default function ConsoleUsersPage() {
                                                         {isManageable && assignableRoles.map((role) => (
                                                             role !== user.role && (
                                                                 <SelectItem key={role} value={role} className="capitalize bg-white hover:bg-gray-100 cursor-pointer">
-                                                                    {role}
+                                                                    {role.replaceAll("_", " ")}
                                                                 </SelectItem>
                                                             )
                                                         ))}

@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from 'react-query';
 import axios from 'axios';
 import Cookies from 'universal-cookie';
+import { ResultAsync } from 'neverthrow';
 
 const cookies = new Cookies();
 const DEVELOPMENT = import.meta.env.VITE_DEVELOPMENT === "true";
@@ -15,18 +16,18 @@ const useVoteContribution = (notify) => {
     const queryClient = useQueryClient();
 
     return useMutation(
-        ({ id, voteType }) => axios.post(`${URL}/${id}/vote`,
-            { voteType },
-            { headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` } }
-        ),
+        ({ id, voteType }) =>
+            ResultAsync.fromPromise(
+                axios.post(
+                    `${URL}/${id}/vote`,
+                    { voteType },
+                    { headers: { Authorization: `Bearer ${cookies.get("budgetbuddy_token")}` } }
+                ),
+                (error) => error
+            ),
         {
             onSuccess: () => {
-                // Instantly refresh the lists across the entire app
-                queryClient.invalidateQueries('pending_contributions');
-            },
-            onError: (error) => {
-                // You could also replace this alert with your toast notification system!
-                notify("Vote Error", error.response?.data?.message || "Failed to submit vote");
+                queryClient.invalidateQueries('pendingContributions_User');
             }
         }
     );

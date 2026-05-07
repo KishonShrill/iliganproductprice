@@ -21,6 +21,9 @@ export const user_verify = (request, response, next) => {
 // 2. The Hierarchical Authorizer (Are you allowed?)
 export const ROLE_HIERARCHY = {
     regular: 1,
+    budget_starter: 2,
+    wise_spender: 3,
+    budget_guru: 4,
     moderator: 5,
     admin: 10
 };
@@ -47,14 +50,18 @@ export const requireRole = (minimumRequiredRole) => {
 };
 
 export const isOneWeekOld = (request, response, next) => {
-    const createdDate = new Date(request.user.created_date) || 0;
+    const createdDate = new Date(request.user.account_created);
     const now = new Date();
     const diffMs = now - createdDate; // difference in milliseconds
     const ONE_WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 
+    //console.log("createdDate:", createdDate);
+    //console.log("now:", now);
+    //console.log("diffMs:", diffMs);
+
     if (ROLE_HIERARCHY[request.user.user_role] > 1) return next();
-    if (~~diffMs < ONE_WEEK_MS) {
-        const daysLeft = Math.ceil((ONE_WEEK_MS - ~~diffMs) / (1000 * 60 * 60 * 24));
+    if (diffMs < ONE_WEEK_MS) {
+        const daysLeft = Math.ceil((ONE_WEEK_MS - diffMs) / (1000 * 60 * 60 * 24));
         return response.status(403).json({
             message: `You have ${daysLeft} days left until you can access this page. Please try again next time...`
         })

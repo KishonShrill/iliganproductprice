@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useOutletContext } from 'react-router-dom';
 import { ThumbsUp, ThumbsDown, Plus, Clock, Store, Tag, PackageOpen, CheckCircle2, Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -9,10 +9,12 @@ import useVoteContribution from '@/hooks/useVoteContribution';
 
 export default function CommunityHub() {
     const navigate = useNavigate();
+    const { addToast } = useOutletContext();
     const [activeTab, setActiveTab] = useState('to_review');
+    const [voteLoading, setVoteLoading] = useState(false);
 
     const { data = { pending: [], votesToday: 0, submissionsToday: 0 }, isLoading, isError, error } = useFetchPendingContributions();
-    const { isLoading: voteLoading, mutate: submitVote } = useVoteContribution();
+    const { mutateAsync: submitVote } = useVoteContribution();
 
     const pendingItems = data.pending
 
@@ -30,12 +32,37 @@ export default function CommunityHub() {
 
     const isSubmissionBlocked = isError || submissionsToday >= MAX_SUBMISSION;
 
-    function handleVote(id, type) {
+    async function handleVote(id, type) {
         if (votesToday >= MAX_VOTES) {
-            alert("You've reached your 5 votes for today! Come back tomorrow.");
+            addToast(
+                "Limit reached",
+                "You've reached your 5 votes for today! Come back tomorrow...",
+                "destructive"
+            );
             return;
         }
-        submitVote({ id, voteType: type });
+
+        setVoteLoading(true);
+        const result = await submitVote({ id, voteType: type });
+
+        result.match(
+            () => {
+                addToast(
+                    "Vote submitted",
+                    "Thanks for helping the community!",
+                    "success"
+                );
+                setVoteLoading(false);
+            },
+            (error) => {
+                addToast(
+                    "Vote Error",
+                    error.response?.data?.message || "Failed to submit vote",
+                    "destructive"
+                );
+                setVoteLoading(false);
+            }
+        );
     }
 
     if (isLoading && !isError) return (
