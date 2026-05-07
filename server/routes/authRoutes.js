@@ -188,9 +188,9 @@ router.post("/login", async (req, res) => {
             const initToken = {
                 user_id: user._id,
                 user_email: user.email,
-                // Fallbacks guarantee the token always has these keys
-                user_role: user.role || "regular",
-                username: user.username || "User",
+                user_role: user.role,
+                username: user.username,
+                account_created: user.account_created
             };
 
             // 5. Handle profile picture logic

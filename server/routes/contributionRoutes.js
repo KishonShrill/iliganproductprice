@@ -2,6 +2,7 @@ import express from 'express';
 import { ResultAsync, errAsync } from 'neverthrow';
 import { PendingListing, User } from '../models/models.js'; // adjust path
 import { isOneWeekOld, user_verify } from '../helpers/auth.js';
+import { calculateUserLevel } from '../helpers/gamification.js';
 
 const router = express.Router();
 
@@ -208,7 +209,12 @@ router.post('/:id/vote', user_verify, isOneWeekOld, async (req, res) => {
     await ResultAsync.fromPromise(
         // Atomic update: push user to array AND increment counter
         PendingListing.findOneAndUpdate(
-            { _id: targetId, status: 'pending' },
+            {
+                _id: targetId,
+                status: 'pending',
+                'submittedBy.user_id': { $ne: currentUserId }, // ANTI-ABUSE: Cannot be the submitter
+                'voters.userId': { $ne: currentUserId }        // ANTI-ABUSE: Cannot have already voted
+            },
             {
                 $push: { voters: { userId: currentUserId, voteType: voteType } },
                 $inc: { [voteField]: 1 }
@@ -217,43 +223,68 @@ router.post('/:id/vote', user_verify, isOneWeekOld, async (req, res) => {
         ).exec(),
         (error) => new Error(`DB_UPDATE_ERROR: ${error.message} `)
     )
-        .andThen((updatedItem) => {
-            if (!updatedItem) return errAsync(new Error("NOT_FOUND"));
+        .andThen(async (updatedItem) => {
+            if (!updatedItem) {
+                // Let's find out WHY it failed to give a good error message
+                const checkItem = await PendingListing.findById(targetId);
+                if (!checkItem || checkItem.status !== 'pending') return errAsync(new Error("NOT_FOUND"));
+                if (checkItem.submittedBy[0].user_id.toString() === currentUserId.toString()) return errAsync(new Error("SELF_VOTE"));
+                return errAsync(new Error("DUPLICATE_VOTE"));
+            }
 
             // 4. INCREMENT USER'S DAILY VOTE COUNT
             user.daily_votes += 1;
-            user.last_vote_date = new Date(); // Stamp the exact time they voted
+            user.last_vote_date = new Date();
+            user.stats.points = (user.stats.points || 0) + 1;// Stamp the exact time they voted
+
+            if (user.daily_votes === user.max_daily_votes) {
+                user.stats.points += 10;
+            }
+            user.role = calculateUserLevel(user.stats.points, user.role);
 
             const totalVotes = updatedItem.upvoteCount + updatedItem.downvoteCount;
 
             // Has it reached the 5-vote threshold?
-            if (totalVotes >= 10) {
+            if (totalVotes >= 3) {
                 const approvalRating = updatedItem.upvoteCount / totalVotes;
+                const isApproved = approvalRating >= 0.5;
 
-                if (approvalRating >= 0.5) {
-                    updatedItem.status = 'approved';
-                    //TODO: Move item to the official Product database
-                    //const newOfficialProduct = new Product({
-                    //    product_name: updatedItem.productName,
-                    //    price: updatedItem.price,
-                    //    location: updatedItem.location,
-                    //    category: updatedItem.category,
-                    //    listType: updatedItem.listType
-                    //});
+                updatedItem.status = isApproved ? 'approved' : 'rejected';
 
-                    //TODO: Save Item, New Product, AND the updated User quota
-                    return ResultAsync.fromPromise(
-                        Promise.all([updatedItem.save(), user.save()]),
-                        (error) => new Error(`MIGRATION_ERROR: ${error.message} `)
-                    ).map(() => "APPROVED_AND_MIGRATED");
-
-                } else {
-                    updatedItem.status = 'rejected';
-                    return ResultAsync.fromPromise(
-                        Promise.all([updatedItem.save(), user.save()]),
-                        (error) => new Error(`REJECTION_SAVE_ERROR: ${error.message} `)
-                    ).map(() => "REJECTED_DUE_TO_RATING");
+                // --- OUTCOME REWARDS FOR SUBMITTER ---
+                let submitterXpReward = 5; // Base reward for rejection
+                if (isApproved) {
+                    submitterXpReward = approvalRating >= 0.8 ? 35 : 25; // 25 base + 10 bonus for high quality
                 }
+
+                const submitter = await User.findById(updatedItem.submittedBy[0].user_id);
+                if (submitter) {
+                    submitter.stats.points = (submitter.stats.points || 0) + submitterXpReward;
+                    submitter.role = calculateUserLevel(submitter.stats.points, submitter.role);
+                    await submitter.save();
+                }
+
+                // --- ACCURACY BONUS FOR VOTERS (+2 XP) ---
+                // Find users who voted correctly
+                const correctVoterIds = updatedItem.voters
+                    .filter(v => (isApproved && v.voteType === 'up') || (!isApproved && v.voteType === 'down'))
+                    .map(v => v.userId);
+
+                if (correctVoterIds.length > 0) {
+                    // Bulk update correct voters (note: level recalculation for these users 
+                    // will naturally happen on their next login/action)
+                    await User.updateMany(
+                        { _id: { $in: correctVoterIds } },
+                        { $inc: { "stats.points": 2 } }
+                    );
+                }
+
+                // TODO: Migrate to official Product database here if approved...
+
+                return ResultAsync.fromPromise(
+                    Promise.all([updatedItem.save(), user.save()]),
+                    (error) => new Error(`MIGRATION_ERROR: ${error.message}`)
+                ).map(() => isApproved ? "APPROVED_AND_MIGRATED" : "REJECTED_DUE_TO_RATING");
             }
 
             // Less than 10 votes, just return success
@@ -264,6 +295,9 @@ router.post('/:id/vote', user_verify, isOneWeekOld, async (req, res) => {
             (actionStatus) => res.status(200).json({ message: "Vote successfully cast", status: actionStatus }),
             (error) => {
                 if (error.message === "NOT_FOUND") return res.status(404).json({ message: "Item not found or already processed." });
+                if (error.message === "SELF_VOTE") return res.status(403).json({ message: "You cannot vote on your own submissions." });
+                if (error.message === "DUPLICATE_VOTE") return res.status(409).json({ message: "You have already voted on this item." });
+
                 console.error('Vote Error:', error);
                 return res.status(500).json({ message: "Internal server error while casting vote." });
             }

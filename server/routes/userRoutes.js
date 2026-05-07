@@ -5,6 +5,31 @@ import { user_verify, requireRole, ROLE_HIERARCHY } from '../helpers/auth.js';
 
 const router = express.Router();
 
+
+// ==========================================
+// GET /api/v1/users - Fetch my account
+// ==========================================
+router.get('/me', user_verify, async (req, res) => {
+    // #swagger.tags = ['v1 | Users']
+    // #swagger.description = 'Endpoint for fetching information of current logged in user'
+
+    await ResultAsync.fromPromise(
+        // Exclude passwords and sensitive data from the payload
+        User.find({ email: req.user.user_email }, { stats: 1, _id: 0 }).exec(),
+        (error) => new Error(`Database fetch failed: ${error.message}`)
+    )
+        .match(
+            (user) => {
+                return res.status(200).json({ user });
+            },
+            (error) => {
+                console.error('Error fetching users:', error);
+                return res.status(500).json({ message: 'Failed to retrieve users.', error: error.message });
+            }
+        );
+});
+
+
 // ==========================================
 // GET /api/v1/users - Fetch all users
 // ==========================================

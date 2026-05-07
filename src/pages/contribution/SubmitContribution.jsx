@@ -53,6 +53,17 @@ export default function SubmitContribution() {
         return fetchedProducts.filter(p => p.category?.list === activeList);
     }, [fetchedProducts, activeList]);
 
+    const categoryMap = useMemo(() => {
+        const map = new Map();
+
+        fetchedCategories.forEach(c => {
+            const key = `${c.category_catalog}|${c.category_list}|${c.category_name}`;
+            map.set(key, c._id);
+        });
+
+        return map;
+    }, [fetchedCategories]);
+
     // --- THE GROUPING LOGIC ---
     const groupedCategories = useMemo(() => {
         if (!fetchedCategories.length) return { Groceries: [], Cuisines: [] };
@@ -93,12 +104,27 @@ export default function SubmitContribution() {
             p => p.product_name.toLowerCase() === selectedName.toLowerCase()
         );
 
+        //console.log(existingProduct)
+
         // 3. If it exists, auto-fill the category to save them time!
         if (existingProduct && existingProduct.category) {
+            const prodCat = existingProduct.category;
+            const key = `${prodCat.catalog}|${prodCat.list}|${prodCat.name}`;
+            const matchedCategoryId = categoryMap.get(key);
+
             setFormData(prev => ({
                 ...prev,
-                category: existingProduct.category.name
+                name: selectedName,
+                categoryId: matchedCategoryId // ✅ FIX HERE
             }));
+        } else {
+            // If not found and in Groceries, clear category
+            if (activeList === 'Groceries') {
+                setFormData(prev => ({
+                    ...prev,
+                    categoryId: ''
+                }));
+            }
         }
     };
 
@@ -147,7 +173,7 @@ export default function SubmitContribution() {
             .match(
                 () => {
                     addToast("Success", "Contribution submitted for community review!");
-                    queryClient.invalidateQueries('pending_contributions');
+                    queryClient.invalidateQueries('pendingContributions_User');
                     navigate('/contribution/hub');
                 },
                 (errMessage) => {
@@ -194,7 +220,7 @@ export default function SubmitContribution() {
                                 required
                                 list="existingProducts"
                                 autoComplete="off"
-                                placeholder="e.g. Joy Dishwashing Liquid 250ml"
+                                placeholder={activeList === "Groceries" ? "e.g. Joy Dishwashing Liquid 250ml" : "e.g. Chicken Adobo"}
                                 value={formData.name}
                                 onChange={handleNameChange} // Using the smart handler!
                                 className="focus-visible:ring-orange-500 bg-white"
@@ -248,9 +274,14 @@ export default function SubmitContribution() {
                                     required
                                     value={formData.categoryId}
                                     onValueChange={(val) => handleInputChange('categoryId', val)}
+                                    disabled={activeList === 'Groceries'}
                                 >
                                     <SelectTrigger className="focus:ring-orange-500 bg-white">
-                                        <SelectValue placeholder="Select category" />
+                                        <SelectValue placeholder={
+                                            activeList === 'Groceries'
+                                                ? "Auto-filled from product"
+                                                : "Select category"
+                                        } />
                                     </SelectTrigger>
 
                                     {/* --- UPDATED GROUPED CATEGORY CONTENT --- */}
@@ -318,7 +349,7 @@ export default function SubmitContribution() {
 
                             <div className="flex flex-wrap items-center justify-center mt-2 text-sm text-gray-500">
                                 <Info className="w-4 h-4 mr-1.5 text-gray-400" />
-                                Don&apos;t see your store?
+                                Don&apos;t see the store/product?
                                 <Link
                                     to="/report"
                                     className="ml-1 text-orange-500 hover:text-orange-600 font-medium hover:underline"

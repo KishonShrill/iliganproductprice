@@ -46,6 +46,7 @@
         "multer": "^2.0.2",
         "neverthrow": "^8.2.0",
         "prop-types": "^15.8.1",
+        "qrcode.react": "^4.2.0",
         "radix-ui": "^1.4.3",
         "react": "^18.2.0",
         "react-auth": "^1.0.0",

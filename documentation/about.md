@@ -13,8 +13,9 @@ Navigating different groceries, convenience stores, and local shops to find the 
 ## Core Features
 
 * **Real-Time Price Tracking:** Instantly search for everyday items and see where they are currently the cheapest.
+* **Price History Logs:** Spot inflation or sales instantly. Click the trending icon on any product card to view an interactive chart of its past price updates.
 * **Community-Sourced Data:** Our database is kept alive by users who submit and verify prices as they shop.
-* **Location-Based Searching:** Filter products by specific stores (e.g., Shoppe 24, Gaisano) to see what's available near you.
+* **Location-Based Searching:** Filter products by specific stores to see what's available near you.
 * **Budget Calculator:** Add items to your virtual cart to ensure you stay within your budget before you even step foot in the store.
 
 By working together, we can create a more transparent and budget-friendly shopping experience for everyone in the city.
