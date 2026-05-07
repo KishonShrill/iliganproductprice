@@ -111,11 +111,11 @@ function App() {
                         </Provider>
                     </BrowserRouter>
                     <SpeedInsights />
-                    {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />}
                 </QueryClientProvider >
             </HelmetProvider>
         </>
     )
 }
+// {DEVELOPMENT && <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />} *\}
 
 export default App

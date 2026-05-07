@@ -1,5 +1,5 @@
 import { useState, useEffect, startTransition } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate, useOutletContext, Link } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { Form, Button } from "react-bootstrap";
@@ -26,7 +26,8 @@ const AuthForm = ({ debugMode }) => {
         username: "",
         email: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        agreeTerms: false
     });
 
     useEffect(() => {
@@ -195,6 +196,32 @@ const AuthForm = ({ debugMode }) => {
                                 isInvalid={status === "error" && errorMessage === "Passwords do not match."}
                                 required={!isLogin}
                                 className="px-[0.8rem] py-[0.4rem] border border-black"
+                            />
+                        </Form.Group>
+                    )}
+
+                    {/* NEW: Terms and Privacy Checkbox (Register Only) */}
+                    {!isLogin && (
+                        <Form.Group controlId="formTermsCheck" className="mb-3 mt-4">
+                            <Form.Check
+                                type="checkbox"
+                                name="agreeTerms"
+                                checked={formData.agreeTerms}
+                                onChange={handleInputChange}
+                                required={!isLogin}
+                                id="terms-checkbox"
+                                label={
+                                    <span className="ml-2 my-auto text-[0.8rem] text-gray-700">
+                                        I agree to the{' '}
+                                        <Link to="/terms" target="_blank" className="text-blue-600 hover:underline">
+                                            Terms of Service
+                                        </Link>
+                                        {' '}and{' '}
+                                        <Link to="/privacy" target="_blank" className="text-blue-600 hover:underline">
+                                            Privacy Policy
+                                        </Link>.
+                                    </span>
+                                }
                             />
                         </Form.Group>
                     )}

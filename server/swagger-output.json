@@ -1016,6 +1016,9 @@
           "404": {
             "description": "Not Found"
           },
+          "409": {
+            "description": "Conflict"
+          },
           "429": {
             "description": "Too Many Requests"
           },

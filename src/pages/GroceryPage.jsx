@@ -67,13 +67,14 @@ function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, remove
     }, [data]);
 
     // Add item on <Cart /> on Button Click on <ProductCard />
-    const handleClick = useCallback((el) => {
-        const productId = el.dataset.productId;
-        const productName = el.dataset.productName;
-        const productPrice = parseFloat(el.dataset.productPrice);
-        const productLocation = el.dataset.productLocation;
-        const productImage = el.dataset.productImage;
-        const card = el.closest('.product-card');
+    const handleClick = useCallback((e) => {
+        e.stopPropagation();
+        const productId = e.currentTarget.dataset.productId;
+        const productName = e.currentTarget.dataset.productName;
+        const productPrice = parseFloat(e.currentTarget.dataset.productPrice);
+        const productLocation = e.currentTarget.dataset.productLocation;
+        const productImage = e.currentTarget.dataset.productImage;
+        const card = e.currentTarget.closest('.product-card');
         const cartButton = (windowWidth < 700) ? cartButtonRef.current : cartRef.current; //TODO: this is a one time fetch thing, static fetch
 
         if (!card || !cartButton) return;
@@ -199,7 +200,7 @@ function GroceryPage({ cartItems, addNewCartItem, updateQuantityFromCart, remove
                                     <ProductCard
                                         key={item._id}
                                         item={item}
-                                        onAdd={(event) => handleClick(event.currentTarget)}
+                                        onAdd={(event) => handleClick(event)}
                                         onViewHistory={handleViewHistory}
                                     />
                                 ))}

@@ -1,3 +1,4 @@
+import { useState, useCallback } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { User, MapPin, Utensils, Package, ReceiptText, ServerCrash, Lock } from "lucide-react";
@@ -5,6 +6,7 @@ import useFetchListings from "@/hooks/useFetchListings";
 import Cookies from "universal-cookie";
 
 import ProductCard from "@/components/ProductCard";
+import PriceHistoryModal from "@/components/PriceHistoryModal";
 
 import '../styles/grocery.scss'
 
@@ -15,7 +17,14 @@ const BudgetHub = () => {
     const token = cookies.get("budgetbuddy_token")
     const userData = token ? jwtDecode(token) : { username: "Guest" };
 
+    const [historyModalOpen, setHistoryModalOpen] = useState(false);
+    const [selectedHistoryItem, setSelectedHistoryItem] = useState(null)
+
     const { data, isLoading, isError } = useFetchListings(token, 10)
+    const handleViewHistory = useCallback((item) => {
+        setSelectedHistoryItem(item);
+        setHistoryModalOpen(true);
+    }, []);
 
     const recentListings = data;
 
@@ -134,6 +143,7 @@ const BudgetHub = () => {
                                     <ProductCard
                                         key={product._id}
                                         item={product}
+                                        onViewHistory={handleViewHistory}
                                     />
                                 ))}
                             </div>
@@ -141,6 +151,13 @@ const BudgetHub = () => {
                     </>
                 )}
             </div>
+
+            <PriceHistoryModal
+                isOpen={historyModalOpen}
+                onClose={() => setHistoryModalOpen(false)}
+                listing={selectedHistoryItem}
+            />
+
 
             <footer className="mt-12 border-t border-gray-200 pt-8 text-center text-sm text-gray-500">
                 <p>© 2026 Budget Buddy. All rights reserved.</p>
